@@ -2,6 +2,7 @@
     pageEncoding="EUC-KR"%>
 <%
 	try {
+		@SuppressWarnings("rawtypes")
 		Class c = Class.forName("com.mysql.jdbc.Driver");
 		if(c != null) {
 			out.println("MySQL JDBC 로딩 완료");
