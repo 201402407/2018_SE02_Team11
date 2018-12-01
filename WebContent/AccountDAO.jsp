@@ -153,7 +153,7 @@
 
 <% 
    try{
-      String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/SE02"; // DB 저장주소
+      String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/SE02?autoReconnect=true"; // DB 저장주소
       String dbId = "SE02_11"; // 아이디
       String dbPass = "2018"; // 비밀번호
       
