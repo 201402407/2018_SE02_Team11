@@ -2,11 +2,13 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Date" %>
 <% request.setCharacterEncoding("euc-kr"); %>
+<%!	int reqSIDnum; %>
+<%!	Date reqSIDdate; %>
 <%!	String accountID; %>
-<%!	String pwd; %>
-<%!	String name; %>
-<%!	int birth; %>
+
 <%!
    Connection conn = null;
    PreparedStatement pstmt = null;
@@ -39,6 +41,69 @@
             return true;
     }
 	return false;
+}
+%>
+<%!
+	public boolean addReqSID(Date p_date, String p_accountID) { // 아이디 이므로 accountID로 이름 변경
+		reqSIDdate = p_date;
+		accountID = p_accountID;
+		
+		try {
+			String SQL = "INSERT INTO StudentIDRequest VALUES (?, ?)";
+			pstmt = conn.prepareStatement(SQL);
+		    pstmt.setDate(1,reqSIDdate);
+		    pstmt.setString(2,accountID);
+		    pstmt.executeUpdate();
+		    return true;
+		}catch(Exception e) {
+		      e.printStackTrace();
+		      str = "member 테이블에 새로운 레코드를 추가에 실패했습니다.";
+		}finally {
+		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		}
+		return false;
+		
+}
+
+%>
+<%!
+	public ArrayList<ArrayList> getReqSIDList() {
+		ArrayList<ArrayList> resultArrayList = new ArrayList<ArrayList>();
+		
+		try {
+			String SQL = "SELECT * FROM StudentIDRequest;";
+			pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery(); // ResultSet
+			
+			// 조회결과 아무것도 없음
+			if(!rs.next()) {
+				return null;	
+			}
+			
+			rs.beforeFirst(); // 첫 행으로 이동  -> 이게 맞나 ?
+			int i = 0;
+			while(rs.next()) {
+				int rsReqSIDnum = rs.getInt("reqSIDnum");
+				Date rsDate = rs.getDate("reqSIDdate");
+				String rsAccountID = rs.getString("accountID");
+				ArrayList temp = new ArrayList();
+				temp[0].add(rsReqSIDnum);
+				temp[1].add(rsDate);
+				temp[2].add(rsAccountID);
+				
+				
+				i++;
+			}
+			 %>
+		   	
+		}catch(Exception e) {
+		      e.printStackTrace();
+		      str = "member 테이블에 새로운 레코드를 추가에 실패했습니다.";
+		}finally {
+		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		}
 }
 %>
 <%!
@@ -94,7 +159,7 @@
 		}		
 		
 		try {
-			String SQL = "SELECT A.accountID FROM Account A WHERE A.accountID = " + accountID;
+			String SQL = "SELECT A.accountID, A.pwd FROM Account A WHERE A.accountID = " + accountID;
 			pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
 			
