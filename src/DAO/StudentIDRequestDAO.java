@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -80,7 +81,7 @@ public class StudentIDRequestDAO {
 		return false;
 	}
 	
-	/* 학번요청추가  */
+	/* 학번요청추가 */
 	public boolean addReqSID(Date p_date, String p_accountID) { // 아이디 이므로 accountID로 이름 변경
 		StudentIDRequest studentIDRequest = new StudentIDRequest();
 		studentIDRequest.setReqSIDdate(p_date);
@@ -164,8 +165,8 @@ public class StudentIDRequestDAO {
 				return false;	
 			}
 
-			// 학번요청 정보 가져오기
-			Date rsReqSIDdate = rs.getDate("reqSIDdate");
+			// 학번요청 정보 가져오기 (일단은 java.util.Date로 했고 안되면 getDate로 변경)
+			java.util.Date rsReqSIDdate = rs.getTimestamp("reqSIDdate");
 			String rsAccountID = rs.getString("accountID");
 						
 			// 년도만 뽑아오는 과정
