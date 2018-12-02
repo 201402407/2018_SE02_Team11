@@ -213,4 +213,28 @@ public class StudentDAO {
 		
 		return false;
 	}
+	
+	public boolean isStudentExist(int p_sid) {
+		try {
+			String SQL = "SELECT * FROM Student" + 
+					" WHERE studentID = ?";
+			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, p_sid);
+			ResultSet rs = pstmt.executeQuery(); // ResultSet
+
+			// 존재하면
+			if(rs.next()) {
+				return true;
+			}
+			
+		}catch(Exception e) {
+		      e.printStackTrace();
+		      
+		}finally { // 삭제는 반대 순서
+		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		}
+		return false;
+	}
 }
