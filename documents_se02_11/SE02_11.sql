@@ -63,7 +63,7 @@ CREATE TABLE Lecture (
     registerTerm integer(2) NOT NULL,
     applyNum integer(4) NOT NULL,
     allNum integer(4) NOT NULL,
-    dayOfWeek int NOT NULL,
+    dayOfWeek int NOT NULL,  --(1=월, 2=화, 3=수, 4=목, 5=금)
     startTime time NOT NULL,
     endTime time NOT NULL,
     subjectCode integer(5) NOT NULL,
