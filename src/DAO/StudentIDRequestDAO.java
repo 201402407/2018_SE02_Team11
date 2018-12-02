@@ -44,19 +44,6 @@ public class StudentIDRequestDAO {
 		AccountDAO.dbPwd = dbPwd;
 	}
 
-	public enum signUpResult { // 회원가입 결과 enum
-		SUCCESS,
-		INVALID_FORM,
-		MISSING_FIELD
-	}
-
-	public enum loginResult { // 로그인 결과 enum
-		SUCCESS,
-		MISSING_FIELD,
-		NOT_FOUND_ID,
-		INCORRECT_PWD
-}
-	
 	// 생성자 생성과 동시에 jbdc 설정.
 	public StudentIDRequestDAO() {
 		setJdbcUrl("jdbc:mysql://127.0.0.1:3306/SE02?autoReconnect=true"); // DB 저장주소
@@ -155,9 +142,10 @@ public class StudentIDRequestDAO {
 		
 		try {
 			// 해당 요청번호의 학번을 불러온다.
-			String SQL = "SELECT * FROM StudentIDRequest WHERE reqSIDnum = " + p_reqnum;
+			String SQL = "SELECT * FROM StudentIDRequest WHERE reqSIDnum = ?";
 			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
 			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, p_reqnum);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
 			
 			// 조회결과 아무것도 없음
@@ -177,10 +165,11 @@ public class StudentIDRequestDAO {
 			
 			// 요청년도가 년도(r.reqSIDdate)에 속하는 요청정보 중 가장 이른 것의 요청번호를 가져온다.
 			SQL = "SELECT reqSIDnum FROM StudentIDRequest"
-					+ " WHERE YEAR(reqSIDdate) = " + reqnum_earliest_from_that_year
+					+ " WHERE YEAR(reqSIDdate) = ?"
 					+ " ORDER BY reqSIDdate ASC LIMIT 1";
 			pstmt = null; // 초기화
 			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, reqnum_earliest_from_that_year);
 			rs = pstmt.executeQuery(); // ResultSet
 		   	
 			// 조회결과 아무것도 없음
@@ -223,9 +212,10 @@ public class StudentIDRequestDAO {
 	public boolean deleteReqSID(int p_reqnum) {
 		try {
 			String SQL = "DELETE FROM StudentIDRequest" + 
-					" WHERE StudentIDRequest.reqSIDNum = " + p_reqnum;
+					" WHERE StudentIDRequest.reqSIDNum = ?";
 			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
 			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, p_reqnum);
 			pstmt.executeUpdate();
 			
 			return true;

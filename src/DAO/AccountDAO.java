@@ -132,9 +132,10 @@ public class AccountDAO {
 		}		
 		
 		try {
-			String SQL = "SELECT A.accountID FROM Account A WHERE A.accountID = " + account.getAccountID();
+			String SQL = "SELECT A.accountID FROM Account A WHERE A.accountID = ?";
 			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
 			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, account.getAccountID());
 			ResultSet rs = pstmt.executeQuery();
 			
 			// 조회결과 아이디 없음
@@ -170,9 +171,10 @@ public class AccountDAO {
 		
 	// 주어진 아이디의 계정정보 가져오기 -> acc -> 학생 이름만 가져오면 되나요 ??
 	try {
-		String SQL = "SELECT * FROM Account A WHERE A.accountID = " + p_id;
+		String SQL = "SELECT * FROM Account A WHERE A.accountID = ?";
 		conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
 		pstmt = conn.prepareStatement(SQL);
+		pstmt.setString(1, p_id);
 		ResultSet rs = pstmt.executeQuery();
 		
 		// 조회결과 계정정보 없음

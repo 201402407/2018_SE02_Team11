@@ -8,15 +8,13 @@
 <% request.setCharacterEncoding("euc-kr"); %>
 
 <%
-   String str_date = request.getParameter("reqSIDdate");
-   String accountID = request.getParameter("accountID");
-   
-   Date date = Date.valueOf(str_date); // String -> java.sql.Date 인데, 날짜형식이 yyyy-mm-dd로 되어야 한다. 
+   int reqSIDnum = Integer.valueOf(request.getParameter("reqSIDnum"));
+   int dCode = Integer.valueOf(request.getParameter("dcode"));
     
    StudentIDRequestDAO studentIDRequestDAO = new StudentIDRequestDAO();
    
    // 성공
-   if(studentIDRequestDAO.addReqSID(date, accountID)) {
+   if(studentIDRequestDAO.permitReqSID(reqSIDnum, dCode)) {
 	   
    }
    

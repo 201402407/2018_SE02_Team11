@@ -1,3 +1,4 @@
+<%@page import="DAO.AccountDAO.loginResult"%>
 <%@page import="DAO.AccountDAO.signUpResult"%>
 <%@page import="DAO.AccountDAO"%>
 <%@ page import="java.util.Stack"%>
@@ -10,8 +11,7 @@
    String id = request.getParameter("accountID");
    String passwd = request.getParameter("pwd");
    
-   AccountDAO accountDAO = new AccountDAO();
-   signUpResult result;
-   accountDAO.login(id, passwd);
+   loginResult result;
+   result = new AccountDAO().login(id, passwd);
    
 %>

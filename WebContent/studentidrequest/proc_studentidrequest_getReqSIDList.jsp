@@ -1,3 +1,5 @@
+<%@page import="ClassObject.StudentIDRequest"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.sql.Timestamp"%>
 <%@page import="DAO.StudentIDRequestDAO"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -8,20 +10,11 @@
 <% request.setCharacterEncoding("euc-kr"); %>
 
 <%
-   String str_date = request.getParameter("reqSIDdate");
-   String accountID = request.getParameter("accountID");
-   
-   Date date = Date.valueOf(str_date); // String -> java.sql.Date 인데, 날짜형식이 yyyy-mm-dd로 되어야 한다. 
-    
+
+   ArrayList<StudentIDRequest> arrayList = new ArrayList<StudentIDRequest>();
+
    StudentIDRequestDAO studentIDRequestDAO = new StudentIDRequestDAO();
+   arrayList = studentIDRequestDAO.getReqSIDList();
    
-   // 성공
-   if(studentIDRequestDAO.addReqSID(date, accountID)) {
-	   
-   }
    
-   // 실패
-   else {
-	   
-   }
 %>
