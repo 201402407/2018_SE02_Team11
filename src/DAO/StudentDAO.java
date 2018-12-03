@@ -7,8 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import ClassObject.Student;
+import ClassObject.StudentInfo;
 import ClassObject.StudentIDRequest;
 
 public class StudentDAO extends DAOBase {
@@ -21,7 +23,9 @@ public class StudentDAO extends DAOBase {
 	}
 	
 	/* 학적상태조회 */
-	public ArrayList getStudentInfoBySID(int p_sid) {
+	public List<StudentInfo> getStudentInfoBySID(int p_sid) {
+		
+		List<StudentInfo> arrayList = new ArrayList<StudentInfo>();
 		
 		try {
 			String SQL = "SELECT S.name, D.departmentName, S.year, S.semester,"
@@ -48,16 +52,16 @@ public class StudentDAO extends DAOBase {
 			boolean rsTimeOff = rs.getBoolean("isTimeOff");
 			boolean rsGraduate = rs.getBoolean("isGraduate");
 			int rsBankAccountNum = rs.getInt("bankAccountNum");
-			
-			// ArrayList에 넣기
-			ArrayList arrayList = new ArrayList();
-			arrayList.add(rsSName);
-		   	arrayList.add(rsDName);
-		   	arrayList.add(rsYear);
-		   	arrayList.add(rsSemester);
-		   	arrayList.add(rsTimeOff);
-		   	arrayList.add(rsGraduate);
-		   	arrayList.add(rsBankAccountNum);
+		
+			StudentInfo studentInfo = new StudentInfo(rsSName,
+					rsDName,
+					rsYear,
+					rsSemester,
+					rsTimeOff,
+					rsGraduate,
+					rsBankAccountNum
+			);
+			arrayList.add(studentInfo);
 		   	
 			return arrayList;
 			
@@ -151,6 +155,7 @@ public class StudentDAO extends DAOBase {
 		return false;
 	}
 	
+	/* 신규학번설정 */ //-> 리턴값?
 	public boolean createNewStudent(int p_newStuYear, int p_newStuOrder, String p_name, String p_accountID, int p_dcode) {
 		
 		int newStuID = p_newStuYear * 100000 + p_newStuOrder;

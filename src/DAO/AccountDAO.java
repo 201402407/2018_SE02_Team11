@@ -17,14 +17,15 @@ public class AccountDAO extends DAOBase {
 	public enum signUpResult { // 회원가입 결과 enum
 		SUCCESS,
 		INVALID_FORM,
-		MISSING_FIELD
+		MISSING_FIELD,
+		SQL_FAILED
 	}
 
 	public enum loginResult { // 로그인 결과 enum
 		SUCCESS,
 		MISSING_FIELD,
 		NOT_FOUND_ID,
-		INCORRECT_PWD
+		INCORRECT_PWD,
 }
 	
 	// 생성자 생성과 동시에 jbdc 설정.
@@ -74,7 +75,10 @@ public class AccountDAO extends DAOBase {
 		    pstmt.setString(2,account.getPwd());
 		    pstmt.setString(3,account.getAccountName());
 		    pstmt.setInt(4, account.getBirth());
-		    pstmt.executeUpdate();
+		    int result = pstmt.executeUpdate(); // -> SQL 실패한 경우도 넣어야 하나 ?
+		    
+		    if(result != 1) // 1개의 행만 추가하므로 1이 아닌가?
+		    	return signUpResult.SQL_FAILED;
 		    
 		    //StudentIDRequestDAO.addReqSID(isDate, accountID);
 		}catch(Exception e) {
@@ -99,7 +103,7 @@ public class AccountDAO extends DAOBase {
 		
 		try {
 			String SQL = "SELECT A.accountID FROM Account A WHERE A.accountID = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, account.getAccountID());
 			ResultSet rs = pstmt.executeQuery();
@@ -138,7 +142,7 @@ public class AccountDAO extends DAOBase {
 	// 주어진 아이디의 계정정보 가져오기 -> acc -> 학생 이름만 가져오면 되나요 ??
 	try {
 		String SQL = "SELECT * FROM Account A WHERE A.accountID = ?";
-		conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+		conn = getConnection();
 		pstmt = conn.prepareStatement(SQL);
 		pstmt.setString(1, p_id);
 		ResultSet rs = pstmt.executeQuery();
