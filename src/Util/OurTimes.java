@@ -122,6 +122,41 @@ public class OurTimes {
 	{
 		LocalDate today = dateNow();
 		
+		int termCurrYearSpring = termValue(today.getYear(), 1);
+		int termCurrYearFall = termValue(today.getYear(), 2);
+		int termNextYearSpring = termValue(today.getYear()+1, 1);
+		
+		//       ▽1학기시작                 ▽2학기시작
+		// □□□□□□■■■■■■■■■□□□□□□□□□■■■■■■■■■□□□
+		if(compareDateWithoutYear(today, BEGIN_TERM_SPRING) < 0)
+			return termCurrYearSpring;
+		else if(compareDateWithoutYear(today, BEGIN_TERM_FALL) < 0)
+			return termCurrYearFall;
+		else
+			return termNextYearSpring;
+	}
+	
+	/**
+	 * 현재에 해당하는 학기, 학기중이 아니라면 결과는 0
+	 * @return e.g. 현재가 2015년도 1학기라면 결과는 20151.
+	 * 현재가 2015년도 여름방학이라면 결과는 0.
+	 * 현재가 2015년도 2학기라면 결과는 20152.
+	 */
+	public static int currentTerm()
+	{
+		if(!isNowOnTerm())  //학기 중이 아니다.
+			return 0;
+		
+		LocalDate today = dateNow();
+		
+		int termCurrYearSpring = termValue(today.getYear(), 1);
+		int termCurrYearFall = termValue(today.getYear(), 2);
+		// □□□□□□■■■■■■■■■□□□□□□□□□■■■■■■■■■□□□
+		
+		if(compareDateWithoutYear(today, BEGIN_TERM_FALL) < 0)
+			return termCurrYearSpring;
+		else 
+			return termCurrYearFall;
 	}
 	
 	/**
