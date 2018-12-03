@@ -12,50 +12,14 @@ import java.util.ArrayList;
 
 import ClassObject.StudentIDRequest;
 
-public class StudentIDRequestDAO {
-	static String jdbcUrl; 
-	static String dbId;
-	static String dbPwd;
+public class StudentIDRequestDAO extends DAOBase {
 	
 	static Connection conn;
 	static PreparedStatement pstmt;
 	
-	private static String getJdbcUrl() {
-		return jdbcUrl;
-	}
-
-	private void setJdbcUrl(String jdbcUrl) {
-		AccountDAO.jdbcUrl = jdbcUrl;
-	}
-
-	private static String getDbId() {
-		return dbId;
-	}
-
-	private void setDbId(String dbId) {
-		AccountDAO.dbId = dbId;
-	}
-
-	private static String getDbPwd() {
-		return dbPwd;
-	}
-
-	private void setDbPwd(String dbPwd) {
-		AccountDAO.dbPwd = dbPwd;
-	}
-
 	// 생성자 생성과 동시에 jbdc 설정.
 	public StudentIDRequestDAO() {
-		setJdbcUrl("jdbc:mysql://127.0.0.1:3306/SE02?autoReconnect=true"); // DB 저장주소
-		setDbId("SE02_11");
-		setDbPwd("2018");
-		
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			//conn = DriverManager.getConnection(this.jdbcUrl, this.dbId, this.dbPass);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		super();
 	}
 	
 	public boolean isIncludeNumber(String string) {
@@ -76,7 +40,7 @@ public class StudentIDRequestDAO {
 		
 		try {
 			String SQL = "INSERT INTO StudentIDRequest VALUES (?, ?)";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 		    pstmt.setDate(1,studentIDRequest.getReqSIDdate());
 		    pstmt.setString(2,studentIDRequest.getAccountID());
@@ -100,7 +64,7 @@ public class StudentIDRequestDAO {
 		
 		try {
 			String SQL = "SELECT * FROM StudentIDRequest";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
 			
@@ -143,7 +107,7 @@ public class StudentIDRequestDAO {
 		try {
 			// 해당 요청번호의 학번을 불러온다.
 			String SQL = "SELECT * FROM StudentIDRequest WHERE reqSIDnum = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_reqnum);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
@@ -213,7 +177,7 @@ public class StudentIDRequestDAO {
 		try {
 			String SQL = "DELETE FROM StudentIDRequest" + 
 					" WHERE StudentIDRequest.reqSIDNum = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_reqnum);
 			pstmt.executeUpdate();

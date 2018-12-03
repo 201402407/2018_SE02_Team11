@@ -7,45 +7,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import ClassObject.Attendance;
+import ClassObject.AttendanceListBySID;
+import ClassObject.AttendanceTimeList;
 import ClassObject.StudentIDRequest;
+import Util.OurTimes;
 
 import java.sql.Date;
 
-public class AttendanceDAO {
-	static String jdbcUrl; 
-	static String dbId;
-	static String dbPwd;
+public class AttendanceDAO extends DAOBase {
 	
 	static Connection conn;
 	static PreparedStatement pstmt;
 	
-	private static String getJdbcUrl() {
-		return jdbcUrl;
-	}
-
-	private void setJdbcUrl(String jdbcUrl) {
-		AccountDAO.jdbcUrl = jdbcUrl;
-	}
-
-	private static String getDbId() {
-		return dbId;
-	}
-
-	private void setDbId(String dbId) {
-		AccountDAO.dbId = dbId;
-	}
-
-	private static String getDbPwd() {
-		return dbPwd;
-	}
-
-	private void setDbPwd(String dbPwd) {
-		AccountDAO.dbPwd = dbPwd;
-	}
-
-	public enum attendanceResult { // 회원가입 결과 enum
+	// 같이 협업하는 DAO 선언.
+	LectureEvaluationDAO lectureEvaluationDAO;
+	LectureDAO lectureDAO;
+	AttendanceDAO attendanceDAO;
+	GradeInfoDAO gradeInfoDAO;
+	
+	 // 회원가입 결과 enum
+	public enum attendanceResult {
 		SUCCESS,
 		NOT_ENOUGH_SCORE ,
 		COLLISION_TIMETABLE 
@@ -53,21 +37,16 @@ public class AttendanceDAO {
 	
 	// 생성자 생성과 동시에 jbdc 설정.
 	public AttendanceDAO() {
-		setJdbcUrl("jdbc:mysql://127.0.0.1:3306/SE02?autoReconnect=true"); // DB 저장주소
-		setDbId("SE02_11");
-		setDbPwd("2018");
-		
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			//conn = DriverManager.getConnection(this.jdbcUrl, this.dbId, this.dbPass);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		super();
+		lectureEvaluationDAO = new LectureEvaluationDAO();
+		lectureDAO = new LectureDAO();
+		attendanceDAO = new AttendanceDAO();
+		gradeInfoDAO = new GradeInfoDAO();
 	}
 	
 	/* 학생의수강목록조회 */
-	public ArrayList<ArrayList> getAttendanceListBySID(int p_sid) {
-			ArrayList<ArrayList> arrayList = new ArrayList<ArrayList>();
+	public List<AttendanceListBySID> getAttendanceListBySID(int p_sid) {
+			List<AttendanceListBySID> arrayList = new ArrayList<AttendanceListBySID>();
 			
 				try {
 					String SQL = "SELECT A.attendanceNum, A.lectureCode, S.subjectName,"
@@ -76,17 +55,19 @@ public class AttendanceDAO {
 							+ " WHERE A.studentID = ? AND L.registerTerm = ?"
 							+ " LEFT JOIN Lecture L ON A.lectureCode = L.lectureCode"
 							+ " LEFT JOIN Subject S ON L.subjectCode = S.subjectCode";
-					conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+					conn = getConnection();
 					pstmt = conn.prepareStatement(SQL);
 
+					// 학기 중인지 체크 ( 만약 학기 중이 아니면 )
+					if(!OurTimes.isNowOnTerm()) {
+						return null;
+					}
+					
 					// 현재 시간 구하기
 					Calendar cal = Calendar.getInstance();
 					int year = cal.get( Calendar.YEAR );
 					int month = cal.get( Calendar.MONTH ) + 1;
-					// 현재 해당 달이 방학이면 null 리턴.
-					if(month == 1 || month == 2 || month == 7 || month == 8) {
-						return null;
-					}
+					
 					int registerTerm = (year * 10) + month;
 					pstmt.setInt(1, p_sid);
 					pstmt.setInt(2, registerTerm);
@@ -110,19 +91,22 @@ public class AttendanceDAO {
 						String rsStartTime = rs.getString("startTime");
 						String rsEndTime = rs.getString("endTime");
 						double rsScore = rs.getDouble("score");
-						ArrayList temp = new ArrayList<>();
-						temp.add(rsReqSIDnum);
-						temp.add(rsLcode);
-						temp.add(rsSubjectName);
-						temp.add(isRetake);
-						temp.add(rsRegisterTerm);
-						temp.add(rsDayOfWeek);
-						temp.add(rsStartTime);
-						temp.add(rsEndTime);
-						temp.add(rsScore);
 						
-						arrayList.add(temp);
+						AttendanceListBySID attendanceListBySID = new AttendanceListBySID(
+								rsReqSIDnum,
+								rsLcode,
+								rsSubjectName,
+								isRetake,
+								rsRegisterTerm,
+								rsDayOfWeek,
+								rsStartTime,
+								rsEndTime,
+								rsScore
+								);
+						arrayList.add(attendanceListBySID);
 					}
+					
+					return arrayList;
 					
 				}catch(Exception e) {
 				      e.printStackTrace();
@@ -131,29 +115,32 @@ public class AttendanceDAO {
 				      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 				      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 				}
-			return arrayList;
+			return null;
 	}
 	
 	/* 수강시간목록조회 */
-	public ArrayList<ArrayList> getAttendanceTimeListBySID(int p_sid) {
-		ArrayList<ArrayList> arrayList = new ArrayList<ArrayList>();
+	public List<AttendanceTimeList> getAttendanceTimeListBySID(int p_sid) {
+		List<AttendanceTimeList> arrayList = new ArrayList<AttendanceTimeList>();
 		try {
 			String SQL = "SELECT S.subjectName, L.dayOfWeek, L.startTime, L.endTime"
 					+ " FROM Attendance A"
 					+ " WHERE A.studentID = ? AND L.registerTerm = ?"
 					+ " LEFT JOIN Lecture L ON A.lectureCode = L.lectureCode"
 					+ " LEFT JOIN Subject S ON L.subjectCode = S.subjectCode";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
+
+
+			// 학기 중인지 체크 ( 만약 학기 중이 아니면 )
+			if(!OurTimes.isNowOnTerm()) {
+				return null;
+			}
 
 			// 현재 시간 구하기
 			Calendar cal = Calendar.getInstance();
 			int year = cal.get( Calendar.YEAR );
 			int month = cal.get( Calendar.MONTH ) + 1;
-			// 현재 해당 달이 방학이면 null 리턴.
-			if(month == 1 || month == 2 || month == 7 || month == 8) {
-				return null;
-			}
+			
 			int registerTerm = (year * 10) + month;
 			pstmt.setInt(1, p_sid);
 			pstmt.setInt(2, registerTerm);
@@ -173,16 +160,17 @@ public class AttendanceDAO {
 				String rsStartTime = rs.getString("startTime");
 				String rsEndTime = rs.getString("endTime");
 				
-				ArrayList temp = new ArrayList<>();
-			
-				temp.add(rsSubjectName);
-				temp.add(rsDayOfWeek);
-				temp.add(rsStartTime);
-				temp.add(rsEndTime);
+				AttendanceTimeList attendanceTimeList = new AttendanceTimeList(
+						rsSubjectName,
+						rsDayOfWeek,
+						rsStartTime,
+						rsEndTime);
 				
-				arrayList.add(temp);
+				arrayList.add(attendanceTimeList);
 			}
 			
+		return arrayList;
+		
 		}catch(Exception e) {
 		      e.printStackTrace();
 		      
@@ -190,7 +178,7 @@ public class AttendanceDAO {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-	return arrayList;
+	return null;
 	}
 	
 	/* 수강신청 */
@@ -203,12 +191,12 @@ public class AttendanceDAO {
 	
 	/* 강의평가여부 */
 	public boolean getLectureEvaluationByCode(int p_attendancecode) {
-		if(new LectureEvaluationDAO().isLectureEvaluationExist(p_attendancecode))
+		if(lectureEvaluationDAO.isLectureEvaluationExist(p_attendancecode))
 			return true;
 		return false;
 	}
 	
-	public ArrayList<ArrayList> getGradeInfo(int p_sid, int p_semester) {
+	public ArrayList<Integer> getGradeInfo(int p_sid, int p_semester) {
 		ArrayList<Integer> attlist = new ArrayList<Integer>();
 		try {
 			String SQL = "SELECT A.attendanceNum"
@@ -216,7 +204,7 @@ public class AttendanceDAO {
 					+ " WHERE A.studentID = ? AND L.registerTerm = ?"
 					+ " LEFT JOIN Lecture L"
 					+ " ON L.lectureCode = A.lectureCode";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_sid);
 			pstmt.setInt(2, p_semester);
@@ -243,8 +231,6 @@ public class AttendanceDAO {
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
 		
-		new GradeInfoDAO().getGradeListByAttCodeList(attlist);
+		GradeInfoDAO.getGradeListByAttCodeList(attlist);
 	}
-	
-	public ArrayList<>
 }

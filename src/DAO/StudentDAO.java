@@ -11,50 +11,13 @@ import java.util.ArrayList;
 import ClassObject.Student;
 import ClassObject.StudentIDRequest;
 
-public class StudentDAO {
-	static String jdbcUrl; 
-	static String dbId;
-	static String dbPwd;
-	
+public class StudentDAO extends DAOBase {
 	static Connection conn;
 	static PreparedStatement pstmt;
 	
-	private static String getJdbcUrl() {
-		return jdbcUrl;
-	}
-
-	private void setJdbcUrl(String jdbcUrl) {
-		AccountDAO.jdbcUrl = jdbcUrl;
-	}
-
-	private static String getDbId() {
-		return dbId;
-	}
-
-	private void setDbId(String dbId) {
-		AccountDAO.dbId = dbId;
-	}
-
-	private static String getDbPwd() {
-		return dbPwd;
-	}
-
-	private void setDbPwd(String dbPwd) {
-		AccountDAO.dbPwd = dbPwd;
-	}
-
 	// 생성자 생성과 동시에 jbdc 설정.
 	public StudentDAO() {
-		setJdbcUrl("jdbc:mysql://127.0.0.1:3306/SE02?autoReconnect=true"); // DB 저장주소
-		setDbId("SE02_11");
-		setDbPwd("2018");
-		
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			//conn = DriverManager.getConnection(this.jdbcUrl, this.dbId, this.dbPass);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		super();
 	}
 	
 	/* 학적상태조회 */
@@ -67,7 +30,7 @@ public class StudentDAO {
 					+ " LEFT JOIN Department D" 
 					+ " ON S.departmentCode = D.departmentCode"
 					+ " WHERE S.studentID = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_sid);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
@@ -116,7 +79,7 @@ public class StudentDAO {
 			String SQL = "UPDATE Student" + 
 					" SET Student.isTimeOff = ?"
 					+ " WHERE Student.studentID = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setBoolean(1, p_changetype);
 			pstmt.setInt(2, p_sid);
@@ -144,7 +107,7 @@ public class StudentDAO {
 			String SQL = "INSERT INTO 학생알림함 (학번, 메시지텍스트)" + 
 					" SET Student.isTimeOff = ?"
 					+ " WHERE Student.studentID = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setBoolean(1, p_changetype);
 			pstmt.setInt(2, p_sid);
@@ -167,7 +130,7 @@ public class StudentDAO {
 		try {
 			String SQL = "SELECT isTimeOff FROM Student" + 
 					" WHERE studentID = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_sid);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
@@ -195,7 +158,7 @@ public class StudentDAO {
 		try {
 			String SQL = "INSERT INTO Student (studentID, name, year, semester, isTimeOff, isGraduate, accountID, departmentCode)"
 					+ " VALUES (?, ?, 1, 1, FALSE, FALSE, ?, ?)";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, newStuID);
 			pstmt.setString(2, p_name);
@@ -218,7 +181,7 @@ public class StudentDAO {
 		try {
 			String SQL = "SELECT * FROM Student" + 
 					" WHERE studentID = ?";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_sid);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet

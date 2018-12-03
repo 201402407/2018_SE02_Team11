@@ -8,38 +8,12 @@ import java.sql.SQLException;
 
 import ClassObject.Account;
 
-public class AccountDAO {
-	static String jdbcUrl; 
-	static String dbId;
-	static String dbPwd;
+public class AccountDAO extends DAOBase {
 	
-	static Connection conn;
-	static PreparedStatement pstmt;
+	// 데이터베이스 접근을 위해
+	private static PreparedStatement pstmt;
+	private static Connection conn;
 	
-	private static String getJdbcUrl() {
-		return jdbcUrl;
-	}
-
-	private void setJdbcUrl(String jdbcUrl) {
-		AccountDAO.jdbcUrl = jdbcUrl;
-	}
-
-	private static String getDbId() {
-		return dbId;
-	}
-
-	private void setDbId(String dbId) {
-		AccountDAO.dbId = dbId;
-	}
-
-	private static String getDbPwd() {
-		return dbPwd;
-	}
-
-	private void setDbPwd(String dbPwd) {
-		AccountDAO.dbPwd = dbPwd;
-	}
-
 	public enum signUpResult { // 회원가입 결과 enum
 		SUCCESS,
 		INVALID_FORM,
@@ -55,18 +29,10 @@ public class AccountDAO {
 	
 	// 생성자 생성과 동시에 jbdc 설정.
 	public AccountDAO() {
-		setJdbcUrl("jdbc:mysql://127.0.0.1:3306/SE02?autoReconnect=true"); // DB 저장주소
-		setDbId("SE02_11");
-		setDbPwd("2018");
-		
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			//conn = DriverManager.getConnection(this.jdbcUrl, this.dbId, this.dbPass);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		super();
 	}
 
+	/* 해당 String 문자열 내부에 숫자가 존재하는지 체크 */
 	public static boolean isIncludeNumber(String string) {
 		for(int i = 0 ; i < string.length(); i ++)
 	    {    
@@ -102,7 +68,7 @@ public class AccountDAO {
 		
 		try {
 			String SQL = "INSERT INTO Account (accountID, pwd, accountName, birth) VALUES (?, ?, ?, ?)";
-			conn = DriverManager.getConnection(getJdbcUrl(), getDbId(), getDbPwd());
+			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 		    pstmt.setString(1,account.getAccountID());
 		    pstmt.setString(2,account.getPwd());
