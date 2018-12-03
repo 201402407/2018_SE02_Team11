@@ -196,8 +196,8 @@ public class AttendanceDAO extends DAOBase {
 	 * @return 수강신청성공결과(enum)
 	 * ! 구현 필요*/
 	public attendanceResult addAttendance(int p_lcode, int p_sid) {
-		ArrayList<ArrayList> lectureInfoList = new LectureDAO().getLectureInfoByLCode(p_lcode);
-		ArrayList<ArrayList> attendanceList = new AttendanceDAO().getAttendanceListBySID(p_sid);
+		ArrayList<ArrayList> lectureInfoList = lectureDAO.getLectureInfoByLCode(p_lcode);
+		List<AttendanceListBySID> attendanceList = attendanceDAO.getAttendanceListBySID(p_sid);
 		
 	}
 	
