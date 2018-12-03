@@ -44,7 +44,17 @@ public class AccountDAO extends DAOBase {
 		return false;
 	}
 	
-	/* 회원가입 */
+	/**
+	 * 회원가입
+	 * @param p_id 아이디 
+	 * @param p_pwd 비밀번호 
+	 * @param p_name 이름 
+	 * @param p_birth 생년월일
+	 * @return 결과(signUpResult).
+	 * 각각의 경우에 따른 enum 리턴.
+	 * + 생년월일 변수 int -> Date 변경, 입력한 생일과 현재날짜 비교 추가해야 함.
+	 * ! DAO명세서 수정 필요
+	 */
 	public signUpResult signUp(String p_id, String p_pwd, String p_name, int p_birth) {
 		Account account = new Account();
 		account.setAccountID(p_id);
@@ -90,7 +100,14 @@ public class AccountDAO extends DAOBase {
 		return signUpResult.SUCCESS;
 }
 
-	/* 로그인 */
+	/** 
+	 * 로그인
+	 * @param p_id 아이디
+	 * @param p_pwd 비밀번호
+	 * @return 결과(LoginResult)
+	 * 각각의 경우에 따른 enum 리턴
+	 * + 현재 세션을 해당 계정으로 활성화 추가
+	 */
 	public loginResult login(String p_id, String p_pwd) {
 		Account account = new Account();
 		account.setAccountID(p_id);
@@ -135,7 +152,15 @@ public class AccountDAO extends DAOBase {
 		return loginResult.SUCCESS;
 }
 	
-	/* 신규학번요청 */
+	/** 
+	 * 신규학번요청
+	 * @param p_id 아이디
+	 * @param p_newStuYear 등록년도, 
+	 * @param p_newStuOrder 등록순서 
+	 * @param p_dcode 학과번호
+	 * @return 학번 -> 0은 없음
+	 * + StudentDAO.createNewStudent 함수 실행 추가
+	 * ! DAO 수정 필요 */
 	public  int requestSID(String p_id, int p_newStuYear, int p_newStuOrder, int p_dcode) {
 		Account account = new Account();
 		

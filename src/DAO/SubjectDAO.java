@@ -28,7 +28,10 @@ public class SubjectDAO extends DAOBase {
 		SQL_FAILED
 	}
 	
-	/* 과목이름조회 */
+	/** 과목이름조회
+	 * @param p_scode 과목코드
+	 * @return 과목명(String)
+	 * ! DAO에 조회 결과 없는 경우도 써야하는지 ? */
 	public String getSubjectNameBySCode(int p_scode) {
 		try {
 			String SQL = "SELECT subjectName FROM Subject WHERE subjectCode = ?";
@@ -52,7 +55,10 @@ public class SubjectDAO extends DAOBase {
 		return null;
 	}
 	
-	/* 과목세부정보조회 */
+	/** 과목세부정보조회 
+	 * @param p_scode 과목코드
+	 * @return 과목세부정보(과목명,학점)
+	 * ! DAO 조회결과없음 수정해야 하는지?*/
 	public Subject getSubjectInfoBySCode(int p_scode) {
 		try {
 			String SQL = "SELECT subjectName, score FROM Subject WHERE subjectCode = ?";
@@ -83,7 +89,10 @@ public class SubjectDAO extends DAOBase {
 	    }
 		return null;
 	}
-	/* 학점조회 */
+	/** 학점조회 
+	 * @param p_scode 과목코드
+	 * @return 학점(double)
+	 * ! DAO 조회결과없음 수정해야 하는지?*/
 	public double getScoreBySCode(int p_scode) {
 		try {
 			String SQL = "SELECT score FROM Subject WHERE subjectCode = ?";
@@ -108,7 +117,10 @@ public class SubjectDAO extends DAOBase {
 		return -1;
 	}
 	
-	/* 과목존재여부조회 */
+	/** 과목존재여부조회 
+	 * @param p_scode 과목코드
+	 * @return 존재여부(boolean)
+	 * ! DAO 알고리즘 return 조건 수정 필요 */
 	public boolean isSubjectExistBySCode(int p_scode) {
 		try {
 			String SQL = "SELECT * FROM Subject WHERE subjectCode = ?";
@@ -130,7 +142,11 @@ public class SubjectDAO extends DAOBase {
 		return false;
 	}
 	
-	/* 교과목 추가 */
+	/** 교과목 추가
+	 * @param p_subjectname 과목명
+	 * @param p_score 학점
+	 * @return 교과목추가결과(enum)
+	 * ! DAO sql 실행 실패에 따른 결과 enum 추가 및 알고리즘 수정 필요 */
 	public AddSubjectResult addSubject(String p_subjectname, double p_score) {
 		if(p_subjectname.isEmpty() || p_score < 0) {
 			return AddSubjectResult.MISSING_FIELD;
@@ -167,7 +183,10 @@ public class SubjectDAO extends DAOBase {
 		return AddSubjectResult.SQL_FAILED;
 	}
 	
-	/* 당학기운용과목조회 */
+	/** 당학기운용과목조회 
+	 * @param p_dcode 학과코드
+	 * @return 과목정보리스트(과목코드, 과목명)
+	 * ! DAO 현재 시간에 따른 조회 가능 여부에 대한 알고리즘 추가 필요*/
 	public List<Subject> getThisSemesterSubjectByDCode(int p_dcode) {
 		List<Subject> arrayList = new ArrayList<Subject>();
 		

@@ -9,9 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ClassObject.Student;
 import ClassObject.StudentInfo;
-import ClassObject.StudentIDRequest;
 
 public class StudentDAO extends DAOBase {
 	static Connection conn;
@@ -22,13 +20,16 @@ public class StudentDAO extends DAOBase {
 		super();
 	}
 	
-	/* 학적상태조회 */
+	/** 학적상태조회 
+	 * @param p_sid 학번
+	 * @return 학적상태(이름, 학과명, 학년, 이수중인학기, 휴학여부, 졸업여부, 은행계좌번호)
+	 * */
 	public List<StudentInfo> getStudentInfoBySID(int p_sid) {
 		
 		List<StudentInfo> arrayList = new ArrayList<StudentInfo>();
 		
 		try {
-			String SQL = "SELECT S.name, D.departmentName, S.year, S.semester,"
+			String SQL = "SELECT S.studentName, D.departmentName, S.year, S.semester,"
 					+ " S.isTimeOff, S.isGraduate, S.bankAccountNum"
 					+ " FROM Student S"
 					+ " LEFT JOIN Department D" 
@@ -100,6 +101,8 @@ public class StudentDAO extends DAOBase {
 		
 		return false;
 	}
+	/* 휴복학설정 */
+	
 	
 	/* 휴복학요청거절알림 */
 	/*
@@ -128,7 +131,10 @@ public class StudentDAO extends DAOBase {
 	}
 	*/
 	
-	/* 휴학여부조회 */
+	/** 휴학여부조회
+	 * @param p_sid 학번
+	 * @return 휴학여부(boolean) -> true : 휴학, false : 재학
+	 * ! DAO if절 추가해야 하나 ? */
 	public boolean getTimeOffBySID(int p_sid) {
 		
 		try {
@@ -155,13 +161,21 @@ public class StudentDAO extends DAOBase {
 		return false;
 	}
 	
-	/* 신규학번설정 */ //-> 리턴값?
-	public boolean createNewStudent(int p_newStuYear, int p_newStuOrder, String p_name, String p_accountID, int p_dcode) {
+	/** 신규학번설정 
+	 * @param p_newStuYear 등록년도
+	 * @param p_newStuOrder 등록순서
+	 * @param p_name 학생이름
+	 * @param p_accountID 계정아이디
+	 * @param p_dcode 학과코드
+	 * @return 학번
+	 * ! DAO 리턴값 + 알고리즘 수정해야 함*/ //-> 리턴값?
+	public int createNewStudent(int p_newStuYear, int p_newStuOrder, String p_name, String p_accountID, int p_dcode) {
 		
 		int newStuID = p_newStuYear * 100000 + p_newStuOrder;
 		
 		try {
-			String SQL = "INSERT INTO Student (studentID, name, year, semester, isTimeOff, isGraduate, accountID, departmentCode)"
+			String SQL = "INSERT INTO Student (studentID, studentName, year,"
+					+ " semester, isTimeOff, isGraduate, accountID, departmentCode)"
 					+ " VALUES (?, ?, 1, 1, FALSE, FALSE, ?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
@@ -170,8 +184,8 @@ public class StudentDAO extends DAOBase {
 			pstmt.setString(3, p_accountID);
 			pstmt.setInt(4, p_dcode);
 		    int result = pstmt.executeUpdate(); // 성공 결과를 모르겠음
-		    
-		    return true;
+		    if(result != 1)
+		    	return 0;
 		}catch(Exception e) {
 		      e.printStackTrace();
 		}finally {
@@ -179,9 +193,13 @@ public class StudentDAO extends DAOBase {
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
 		
-		return false;
+		return newStuID;
 	}
 	
+	/** 학생존재여부
+	 * @param p_sid 학번
+	 * @return 존재여부(boolean) -> 존재 : true, 미존재 : false
+	 * */
 	public boolean isStudentExist(int p_sid) {
 		try {
 			String SQL = "SELECT * FROM Student" + 
