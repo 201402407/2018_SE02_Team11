@@ -5,6 +5,10 @@ public class Subject {
 	private String subjectName;
 	private double score;
 	
+	public Subject() {
+		
+	}
+	
 	public Subject(int subjectCode, String subjectName, double score) {
 		
 		this.subjectCode = subjectCode;
