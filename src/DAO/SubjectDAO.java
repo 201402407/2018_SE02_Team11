@@ -165,7 +165,7 @@ public class SubjectDAO extends DAOBase {
 			
 			SQL = "INSERT INTO Subject (subjectName, score)" 
 			+ " VALUES (?, ?)";
-			pstmt = null;
+			pstmt.clearParameters();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, p_subjectname);
 			pstmt.setDouble(2, p_score);

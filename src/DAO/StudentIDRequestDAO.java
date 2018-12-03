@@ -145,7 +145,7 @@ public class StudentIDRequestDAO extends DAOBase {
 			SQL = "SELECT reqSIDnum FROM StudentIDRequest"
 					+ " WHERE YEAR(reqSIDdate) = ?"
 					+ " ORDER BY reqSIDdate ASC LIMIT 1";
-			pstmt = null; // 초기화
+			pstmt.clearParameters(); // 초기화
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, reqnum_earliest_from_that_year);
 			rs = pstmt.executeQuery(); // ResultSet

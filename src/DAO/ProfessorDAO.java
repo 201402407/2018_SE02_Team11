@@ -26,7 +26,10 @@ public class ProfessorDAO extends DAOBase {
 		return false;
 	}
 	
-	/* 교수이름조회 */
+	/** 교수이름조회 
+	 * @param p_profcode 교수등록번호
+	 * @return 교수이름(String)
+	 * ! DAO 조회결과 없음 표시 필요*/
 	public String getProfNameByPCode(int p_profcode) {
 		try {
 			String SQL = "SELECT profName FROM Professor WHERE professorCode = ?";
@@ -51,7 +54,10 @@ public class ProfessorDAO extends DAOBase {
 		return null;
 	}
 	
-	/* 교수 추가 */
+	/** 교수 추가 
+	 * @param p_name 교수이름
+	 * @return 교수추가결과(boolean)
+	 * ! DAO 경우에따른결과 추가 필요*/
 	public boolean addProfessor(String p_profname) {
 		// 숫자가 포함되어 있는지 여부
 		if(isIncludeNumber(p_profname)) {
@@ -79,7 +85,10 @@ public class ProfessorDAO extends DAOBase {
 		return false;
 	}
 	
-	/* 교수존재여부조회 */
+	/** 교수존재여부조회 
+	 * @param p_profcode 교수등록번호
+	 * @return 조회결과(boolean)
+	 * ! DAO 위오 ㅏ마찬가지*/
 	public boolean IsProfessorByPCode(int p_profcode) {
 		try {
 			String SQL = "SELECT * FROM Professor WHERE professorCode = ?";

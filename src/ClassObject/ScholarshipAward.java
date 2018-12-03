@@ -1,15 +1,19 @@
 package ClassObject;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class ScholarshipAward {
 	private int awardNum;
 	private int awardMoney;
-	private Date awardDate;
+	private LocalDate awardDate;
 	private int scholarshipNum;
 	private int studentID;
 	
-	public ScholarshipAward(int awardNum, int awardMoney, Date awardDate, int scholarshipNum, int studentID) {
+	public ScholarshipAward() {
+		
+	}
+	public ScholarshipAward(int awardNum, int awardMoney, LocalDate awardDate, int scholarshipNum, int studentID) {
 		
 		this.awardNum = awardNum;
 		this.awardMoney = awardMoney;
@@ -30,10 +34,10 @@ public class ScholarshipAward {
 	public void setAwardMoney(int awardMoney) {
 		this.awardMoney = awardMoney;
 	}
-	public Date getAwardDate() {
+	public LocalDate getAwardDate() {
 		return awardDate;
 	}
-	public void setAwardDate(Date awardDate) {
+	public void setAwardDate(LocalDate awardDate) {
 		this.awardDate = awardDate;
 	}
 	public int getScholarshipNum() {

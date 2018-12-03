@@ -199,7 +199,6 @@ public class AttendanceDAO extends DAOBase {
 		ArrayList<ArrayList> lectureInfoList = new LectureDAO().getLectureInfoByLCode(p_lcode);
 		ArrayList<ArrayList> attendanceList = new AttendanceDAO().getAttendanceListBySID(p_sid);
 		
-		
 	}
 	
 	/** 강의평가여부 
