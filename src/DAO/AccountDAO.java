@@ -20,13 +20,11 @@ public class AccountDAO extends DAOBase {
 	public enum signUpResult { // 회원가입 결과 enum
 		SUCCESS,
 		INVALID_FORM,
-		MISSING_FIELD,
 		NULL_IN_DB
 	}
 
 	public enum loginResult { // 로그인 결과 enum
 		SUCCESS,
-		MISSING_FIELD,
 		NOT_FOUND_ID,
 		INCORRECT_PWD,
 		NULL_IN_DB
@@ -68,12 +66,6 @@ public class AccountDAO extends DAOBase {
 		account.setPwd(p_pwd);
 		account.setAccountName(p_name);
 		account.setBirth(p_birth);
-		
-		// null 체크
-		if(account.getAccountID().isEmpty() || account.getPwd().isEmpty() 
-				|| account.getAccountName().isEmpty() || account.getBirth() == 0) {
-			return signUpResult.MISSING_FIELD;
-		}
 
 		// 현재 날짜를 가져와서 int로 변환. -> Date 타입 안쓰고 int로 하실껀지..
 		String inDate = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
@@ -97,7 +89,9 @@ public class AccountDAO extends DAOBase {
 		    if(result != 1) // 1개의 행만 추가하므로 1이 아닌가?
 		    	return signUpResult.NULL_IN_DB;
 		    
-		    //StudentIDRequestDAO.addReqSID(isDate, accountID);
+		    if(StudentIDRequestDAO.addReqSID(isDate, account.getAccountID())) {
+		    	return signUpResult.SUCCESS;
+		    }
 		    return signUpResult.SUCCESS;
 		}catch(SQLException e) {
 		      throw e;
@@ -121,11 +115,6 @@ public class AccountDAO extends DAOBase {
 		Account account = new Account();
 		account.setAccountID(p_id);
 		account.setPwd(p_pwd);
-		
-		// null 체크
-		if(account.getAccountID().isEmpty() || account.getPwd().isEmpty()) {
-			return loginResult.MISSING_FIELD;
-		}		
 		
 		try {
 			String SQL = "SELECT A.accountID FROM Account A WHERE A.accountID = ?";
@@ -172,7 +161,7 @@ public class AccountDAO extends DAOBase {
 	 * @throws SQLException DB오류
 	 * + StudentDAO.createNewStudent 함수 실행 추가
 	 * ! DAO 수정 필요 */
-	public  int requestSID(String p_id, int p_newStuYear, int p_newStuOrder, int p_dcode) throws SQLException
+	public int requestSID(String p_id, int p_newStuYear, int p_newStuOrder, int p_dcode) throws SQLException
 	{
 		Account account = new Account();
 		

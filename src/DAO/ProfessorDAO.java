@@ -15,6 +15,11 @@ public class ProfessorDAO extends DAOBase {
 		super();
 	}
 	
+	public enum AddProfessorResult {
+		SUCCESS,
+		INVALID_NAME,
+		INSERT_NULL
+	}
 	/* 해당 String 문자열 내부에 숫자가 존재하는지 체크 */
 	public static boolean isIncludeNumber(String string) {
 		for(int i = 0 ; i < string.length(); i ++)
@@ -30,7 +35,8 @@ public class ProfessorDAO extends DAOBase {
 	 * @param p_profcode 교수등록번호
 	 * @return 교수이름(String)
 	 * @throws SQLException DB오류
-	 * ! DAO 조회결과 없음 표시 필요*/
+	 * ! DAO 조회결과 없음 표시 필요
+	 * */
 	public String getProfNameByPCode(int p_profcode) throws SQLException {
 		try {
 			String SQL = "SELECT profName FROM Professor WHERE professorCode = ?";
@@ -58,11 +64,13 @@ public class ProfessorDAO extends DAOBase {
 	 * @param p_name 교수이름
 	 * @return 교수추가결과(boolean)
 	 * @throws SQLException DB오류
-	 * ! DAO 경우에따른결과 추가 필요*/
-	public boolean addProfessor(String p_profname) throws SQLException {
+	 * ! DAO 경우에따른결과 추가 필요
+	 * ! DAO enum 리턴값 변경 필요
+	 * */
+	public AddProfessorResult addProfessor(String p_profname) throws SQLException {
 		// 숫자가 포함되어 있는지 여부
 		if(isIncludeNumber(p_profname)) {
-			return false;
+			return AddProfessorResult.INVALID_NAME;
 		}	
 		try {
 			String SQL = "INSERT INTO Professor (profName) VALUES (?)";
@@ -73,9 +81,9 @@ public class ProfessorDAO extends DAOBase {
 			
 			// SQL 실패
 			if(result != 1)
-				return false;
+				return AddProfessorResult.INSERT_NULL;
 			
-			return true;
+			return AddProfessorResult.SUCCESS;
 			
 		}catch(SQLException e){
 	        throw e;
@@ -98,7 +106,7 @@ public class ProfessorDAO extends DAOBase {
 			pstmt.setInt(1, p_profcode);
 			ResultSet rs = pstmt.executeQuery();
 			
-			// 조회결과 없음 
+			// 조회결과 존재 
 			if(rs.next()) 
 				return true;	
 		return false;	

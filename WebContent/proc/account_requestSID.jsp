@@ -1,4 +1,3 @@
-<%@page import="DAO.AccountDAO.signUpResult"%>
 <%@page import="DAO.AccountDAO"%>
 <%@ page import="java.util.Stack"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
@@ -8,28 +7,31 @@
 
 <%
    String id = request.getParameter("accountID");
-   String passwd = request.getParameter("pwd");
-   String name = request.getParameter("accountName");
-   int birth = Integer.valueOf(request.getParameter("birth")); // 확인!
+   String newStuYear = request.getParameter("newStuYear");
+   String newStuOrder = request.getParameter("newStuOrder");
+   String dCode = request.getParameter("departmentCode");
+   
+   int pNewStuYear = Integer.valueOf(newStuYear);
+   int pNewStuOrder = Integer.valueOf(newStuOrder);
+   int pDCode = Integer.valueOf(dCode);
    
    AccountDAO accountDAO = new AccountDAO();
-   signUpResult result;
-   /*
-   result = accountDAO.requestSID(id, p_newStuYear, p_newStuOrder, p_dcode);
    
-   // 성공
-   if(result == signUpResult.SUCCESS) {
+   try {
+
+	   int result = accountDAO.requestSID(id, pNewStuYear, pNewStuOrder, pDCode);
 	   
+	   // 실패
+	   if(result == -1) {
+		   
+	   }
+	   // 성공
+	   else {
+		   
+	   }
+   }
+   catch(SQLException e) {
+	   e.printStackTrace();
    }
    
-   // 유효하지 않은 형식
-   if(result == signUpResult.INVALID_FORM) {
-	   
-   }
-   
-   // 하나라도 입력 X
-   if(result == signUpResult.MISSING_FIELD) {
-	   
-   }
-   */
 %>

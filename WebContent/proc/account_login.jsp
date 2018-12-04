@@ -17,7 +17,7 @@
 	switch(result) {
 	case SUCCESS: // 성공한 경우
 		break;
-	case MISSING_FIELD: // 필드 입력이 잘못된 경우
+	case NULL_IN_DB: // DB에 저장된 데이터가 하나도 없는 경우
 		break;
 	case NOT_FOUND_ID: // 아이디를 찾을 수 없는 경우
 		break;

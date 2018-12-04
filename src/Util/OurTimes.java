@@ -200,4 +200,20 @@ public class OurTimes {
 		return sqltime.toLocalTime();
 	}
 	
+	/** 
+	 * Java 상의 LocalDate를 java.sql.Date으로 변경한다.
+	 * sql에 insert를 위한 변경 함수
+	 * @param LocalDate javalocaldate*/
+	public static Date LocalDateTosqlDate(LocalDate javalocaldate) {
+		return Date.valueOf(javalocaldate);
+	}
+	
+	/** 
+	 * Java 상의 LocalTime를 java.sql.Time으로 변경한다.
+	 * sql에 insert를 위한 변경 함수
+	 * @param LocalDate javalocaltime*/
+	public static Time LocalDateTosqlDate(LocalTime javalocaltime) {
+		return Time.valueOf(javalocaltime);
+	}
+	
 }

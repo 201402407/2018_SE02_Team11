@@ -51,7 +51,7 @@ public class ScholarshipAwardDAO extends DAOBase {
 		try {
 			String SQL = "INSERT INTO ScholarshipAward "
 					+ "(awardMoney, awardDate, scholarshipNum, studentID) VALUES (?, ?, ?, ?)";
-			Date currentTime = Date.valueOf(OurTimes.dateNow()); // 현재날짜 Date 타입으로 변환
+			Date currentTime = OurTimes.LocalDateTosqlDate(OurTimes.dateNow()); // 현재날짜 sqlDate 타입으로 변환
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_money);

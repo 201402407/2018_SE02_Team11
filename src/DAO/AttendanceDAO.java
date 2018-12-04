@@ -33,7 +33,7 @@ public class AttendanceDAO extends DAOBase {
 	 // 회원가입 결과 enum
 	public enum attendanceResult {
 		SUCCESS,
-		NOT_ENOUGH_SCORE ,
+		NOT_ENOUGH_SCORE,
 		COLLISION_TIMETABLE 
 	}
 	
