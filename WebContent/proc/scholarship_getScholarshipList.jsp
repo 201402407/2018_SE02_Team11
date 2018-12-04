@@ -1,5 +1,5 @@
-<%@page import="ClassObject.AwardInfoBySID"%>
-<%@page import="DAO.ScholarshipAwardDAO"%>
+<%@page import="ClassObject.ScholarShip"%>
+<%@page import="DAO.ScholarshipDAO"%>
 <%@ page import="java.util.Stack"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
@@ -10,19 +10,21 @@
 
 <%
    String sName = request.getParameter("scholarshipName");
-   int money = Integer.valueOf(request.getParameter("awardMoney"));
-   int sid = Integer.valueOf(request.getParameter("studentID"));
    
-   ScholarshipAwardDAO scholarshipAwardDAO = new ScholarshipAwardDAO();
-   List<AwardInfoBySID> result = new ArrayList<>();
+   ScholarshipDAO scholarshipDAO = new ScholarshipDAO();
+   List<ScholarShip> result = new ArrayList<>();
    try {
-	   result = scholarshipAwardDAO.getAwardInfoBySID(sName, money, sid);
+	   result = scholarshipDAO.getScholarshipList();
 	   
-	   // = NULL_IN_DB
+	   // NULL_IN_DB
 	   if(result.isEmpty()) {
 		   
 	   }
-		
+	   
+	   // ¼º°ø
+	   else {
+		   
+	   }
    }
    catch(SQLException e) {
 	   e.printStackTrace();

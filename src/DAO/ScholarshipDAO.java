@@ -20,7 +20,6 @@ public class ScholarshipDAO extends DAOBase {
 	
 	public enum addScholarshipResult {
 		SUCCESS,
-		MISSING_FIELD,
 		NULL_IN_DB
 	}
 	/** 장학존재여부조회
@@ -56,9 +55,6 @@ public class ScholarshipDAO extends DAOBase {
 	 * ! SQL 실패하는 경우의 enum DAO에 추가 필요 */
 	public addScholarshipResult addScholarship(String p_scname) throws SQLException{
 		
-		// null이거나 ""인 경우
-		if(p_scname.equals(null) || p_scname.trim().equals(""))
-			return addScholarshipResult.MISSING_FIELD;
 		p_scname = p_scname.trim(); // 좌우 공백제거
 		try {
 			String SQL = "INSERT INTO Scholar (scholarshipName) VALUES (?)";

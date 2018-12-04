@@ -178,6 +178,20 @@ public class AttendanceDAO extends DAOBase {
 		LectureDetail lectureInfoList = lectureDAO.getLectureInfoByLCode(p_lcode);
 		List<AttendanceListBySID> attendanceList = attendanceDAO.getAttendanceListBySID(p_sid);
 		
+		// 지금까지 수강한 목록의 총 학점 구하기
+		int i = 0;
+		double attendanceScore = 0;
+		while(i < attendanceList.size()) {
+			attendanceScore += attendanceList.get(i).getScore();
+		}
+		// 분반의 학점 구하기
+		double lectureScore = lectureInfoList.getScore();
+		// 일정기준보다 초과하면
+		if(attendanceScore + lectureScore > 18) {
+			return attendanceResult.NOT_ENOUGH_SCORE;
+		}
+		
+		
 	}
 	
 	/** 강의평가여부 
@@ -222,7 +236,7 @@ public class AttendanceDAO extends DAOBase {
 				attlist.add(rsAttendanceNum);
 			}
 		
-			GradeInfoDAO.getGradeListByAttCodeList(attlist);
+			gradeInfoDAO.getGradeListByAttCodeList(attlist);
 			return attlist;
 		}catch(SQLException e) {
 		      throw e;

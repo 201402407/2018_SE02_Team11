@@ -45,9 +45,9 @@ public class GradeInfoDAO extends DAOBase {
 		
 	}
 	
-	/** 성적정보리스트 조회 
+	/** 성적정보리스트 조회 getGradeListByAttCodeList 
 	 * @param p_attnumlist 수강번호리스트
 	 * @return 성적정보리스트(평점보여짐여부, 평점)*/
-
+	
 
 }

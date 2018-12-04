@@ -128,8 +128,11 @@ public class ChangeRecordDAO extends DAOBase {
 		try {
 			if(OurTimes.isNowOnTerm())
 				return RequestTimeOnOffsResult.CURRENTLY_UNAVAILABLE;
-			if(timeoffRequestDAO.addTimeOnOff())
+			
+			if(timeoffRequestDAO.addTimeOnOff(OurTimes.dateNow(), p_change, p_start, p_end, p_reason, p_sid))
 				return RequestTimeOnOffsResult.SUCCESS;
+			else 
+				return RequestTimeOnOffsResult.NULL_IN_DB;
 		}
 		catch(SQLException e) {
 			throw e;
