@@ -98,12 +98,6 @@ public class ScholarshipAwardDAO extends DAOBase {
 			pstmt.setInt(1, p_sid);
 			ResultSet rs = pstmt.executeQuery();
 			
-			// 조회결과 X
-			if(!rs.next())
-				return null;
-			
-			rs.beforeFirst();
-			
 			while(rs.next()) {
 				String rsScholarshipName = rs.getString("scholarshipName");
 				int rsAwardMoney = rs.getInt("awardMoney");

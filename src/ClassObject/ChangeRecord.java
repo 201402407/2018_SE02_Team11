@@ -1,22 +1,21 @@
 package ClassObject;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class ChangeRecord {
 	private int changerecordNum;
-	private Date changeDate;
+	private LocalDate changeDate;
 	private ChangeType changeType;
 	private int startSemester;
 	private int endSemester;
 	private String reason;
 	private int studentID;
-	
-	public enum ChangeType {
-		TAKEOFF,
-		RESUME
-	}
 
-	public ChangeRecord(int changerecordNum, Date changeDate, ChangeType changeType, int startSemester, int endSemester,
+	public ChangeRecord() {
+		
+	}
+	
+	public ChangeRecord(int changerecordNum, LocalDate changeDate, ChangeType changeType, int startSemester, int endSemester,
 			String reason, int studentID) {
 		
 		this.changerecordNum = changerecordNum;
@@ -36,11 +35,11 @@ public class ChangeRecord {
 		this.changerecordNum = changerecordNum;
 	}
 
-	public Date getChangeDate() {
+	public LocalDate getChangeDate() {
 		return changeDate;
 	}
 
-	public void setChangeDate(Date changeDate) {
+	public void setChangeDate(LocalDate changeDate) {
 		this.changeDate = changeDate;
 	}
 

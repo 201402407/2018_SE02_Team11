@@ -9,6 +9,7 @@ import java.util.List;
 
 import ClassObject.Subject;
 import DAO.AccountDAO.signUpResult;
+import Util.OurTimes;
 
 public class SubjectDAO extends DAOBase {
 	
@@ -149,7 +150,7 @@ public class SubjectDAO extends DAOBase {
 	 * @return 교과목추가결과(enum)
 	 * @throws SQLException DB오류
 	 * ! DAO sql 실행 실패에 따른 결과 enum 추가 및 알고리즘 수정 필요 */
-	public AddSubjectResult addSubject(String p_subjectname, double p_score) throw SQLException {
+	public AddSubjectResult addSubject(String p_subjectname, double p_score) throws SQLException {
 		if(p_subjectname.isEmpty() || p_score < 0) {
 			return AddSubjectResult.MISSING_FIELD;
 		}
@@ -186,7 +187,7 @@ public class SubjectDAO extends DAOBase {
 	
 	/** 당학기운용과목조회 
 	 * @param p_dcode 학과코드
-	 * @return 과목정보리스트(과목코드, 과목명)
+	 * @return 과목정보리스트(과목코드, 과목명) null : 조회가능기간 아닌경우.
 	 * @throws SQLException DB오류
 	 * ! DAO 현재 시간에 따른 조회 가능 여부에 대한 알고리즘 추가 필요*/
 	public List<Subject> getThisSemesterSubjectByDCode(int p_dcode) throws SQLException {
@@ -202,15 +203,25 @@ public class SubjectDAO extends DAOBase {
 					+ " GROUP BY Subject.subjectCode";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, 현재학기);
+
+			int currentTerm;
+			if(OurTimes.isNowOnTerm()) { // 학기중인 경우
+				currentTerm = OurTimes.currentTerm();
+			}
+			// 방학중인 경우
+			else {
+				// 수강신청 기간(2.1~2.7, 8.1~8.7) 포함 개강 전인 2월과 8월 둘 다 조회 가능.
+				if(OurTimes.dateNow().getMonthValue() == 2 || 
+						OurTimes.dateNow().getMonthValue() == 8) { 
+					currentTerm = OurTimes.closestFutureTerm();
+				}
+				else {
+					return null;
+				}
+			}
+			pstmt.setInt(1, currentTerm);
 			pstmt.setInt(2, p_dcode);
 			ResultSet rs = pstmt.executeQuery();
-			
-			// 조회결과 중복 존재
-			if(!rs.next())
-				return null;
-			
-			rs.beforeFirst();
 			
 			while(rs.next()) {
 				int rsSubjectCode = rs.getInt("subjectCode");

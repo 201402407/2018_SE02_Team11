@@ -76,13 +76,6 @@ public class AttendanceDAO extends DAOBase {
 					pstmt.setInt(2, registerTerm);
 					ResultSet rs = pstmt.executeQuery(); // ResultSet
 					
-					// 조회결과 아무것도 없음
-					if(!rs.next()) {
-						return null;	
-					}
-					
-					rs.beforeFirst(); // 첫 행으로 이동  -> 이게 맞나 ?
-					
 					// 목록 꺼내오기
 					while(rs.next()) {
 						int rsReqSIDnum = rs.getInt("attendanceNum");
@@ -148,13 +141,6 @@ public class AttendanceDAO extends DAOBase {
 			pstmt.setInt(1, p_sid);
 			pstmt.setInt(2, registerTerm);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
-			
-			// 조회결과 아무것도 없음
-			if(!rs.next()) {
-				return null;	
-			}
-			
-			rs.beforeFirst(); // 첫 행으로 이동  -> 이게 맞나 ?
 			
 			// 목록 꺼내오기
 			while(rs.next()) {
@@ -230,13 +216,6 @@ public class AttendanceDAO extends DAOBase {
 			pstmt.setInt(2, p_semester);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
 			
-			// 조회결과 아무것도 없음
-			if(!rs.next()) {
-				return null;	
-			}
-			
-			rs.beforeFirst(); // 첫 행으로 이동  -> 이게 맞나 ?
-			
 			// 목록 꺼내오기
 			while(rs.next()) {
 				int rsAttendanceNum = rs.getInt("attendanceNum");
@@ -244,6 +223,7 @@ public class AttendanceDAO extends DAOBase {
 			}
 		
 			GradeInfoDAO.getGradeListByAttCodeList(attlist);
+			return attlist;
 		}catch(SQLException e) {
 		      throw e;
 		      
@@ -275,13 +255,6 @@ public class AttendanceDAO extends DAOBase {
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_lcode);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
-			
-			// 조회결과 아무것도 없음
-			if(!rs.next()) {	
-				return null;	
-			}
-			
-			rs.beforeFirst(); // 첫 행으로 이동  -> 이게 맞나 ?
 			
 			// 목록 꺼내오기
 			while(rs.next()) {

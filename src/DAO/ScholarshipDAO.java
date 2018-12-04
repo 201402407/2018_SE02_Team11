@@ -93,12 +93,6 @@ public class ScholarshipDAO extends DAOBase {
 			pstmt = conn.prepareStatement(SQL);
 			ResultSet rs = pstmt.executeQuery();
 			
-			// 조회결과 존재 X 
-			if(!rs.next()) 
-				return null;	
-			
-			rs.beforeFirst();
-			
 			while(rs.next()) {
 				int rsScholarshipNum = rs.getInt("scholarshipNum");
 				String rsScholarshipName = rs.getString("scholarshipName");

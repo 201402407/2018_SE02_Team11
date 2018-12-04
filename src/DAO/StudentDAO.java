@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ClassObject.ChangeType;
 import ClassObject.StudentInfo;
 
 public class StudentDAO extends DAOBase {
@@ -85,7 +86,7 @@ public class StudentDAO extends DAOBase {
 	 * @param p_changetype 휴복학여부
 	 * @return 성공결과(boolean)
 	 * @throws SQLException DB오류 */
-	public boolean setTimeOff(int p_sid, boolean p_changetype) throws SQLException {
+	public boolean setTimeOff(int p_sid, ChangeType p_changetype) throws SQLException {
 		
 		try {
 			String SQL = "UPDATE Student" + 
@@ -93,7 +94,7 @@ public class StudentDAO extends DAOBase {
 					+ " WHERE Student.studentID = ?";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setBoolean(1, p_changetype);
+			pstmt.setInt(1, ChangeType.gotTinyInt(p_changetype));
 			pstmt.setInt(2, p_sid);
 			int result = pstmt.executeUpdate(); // 변경된 row수 만큼 리턴
 			if(result == 1) // 1줄만 변경하므로 성공

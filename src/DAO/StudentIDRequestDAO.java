@@ -135,7 +135,7 @@ public class StudentIDRequestDAO extends DAOBase {
 			}
 
 			// 학번요청 정보 가져오기 (일단은 java.util.Date로 했고 안되면 getDate로 변경)
-			java.util.Date rsReqSIDdate = rs.getTimestamp("reqSIDdate");
+			
 			String rsAccountID = rs.getString("accountID");
 						
 			// 년도만 뽑아오는 과정
@@ -154,8 +154,6 @@ public class StudentIDRequestDAO extends DAOBase {
 			// 올 해 하나라도 존재하는 경우
 			if(rs.next()) {
 				rsSID = rs.getInt("reqSIDnum");
-				// 년도당_요청번호 <- r.reqnum - reqnum_earliest_from_that_year??
-				int year_reqnum = p_reqnum - rsSID;
 					
 			}
 			// 존재하지 않으면 최초가 되므로 첫 번째가 됨.
