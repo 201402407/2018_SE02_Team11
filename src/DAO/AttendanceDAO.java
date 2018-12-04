@@ -70,12 +70,8 @@ public class AttendanceDAO extends DAOBase {
 						return null;
 					}
 					
-					// 현재 시간 구하기
-					Calendar cal = Calendar.getInstance();
-					int year = cal.get( Calendar.YEAR );
-					int month = cal.get( Calendar.MONTH ) + 1;
-					
-					int registerTerm = (year * 10) + month;
+					// 현재 학기 int로 구하기
+					int registerTerm = OurTimes.currentTerm();
 					pstmt.setInt(1, p_sid);
 					pstmt.setInt(2, registerTerm);
 					ResultSet rs = pstmt.executeQuery(); // ResultSet
@@ -147,12 +143,8 @@ public class AttendanceDAO extends DAOBase {
 				return null;
 			}
 
-			// 현재 시간 구하기
-			Calendar cal = Calendar.getInstance();
-			int year = cal.get( Calendar.YEAR );
-			int month = cal.get( Calendar.MONTH ) + 1;
-			
-			int registerTerm = (year * 10) + month;
+			// 현재 학기 int로 구하기
+			int registerTerm = OurTimes.currentTerm();
 			pstmt.setInt(1, p_sid);
 			pstmt.setInt(2, registerTerm);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
@@ -205,10 +197,15 @@ public class AttendanceDAO extends DAOBase {
 	/** 강의평가여부 
 	 * @param p_attendancecode 수강번호
 	 * @return 강의평가결과
+	 * @throws SQLException DB오류
 	 * ! LectureEvaluationDAO 구현 필요 */
-	public boolean getLectureEvaluationByCode(int p_attendancecode) {
-		if(lectureEvaluationDAO.isLectureEvaluationExist(p_attendancecode))
-			return true;
+	public boolean getLectureEvaluationByCode(int p_attendancecode) throws SQLException {
+		try {
+			if(lectureEvaluationDAO.isLectureEvaluationExist(p_attendancecode))
+				return true;
+		} catch (SQLException e) {
+			throw e;
+		}
 		return false;
 	}
 	

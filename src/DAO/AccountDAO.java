@@ -1,12 +1,13 @@
 package DAO;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import ClassObject.Account;
+import Util.OurTimes;
 
 public class AccountDAO extends DAOBase {
 	
@@ -16,6 +17,7 @@ public class AccountDAO extends DAOBase {
 	
 	// 협업하기 위한 DAO 클래스 변수 선언
 	StudentDAO studentDAO;
+	StudentIDRequestDAO studentIDRequestDAO;
 	
 	public enum signUpResult { // 회원가입 결과 enum
 		SUCCESS,
@@ -35,6 +37,7 @@ public class AccountDAO extends DAOBase {
 		super();
 		
 		studentDAO = new StudentDAO();
+		studentIDRequestDAO = new StudentIDRequestDAO();
 	}
 
 	/* 해당 String 문자열 내부에 숫자가 존재하는지 체크 */
@@ -60,19 +63,16 @@ public class AccountDAO extends DAOBase {
 	 * + 생년월일 변수 int -> Date 변경, 입력한 생일과 현재날짜 비교 추가해야 함.
 	 * ! DAO명세서 수정 필요
 	 */
-	public signUpResult signUp(String p_id, String p_pwd, String p_name, int p_birth) throws SQLException {
+	public signUpResult signUp(String p_id, String p_pwd, String p_name, LocalDate p_birth) throws SQLException {
 		Account account = new Account();
 		account.setAccountID(p_id);
 		account.setPwd(p_pwd);
 		account.setAccountName(p_name);
 		account.setBirth(p_birth);
 
-		// 현재 날짜를 가져와서 int로 변환. -> Date 타입 안쓰고 int로 하실껀지..
-		String inDate = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
-		int isDate = Integer.parseInt(inDate);
-
 		// 이름 중 숫자가 있는 경우, 생일이 현재 날짜보다 큰 경우
-		if(isIncludeNumber(account.getAccountName()) || (account.getBirth() >= isDate)) {
+		if(isIncludeNumber(account.getAccountName()) ||
+				(OurTimes.compareDateWithoutYear(account.getBirth(),OurTimes.dateNow()) >= 0)) {
 			return signUpResult.INVALID_FORM;
 		}
 		
@@ -83,13 +83,13 @@ public class AccountDAO extends DAOBase {
 		    pstmt.setString(1,account.getAccountID());
 		    pstmt.setString(2,account.getPwd());
 		    pstmt.setString(3,account.getAccountName());
-		    pstmt.setInt(4, account.getBirth());
+		    pstmt.setDate(4, OurTimes.LocalDateTosqlDate(account.getBirth()));
 		    int result = pstmt.executeUpdate(); // -> SQL 실패한 경우도 넣어야 하나 ?
 		    
 		    if(result != 1) // 1개의 행만 추가하므로 1이 아닌가?
 		    	return signUpResult.NULL_IN_DB;
 		    
-		    if(StudentIDRequestDAO.addReqSID(isDate, account.getAccountID())) {
+		    if(studentIDRequestDAO.addReqSID(account.getBirth(), account.getAccountID())) {
 		    	return signUpResult.SUCCESS;
 		    }
 		    return signUpResult.SUCCESS;

@@ -39,7 +39,7 @@ public class OurTimes {
 	 * 년도 구별 없는 날짜 비교를 한다.
 	 * @return 0보다 크다 -> dtA가 dtB보다 늦다(미래에 있다).
 	 */
-	private static int compareDateWithoutYear(LocalDate dA, LocalDate dB) {
+	public static int compareDateWithoutYear(LocalDate dA, LocalDate dB) {
 	    int cmp = (dA.getMonthValue() - dB.getMonthValue());
 	    if (cmp == 0) {
 	        cmp = (dA.getDayOfMonth() - dB.getDayOfMonth());

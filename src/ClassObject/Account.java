@@ -1,10 +1,12 @@
 package ClassObject;
 
+import java.time.LocalDate;
+
 public class Account {
 	private String accountID;
 	private String pwd;
 	private String accountName;
-	private int birth;
+	private LocalDate birth;
 	
 	public String getAccountID() {
 		return accountID;
@@ -24,10 +26,10 @@ public class Account {
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
 	}
-	public int getBirth() {
+	public LocalDate getBirth() {
 		return birth;
 	}
-	public void setBirth(int birth) {
+	public void setBirth(LocalDate birth) {
 		this.birth = birth;
 	}
 }

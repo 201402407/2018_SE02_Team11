@@ -15,14 +15,18 @@ public class StudentDAO extends DAOBase {
 	static Connection conn;
 	static PreparedStatement pstmt;
 	
+	// 협업 DAO
+	
 	// 생성자 생성과 동시에 jbdc 설정.
 	public StudentDAO() {
 		super();
+		
 	}
 	
 	/** 학적상태조회 
 	 * @param p_sid 학번
 	 * @return 학적상태(이름, 학과명, 학년, 이수중인학기, 휴학여부, 졸업여부, 은행계좌번호)
+	 * @throws SQLException DB오류
 	 * */
 	public List<StudentInfo> getStudentInfoBySID(int p_sid) throws SQLException {
 		

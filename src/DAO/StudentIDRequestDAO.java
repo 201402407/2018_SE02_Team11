@@ -8,9 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import ClassObject.StudentIDRequest;
+import Util.OurTimes;
 
 public class StudentIDRequestDAO extends DAOBase {
 	
@@ -39,16 +41,16 @@ public class StudentIDRequestDAO extends DAOBase {
 	 * @throws SQLException DB오류
 	 * ! DAO SQL 실패 경우 추가
 	 * */
-	public boolean addReqSID(Date p_date, String p_accountID) throws SQLException { // 아이디 이므로 accountID로 이름 변경
+	public boolean addReqSID(LocalDate p_date, String p_accountID) throws SQLException { // 아이디 이므로 accountID로 이름 변경
 		StudentIDRequest studentIDRequest = new StudentIDRequest();
 		studentIDRequest.setReqSIDdate(p_date);
 		studentIDRequest.setAccountID(p_accountID);
-		
+
 		try {
 			String SQL = "INSERT INTO StudentIDRequest VALUES (?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
-		    pstmt.setDate(1,studentIDRequest.getReqSIDdate());
+		    pstmt.setDate(1,OurTimes.LocalDateTosqlDate(studentIDRequest.getReqSIDdate()));
 		    pstmt.setString(2,studentIDRequest.getAccountID());
 		    int result = pstmt.executeUpdate();
 		    if(result != 1)
@@ -88,7 +90,7 @@ public class StudentIDRequestDAO extends DAOBase {
 			// 목록 꺼내오기
 			while(rs.next()) {
 				int rsReqSIDnum = rs.getInt("reqSIDnum");
-				Date rsDate = rs.getDate("reqSIDdate");
+				LocalDate rsDate = OurTimes.sqlDateToLocalDate(rs.getDate("reqSIDdate"));
 				String rsAccountID = rs.getString("accountID");
 				
 				StudentIDRequest studentIDRequest = new StudentIDRequest();
