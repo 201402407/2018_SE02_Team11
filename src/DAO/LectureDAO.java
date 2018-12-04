@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ClassObject.LectureDetail;
+import Util.OurSchoolPolicy;
 import Util.OurTimes;
 
 public class LectureDAO extends DAOBase {
@@ -24,7 +25,11 @@ public class LectureDAO extends DAOBase {
 		NOT_FOUND_SUBJCODE,
 		NOT_FOUND_PROFCODE,
 		NOT_FOUND_DEPCODE,
-		INVALID_TERM
+		INVALID_TERM,
+		INVALID_ALLNUM, // !DAO에 추가되야 할 것 (addLecture 참고)
+		INVALID_DAY_OF_WEEK,  // !DAO에 추가되야 할 것 (addLecture 참고)
+		INVALID_S_E_TIME,  // !DAO에 추가되야 할 것 (addLecture 참고)
+		NULL_IN_DB  // DB접근은 성공하였으나, 그 삽입 결과가 정상적이지 않은 경우  !DAO에 추가되야 할 것 (addLecture 참고)
 	}
 	
 	// 협업하는 DAO
@@ -60,21 +65,20 @@ public class LectureDAO extends DAOBase {
 	 */
 	public List<LectureDetail> getApplyLectureList(int p_sid) throws SQLException
 	{
-		// 휴학중이면 선조건에 맞지 않는다.
-		boolean isTimeOff = studentDAO.getTimeOffBySID(p_sid);
-		if( !(isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
-			return null;
-		
-		// 리턴 결과물
-		List<LectureDetail> lectureDetailList;
-
-		// 학생의 해당학과를 구한다
-		int dcode = departmentDAO.getDCodeBySID(p_sid);
-		// 현재학기: 아직은 학기중이 아니나, 수강신청기간동안 "현재학기"는 앞으로 다가올 학기 중 가장 가까운 것이다.
-		int currentApplyTerm = OurTimes.closestFutureTerm();
-		
 		try
 		{
+			// 리턴 결과물
+			List<LectureDetail> lectureDetailList;
+			
+			// 휴학중이면 선조건에 맞지 않는다.
+			boolean isTimeOff = studentDAO.getTimeOffBySID(p_sid);
+			if( !(isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
+				return null;
+			// 학생의 해당학과를 구한다
+			int dcode = departmentDAO.getDCodeBySID(p_sid);
+			// 현재학기: 아직은 학기중이 아니나, 수강신청기간동안 "현재학기"는 앞으로 다가올 학기 중 가장 가까운 것이다.
+			int currentApplyTerm = OurTimes.closestFutureTerm();
+			
 			// DB 접속
 			conn = getConnection();
 			// 쿼리문 설정
@@ -111,12 +115,9 @@ public class LectureDAO extends DAOBase {
 			
 			return lectureDetailList;
 		}
-		catch (SQLException sqle)
-		{
+		catch (SQLException sqle) {
 			throw sqle;
-		}
-		finally
-		{
+		} finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
@@ -130,27 +131,28 @@ public class LectureDAO extends DAOBase {
 	 */
 	public List<LectureDetail> getLectureByName(int p_sid, String p_subjectname)
 	{
-		// 휴학중이면 선조건에 맞지 않는다.
-		boolean isTimeOff = studentDAO.getTimeOffBySID(p_sid);
-		if( !(isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
-			return null;
-		
-		// 리턴 결과물
-		List<LectureDetail> lectureDetailList;
-		
-		//해당학과
-		int dcode = departmentDAO.getDCodeBySID(p_sid);
-		//수강신청기간동안 "현재학기"는 앞으로 다가올 학기 중 가장 가까운 것이다.
-		int currentApplyTerm = OurTimes.closestFutureTerm();
-		// https://stackoverflow.com/questions/8247970/using-like-wildcard-in-prepared-statement
-		String subjectname_wildcarded = "%" + p_subjectname
-				.replace("!", "!!")
-				.replace("%", "!%")
-				.replace("_", "!_")
-				.replace("[", "![") + "%";
-		
 		try
 		{
+			// 리턴 결과물
+			List<LectureDetail> lectureDetailList;
+			
+			// 휴학중이면 선조건에 맞지 않는다.
+			boolean isTimeOff = studentDAO.getTimeOffBySID(p_sid);
+			if( !(isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
+				return null;
+			
+			// 해당학과
+			int dcode = departmentDAO.getDCodeBySID(p_sid);
+			// 수강신청기간동안 "현재학기"는 앞으로 다가올 학기 중 가장 가까운 것이다.
+			int currentApplyTerm = OurTimes.closestFutureTerm();
+			// 과목명을 검색코자 한다.
+			// https://stackoverflow.com/questions/8247970/using-like-wildcard-in-prepared-statement
+			String subjectname_wildcarded = "%" + p_subjectname
+					.replace("!", "!!")
+					.replace("%", "!%")
+					.replace("_", "!_")
+					.replace("[", "![") + "%";
+			
 			// DB 접속
 			conn = getConnection();
 			// 쿼리문 설정
@@ -160,7 +162,7 @@ public class LectureDAO extends DAOBase {
 					"LEFT JOIN Professor P ON L.profCode = P.professorCode\r\n" + 
 					"WHERE L.registerTerm = ? AND S.subjectName LIKE ? ESCAPE '!' AND L.departmentCode = ?;";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, dcode);
+			pstmt.setInt(1, currentApplyTerm);
 			pstmt.setString(2, subjectname_wildcarded);
 			pstmt.setInt(3, dcode);
 			// 쿼리 실행
@@ -190,7 +192,8 @@ public class LectureDAO extends DAOBase {
 		}
 		catch (SQLException sqle)
 		{
-			throw sqle;
+			sqle.printStackTrace();
+			return null;
 		}
 		finally
 		{
@@ -202,8 +205,7 @@ public class LectureDAO extends DAOBase {
 	/**
 	 * 강의계획서 조회. 분반코드를 가진 분반의 강의계획서를 조회한다.
 	 * @param p_lcode 분반코드
-	 * @return 문자열로 된 강의계획서 내용물. 분반추가 당시 강의계획서 내용물을 입력하지 않았으면 null.
-	 * @throws SQLException DB오류.
+	 * @return 문자열로 된 강의계획서 내용물. 분반추가 당시 강의계획서 내용물을 입력하지 않았으면 "".
 	 */
 	public String getSyllabusByLCode(int p_lcode) throws SQLException
 	{
@@ -221,6 +223,8 @@ public class LectureDAO extends DAOBase {
 			ResultSet rs = pstmt.executeQuery();
 			// 이후 결과 처리(rs)...
 			
+			if(!rs.next())
+				return null;
 			sylCode = rs.getInt("syllabusCode");
 		}
 		catch (SQLException sqle)
@@ -236,17 +240,10 @@ public class LectureDAO extends DAOBase {
 		
 		// 강의계획서 내용물을 가져온다. -> sylText
 		// DB성공, 내용물비었음 -> getTextBySYLCode는 ""을 반환한다
-		String sylText;
-		try {
-			sylText = syllabusDAO.getTextBySYLCode(sylCode);
-			if (sylText.isEmpty())
-				sylText = null;
-		}
-		catch (SQLException sqle_sylText)
-		{
-			// SyllabusDAO.getTextBySYLCode에서 DB오류가 발생.
-			throw sqle_sylText;
-		}
+		// DB실패 -> getTextBySYLcode는 null을 반환한다.
+		String sylText = syllabusDAO.getTextBySYLCode(sylCode);
+		if (sylText.isEmpty())
+			sylText = null;
 		
 		return sylText;
 	}
@@ -278,6 +275,9 @@ public class LectureDAO extends DAOBase {
 			ResultSet rs = pstmt.executeQuery();
 			// 이후 결과 처리(rs)...
 			
+			if(!rs.next())
+				return null;
+			
 			lectureDetail = new LectureDetail(
 				rs.getInt("lectureCode"),  //분반코드
 				rs.getString("subjectName"),  //과목명
@@ -305,6 +305,12 @@ public class LectureDAO extends DAOBase {
 	
 	/**
 	 * 분반추가. 
+	 * [입력조건]
+	 * 학과코드와 교수등록번호와, 학과코드는 존재하는 것이어야 함.
+	 * 등록학기는 "가장 가까운 미래학기" 이후(>=)여야 한다.
+	 * 전체인원은 정해진 범위 안에 있어야 하며, OurSchoolPolicy 클래스를 참고바람.
+	 * 강의요일은 월요일과 금요일 사이여야 함.
+	 * 강의시작시각은 강의종료시각보다 앞서야 함.
 	 * @param p_subjcode 과목코드
 	 * @param p_profcode 교수등록번호
 	 * @param p_depcode 학과코드
@@ -316,6 +322,7 @@ public class LectureDAO extends DAOBase {
 	 * @param p_sylText 강의계획서내용
 	 * @return 분반추가결과(enum)
 	 * @throws SQLException DB오류
+	 * ! DAO수정 필요 (설명란과 반환값란에 타당성 검사 추가)
 	 */
 	public AddLectureResult addLecture (
 			int p_subjcode, int p_profcode, int p_depcode,
@@ -326,25 +333,73 @@ public class LectureDAO extends DAOBase {
 			) throws SQLException
 	{
 		// 파라메터의 타당성 검사
-		if( isInvalidRegisterTerm(p_registerterm) )
-			return AddLectureResult.INVALID_TERM;
 		if( ! subjectDAO.isSubjectExistBySCode(p_subjcode) )
 			return AddLectureResult.NOT_FOUND_SUBJCODE;
 		if( ! professorDAO.IsProfessorByPCode(p_profcode) )
 			return AddLectureResult.NOT_FOUND_PROFCODE;
 		if( ! departmentDAO.isDepartmentExistByDCode(p_depcode) )
 			return AddLectureResult.NOT_FOUND_DEPCODE;
-		
-		
+		if( ! isValidRegisterTerm(p_registerterm) )
+			return AddLectureResult.INVALID_TERM;
+		if( ! isValidAllNum(p_allnum) )
+			return AddLectureResult.INVALID_ALLNUM;
+		if( ! isValidDayOfWeek(p_dayofweek) )
+			return AddLectureResult.INVALID_DAY_OF_WEEK;
+		if( ! isValidStartEndTime(p_starttime, p_endtime) )
+			return AddLectureResult.INVALID_S_E_TIME;
 		// 강의계획서내용물은 비어있을 수 있다.
 		if(p_sylText == null)
 			p_sylText = "";
 		
-		
-		
+		try {
+			// 강의계획서를 등록하고, 그 번호(Last Inserted ID)를 가져온다.
+			int sylCode = syllabusDAO.addSyllabus(p_sylText);
+			
+			// DB 접속
+			conn = getConnection();
+			// 쿼리문 설정
+			String sql = "INSERT INTO Lecture (registerTerm, applyNum, allNum, dayofweek, startTime, endTime, subjectCode, departmentCode, profCode, syllabusCode)\r\n" + 
+					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, p_registerterm);
+			pstmt.setInt(2, 0);  // applyNum(수강인원)
+			pstmt.setInt(3, p_allnum);
+			pstmt.setInt(4, OurTimes.dayOfWeekToInt(p_dayofweek) );
+			pstmt.setTime(5, OurTimes.LocalTimeTosqlTime(p_starttime) );
+			pstmt.setTime(6, OurTimes.LocalTimeTosqlTime(p_endtime) );
+			pstmt.setInt(7, p_subjcode);
+			pstmt.setInt(8, p_depcode);
+			pstmt.setInt(9, p_profcode);
+			pstmt.setInt(10, sylCode);
+			
+			// 쿼리 실행
+			int result = pstmt.executeUpdate();
+			// 이후 결과 처리...
+			
+			if (result != 1)
+				return AddLectureResult.NULL_IN_DB;
+			else
+				return AddLectureResult.SUCCESS;
+		}
+		catch(SQLException sqle){
+			throw sqle;
+		} finally {
+			if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		    if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		}
 	}
-
-	private boolean isInvalidRegisterTerm(int p_registerterm) {
-		return false;
+	private boolean isValidRegisterTerm(int p_registerterm) {
+		return p_registerterm >= OurTimes.closestFutureTerm();
+	}
+	private boolean isValidAllNum(int p_allnum) {
+		int min = OurSchoolPolicy.MIN_ALLNUM;
+		int max = OurSchoolPolicy.MAX_ALLNUM;
+		return p_allnum >= min && p_allnum <= max;
+	}
+	private boolean isValidDayOfWeek(DayOfWeek dow) {
+		return dow == DayOfWeek.MONDAY || dow == DayOfWeek.TUESDAY || dow == DayOfWeek.WEDNESDAY || dow == DayOfWeek.THURSDAY || dow == DayOfWeek.FRIDAY;
+	}
+	private boolean isValidStartEndTime(LocalTime p_starttime, LocalTime p_endtime) {
+		return p_starttime.compareTo(p_endtime) > 0;
 	}
 }

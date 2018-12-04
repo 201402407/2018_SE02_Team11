@@ -183,6 +183,29 @@ public class OurTimes {
 	}
 	
 	/**
+	 * DayOfWeek 타입을 DB상의 int로 바꿔준다.
+	 * 만약 dow가 월요일~금요일 사이가 아니라면 -1을 리턴
+	 */
+	public static int dayOfWeekToInt(DayOfWeek dow)
+	{
+		switch(dow)
+		{
+		case MONDAY:
+			return 1;
+		case TUESDAY:
+			return 2;
+		case WEDNESDAY:
+			return 3;
+		case THURSDAY:
+			return 4;
+		case FRIDAY:
+			return 5;
+		default:
+			return -1;
+		}
+	}
+	
+	/**
 	 * DB상의 java.sql.Date을 LocalTime으로 바꿔준다.
 	 * @param sqldate ResultSet.getDate()으로 구해왔을 java.sql.Date 객체
 	 */
@@ -212,7 +235,7 @@ public class OurTimes {
 	 * Java 상의 LocalTime를 java.sql.Time으로 변경한다.
 	 * sql에 insert를 위한 변경 함수
 	 * @param LocalDate javalocaltime*/
-	public static Time LocalDateTosqlDate(LocalTime javalocaltime) {
+	public static Time LocalTimeTosqlTime(LocalTime javalocaltime) {
 		return Time.valueOf(javalocaltime);
 	}
 	

@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.Statement;
+
 public class SyllabusDAO extends DAOBase {
 
 	// 데이터베이스 접근을 위해
@@ -44,24 +46,29 @@ public class SyllabusDAO extends DAOBase {
 	
 	/** 강의계획서 등록
 	 * @param p_text 내용
-	 * @return 성공여부(boolean)
+	 * @return 신규 강의계획서 번호
 	 * @throws SQLException DB오류
+	 * ! DAO명세서 수정바람 (성공여부(Boolean)에서 강의계획서번호(int)로 리턴 형식이 바뀌었음.)
 	 * */
-	public boolean addSyllabus(String p_text) throws SQLException {
+	public int addSyllabus(String p_text) throws SQLException {
 		try {
 			String SQL = "INSERT INTO Syllabus (text) VALUES (?)";
 			conn = getConnection();
-			pstmt = conn.prepareStatement(SQL);
+			pstmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, p_text);
-			int result = pstmt.executeUpdate(); 
+			int result = pstmt.executeUpdate();
 			
-			// SQL 실패
+			// INSERT가 제대로 행해지지 못하면
 			if(result != 1)
-				return false;
+				throw new SQLException("Inserting syllabus, but no rows affected.");
 			
-			return true;
-			
-		}catch(SQLException e){
+			// 강의계획서번호
+			ResultSet generatedKeys = pstmt.getGeneratedKeys();
+			if(!generatedKeys.next())
+				throw new SQLException("Inserting syllabus was succes, but no syllabusCode obtained.");
+			return generatedKeys.getInt(1);
+		}
+		catch(SQLException e){
 	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
