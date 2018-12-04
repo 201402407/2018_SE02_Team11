@@ -9,8 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import ClassObject.ScholarshipAward;
-import ClassObject.Subject;
 import ClassObject.AwardInfoBySID;
 import Util.OurTimes;
 
@@ -35,15 +33,16 @@ public class ScholarshipAwardDAO extends DAOBase {
 		SUCCESS,
 		NOT_FOUND_SCHOLAR,
 		NOT_FOUND_STUDENT,
-		SQL_FAILED
+		NULL_IN_DB
 	}
 	/** 장학수여
 	 * @param p_scnum 장학번호
 	 * @param p_money 장학금
 	 * @param p_sid 학번
 	 * @return 성공여부결과(awardToStudentResult)
+	 * @throws SQLException DB오류
 	 * */
-	public awardToStudentResult awardToStudent(int p_scnum, int p_money, int p_sid) {
+	public awardToStudentResult awardToStudent(int p_scnum, int p_money, int p_sid) throws SQLException {
 		if(!scholarshipDAO.isScholarshipExist(p_scnum))
 			return awardToStudentResult.NOT_FOUND_SCHOLAR;
 		if(!studentDAO.isStudentExist(p_sid))
@@ -63,16 +62,15 @@ public class ScholarshipAwardDAO extends DAOBase {
 			
 			// SQL 실패
 			if(result != 1)
-				return awardToStudentResult.SQL_FAILED;
+				return awardToStudentResult.NULL_IN_DB;
 			
 			return awardToStudentResult.SUCCESS;
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return awardToStudentResult.SQL_FAILED;
 	}
 	
 	/** 장학내역조회
@@ -80,10 +78,11 @@ public class ScholarshipAwardDAO extends DAOBase {
 	 * @param p_money 장학금
 	 * @param p_sid 학번
 	 * @return 장학내역(장학이름, 장학금, 수혜일자)
+	 * @throws SQLException DB오류
 	 * ! DAO 알고리즘 오류(SA.schoalrshipName) 수정 필요
 	 * ! Date 타입인지 LocalDate 타입인지 명확히 해야 할 필요
 	 * ! DAO 조회결과 X 조건 추가 필요*/
-	public List<AwardInfoBySID> getAwardInfoBySID(String p_awardname, int p_money, int p_sid) {
+	public List<AwardInfoBySID> getAwardInfoBySID(String p_awardname, int p_money, int p_sid) throws SQLException{
 		List<AwardInfoBySID> scholarshipAwards = new ArrayList<>();
 		
 		try {
@@ -122,12 +121,11 @@ public class ScholarshipAwardDAO extends DAOBase {
 			
 		return scholarshipAwards;
 		
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-	return null;
 	}
 }

@@ -29,8 +29,9 @@ public class ProfessorDAO extends DAOBase {
 	/** 교수이름조회 
 	 * @param p_profcode 교수등록번호
 	 * @return 교수이름(String)
+	 * @throws SQLException DB오류
 	 * ! DAO 조회결과 없음 표시 필요*/
-	public String getProfNameByPCode(int p_profcode) {
+	public String getProfNameByPCode(int p_profcode) throws SQLException {
 		try {
 			String SQL = "SELECT profName FROM Professor WHERE professorCode = ?";
 			conn = getConnection();
@@ -45,20 +46,20 @@ public class ProfessorDAO extends DAOBase {
 			
 			return rs.getString("profName");
 			
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return null;
 	}
 	
 	/** 교수 추가 
 	 * @param p_name 교수이름
 	 * @return 교수추가결과(boolean)
+	 * @throws SQLException DB오류
 	 * ! DAO 경우에따른결과 추가 필요*/
-	public boolean addProfessor(String p_profname) {
+	public boolean addProfessor(String p_profname) throws SQLException {
 		// 숫자가 포함되어 있는지 여부
 		if(isIncludeNumber(p_profname)) {
 			return false;
@@ -76,20 +77,20 @@ public class ProfessorDAO extends DAOBase {
 			
 			return true;
 			
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return false;
 	}
 	
 	/** 교수존재여부조회 
 	 * @param p_profcode 교수등록번호
 	 * @return 조회결과(boolean)
+	 * @throws SQLException DB오류
 	 * ! DAO 위오 ㅏ마찬가지*/
-	public boolean IsProfessorByPCode(int p_profcode) {
+	public boolean IsProfessorByPCode(int p_profcode) throws SQLException{
 		try {
 			String SQL = "SELECT * FROM Professor WHERE professorCode = ?";
 			conn = getConnection();
@@ -100,13 +101,12 @@ public class ProfessorDAO extends DAOBase {
 			// 조회결과 없음 
 			if(rs.next()) 
 				return true;	
-			
-		}catch(Exception e){
-	        e.printStackTrace();
+		return false;	
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return false;
 	}
 }

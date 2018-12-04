@@ -22,10 +22,11 @@ public class LectureEvaluationDAO extends DAOBase {
 	/** 강의평가여부리스트 조회
 	 * @param p_list 수강번호리스트 -> List<Integer>
 	 * @return 강의평가여부리스트(boolean) -> HashMap<Integer, Boolean>
+	 * @throws SQLException DB오류
 	 * ! DB에서 가져온 attendanceNum과 인자로 받은 p_list의 attendanceNum이 같으면 뜻 ?
 	 * ! // 변경실패 시 진행방법 ??
 	 * ! DAO HashMap 사용으로 변경 해야함*/
-	public HashMap<Integer, Boolean> getLectureEvaluationExistList(List<Integer> p_list) {
+	public HashMap<Integer, Boolean> getLectureEvaluationExistList(List<Integer> p_list) throws SQLException {
 		List<LectureEvaluation> temp = new ArrayList<LectureEvaluation>();
 		
 		try {
@@ -39,6 +40,11 @@ public class LectureEvaluationDAO extends DAOBase {
 			while(i < p_list.size()) {
 				pstmt.setInt(1, p_list.get(i));
 				ResultSet rs = pstmt.executeQuery();
+				
+				// DB에 존재하지 않는 경우
+				if(!rs.next())
+					continue;
+				
 				int rsAttendanceNum = rs.getInt("attendanceNum"); // 수강번호 가져오기
 				String rsText = rs.getString("LectureEvaluationText"); // 강의평가내용 가져오기
 				
@@ -51,8 +57,8 @@ public class LectureEvaluationDAO extends DAOBase {
 				pstmt.clearParameters(); // set 한 인자 초기화
 				i++;
 			}	
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
@@ -80,8 +86,9 @@ public class LectureEvaluationDAO extends DAOBase {
 	/** 강의평가여부 조회
 	 * @param p_attendancenum 수강번호
 	 * @return 강의평가여부결과(boolean)
+	 * @throws SQLException DB오류
 	 * ! DAO 알고리즘 결과 반환 수정 필요*/
-	public boolean isLectureEvaluationExist(int p_attendancenum) {
+	public boolean isLectureEvaluationExist(int p_attendancenum) throws SQLException {
 		
 		try {
 			String SQL = "SELECT * FROM LectureEvaluation"
@@ -94,22 +101,22 @@ public class LectureEvaluationDAO extends DAOBase {
 			// 조회결과 존재함 
 			if(rs.next()) 
 				return true;	
-			
-		}catch(Exception e){
-	        e.printStackTrace();
+			return false;	
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return false;
 	}
 	
 	/** 강의평가작성 
 	 * @param p_attendancenum 수강번호
 	 * @param p_text 강의평가내용
 	 * @return 작성성공결과(boolean)
+	 * @throws SQLException DB오류
 	 * ! DAO 경우에 따른 결과 추가 필요*/
-	public boolean writeLectureEvaluation(int p_attendancenum, String p_text) {
+	public boolean writeLectureEvaluation(int p_attendancenum, String p_text) throws SQLException {
 		
 		try {
 			String SQL = "INSERT INTO LectureEvaluation (LectureEvaluationText, attendanceNum)"
@@ -123,13 +130,12 @@ public class LectureEvaluationDAO extends DAOBase {
 			// SQL 실패
 			if(result != 1)
 				return false;
-			
-		}catch(Exception e){
-	        e.printStackTrace();
+			return true;	
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return true;
 	}
 }

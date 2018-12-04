@@ -21,12 +21,13 @@ public class ScholarshipDAO extends DAOBase {
 	public enum addScholarshipResult {
 		SUCCESS,
 		MISSING_FIELD,
-		SQL_FAILED
+		NULL_IN_DB
 	}
 	/** 장학존재여부조회
 	 * @param p_scnum 장학번호
-	 * @return 존재여부(boolean)*/
-	public boolean isScholarshipExist(int p_scnum) {
+	 * @return 존재여부(boolean)
+	 * @throws SQLException DB오류*/
+	public boolean isScholarshipExist(int p_scnum) throws SQLException {
 		try {
 			String SQL = "SELECT * FROM Scholarship WHERE scholarshipNum = ?";
 			conn = getConnection();
@@ -37,22 +38,23 @@ public class ScholarshipDAO extends DAOBase {
 			// 조회결과 존재 
 			if(rs.next()) 
 				return true;	
-			
-		}catch(Exception e){
-	        e.printStackTrace();
+			return false;			
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return false;
+
 	}
 	
 	/** 장학추가
 	 * @param p_scname 장학이름
 	 * @return 성공여부결과(addScholarshipResult)
+	 * @throws SQLException DB오류
 	 * ! String 문자열이 인자로 들어오면 좌우 공백처리는 어떻게 ? 
 	 * ! SQL 실패하는 경우의 enum DAO에 추가 필요 */
-	public addScholarshipResult addScholarship(String p_scname) {
+	public addScholarshipResult addScholarship(String p_scname) throws SQLException{
 		
 		// null이거나 ""인 경우
 		if(p_scname.equals(null) || p_scname.trim().equals(""))
@@ -67,22 +69,23 @@ public class ScholarshipDAO extends DAOBase {
 			
 			// SQL 실패
 			if(result != 1)
-				return addScholarshipResult.SQL_FAILED;
+				return addScholarshipResult.NULL_IN_DB;
 			
 			return addScholarshipResult.SUCCESS;
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return addScholarshipResult.MISSING_FIELD; 
+	 
 	}
 	
 	/** 모든장학조회 
-	 * @return 장학정보리스트(장학번호, 장학이름) 
+	 * @return 장학정보리스트(장학번호, 장학이름)
+	 * @throws SQLException DB오류 
 	 * ! DAO 조회결과 존재 X 수정 필요 */
-	public List<ScholarShip> getScholarshipList() {
+	public List<ScholarShip> getScholarshipList() throws SQLException{
 		List<ScholarShip> scholarShips = new ArrayList<>();
 		try {
 			String SQL = "SELECT scholarshipNum, scholarshipName FROM Scholarship";
@@ -108,12 +111,11 @@ public class ScholarshipDAO extends DAOBase {
 			}
 			
 			return scholarShips;
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return null;
 	}
 }

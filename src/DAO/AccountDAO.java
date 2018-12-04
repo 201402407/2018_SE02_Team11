@@ -14,11 +14,14 @@ public class AccountDAO extends DAOBase {
 	private static PreparedStatement pstmt;
 	private static Connection conn;
 	
+	// 협업하기 위한 DAO 클래스 변수 선언
+	StudentDAO studentDAO;
+	
 	public enum signUpResult { // 회원가입 결과 enum
 		SUCCESS,
 		INVALID_FORM,
 		MISSING_FIELD,
-		SQL_FAILED
+		NULL_IN_DB
 	}
 
 	public enum loginResult { // 로그인 결과 enum
@@ -26,11 +29,14 @@ public class AccountDAO extends DAOBase {
 		MISSING_FIELD,
 		NOT_FOUND_ID,
 		INCORRECT_PWD,
+		NULL_IN_DB
 }
 	
 	// 생성자 생성과 동시에 jbdc 설정.
 	public AccountDAO() {
 		super();
+		
+		studentDAO = new StudentDAO();
 	}
 
 	/* 해당 String 문자열 내부에 숫자가 존재하는지 체크 */
@@ -51,11 +57,12 @@ public class AccountDAO extends DAOBase {
 	 * @param p_name 이름 
 	 * @param p_birth 생년월일
 	 * @return 결과(signUpResult).
+	 * @throws SQLException DB오류
 	 * 각각의 경우에 따른 enum 리턴.
 	 * + 생년월일 변수 int -> Date 변경, 입력한 생일과 현재날짜 비교 추가해야 함.
 	 * ! DAO명세서 수정 필요
 	 */
-	public signUpResult signUp(String p_id, String p_pwd, String p_name, int p_birth) {
+	public signUpResult signUp(String p_id, String p_pwd, String p_name, int p_birth) throws SQLException {
 		Account account = new Account();
 		account.setAccountID(p_id);
 		account.setPwd(p_pwd);
@@ -88,16 +95,17 @@ public class AccountDAO extends DAOBase {
 		    int result = pstmt.executeUpdate(); // -> SQL 실패한 경우도 넣어야 하나 ?
 		    
 		    if(result != 1) // 1개의 행만 추가하므로 1이 아닌가?
-		    	return signUpResult.SQL_FAILED;
+		    	return signUpResult.NULL_IN_DB;
 		    
 		    //StudentIDRequestDAO.addReqSID(isDate, accountID);
-		}catch(Exception e) {
-		      e.printStackTrace();
-		}finally {
+		    return signUpResult.SUCCESS;
+		}catch(SQLException e) {
+		      throw e;
+		}
+		finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-		return signUpResult.SUCCESS;
 }
 
 	/** 
@@ -105,10 +113,11 @@ public class AccountDAO extends DAOBase {
 	 * @param p_id 아이디
 	 * @param p_pwd 비밀번호
 	 * @return 결과(LoginResult)
+	 * @throws SQLException DB 오류
 	 * 각각의 경우에 따른 enum 리턴
-	 * + 현재 세션을 해당 계정으로 활성화 추가
+	 * + 현재 세션을 해당 계정으로 활성화 추가 필요
 	 */
-	public loginResult login(String p_id, String p_pwd) {
+	public loginResult login(String p_id, String p_pwd) throws SQLException {
 		Account account = new Account();
 		account.setAccountID(p_id);
 		account.setPwd(p_pwd);
@@ -143,13 +152,14 @@ public class AccountDAO extends DAOBase {
 			account.setPwd(rsPWD);
 			
 			 // + 현재 세션을 해당 계정으로 활성화.
-		}catch(Exception e){
-	        e.printStackTrace();
+			
+			return loginResult.SUCCESS;
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return loginResult.SUCCESS;
 }
 	
 	/** 
@@ -158,10 +168,12 @@ public class AccountDAO extends DAOBase {
 	 * @param p_newStuYear 등록년도, 
 	 * @param p_newStuOrder 등록순서 
 	 * @param p_dcode 학과번호
-	 * @return 학번 -> 0은 없음
+	 * @return 학번 -> -1은 없음
+	 * @throws SQLException DB오류
 	 * + StudentDAO.createNewStudent 함수 실행 추가
 	 * ! DAO 수정 필요 */
-	public  int requestSID(String p_id, int p_newStuYear, int p_newStuOrder, int p_dcode) {
+	public  int requestSID(String p_id, int p_newStuYear, int p_newStuOrder, int p_dcode) throws SQLException
+	{
 		Account account = new Account();
 		
 	// 주어진 아이디의 계정정보 가져오기 -> acc -> 학생 이름만 가져오면 되나요 ??
@@ -174,7 +186,7 @@ public class AccountDAO extends DAOBase {
 		
 		// 조회결과 계정정보 없음
 		if(!rs.next()) {
-			return 0;	
+			return -1;	
 		}
 		
 		String rsName = rs.getString("accountName"); // 학생 이름 받기
@@ -185,18 +197,12 @@ public class AccountDAO extends DAOBase {
 		//account.setBirth(p_birth);
 		
 		// 학번 생성 함수 실행
-		/*
-		if(StudentDAO.createNewStudent(p_newStuYear, p_newStuOrder, rsName, p_accountID, p_dcode)) { // 이것만 넘기면 되는지??
-			return StudentDAO.studentID; // 학번
-		}
-		*/
-	}catch(Exception e){
-        e.printStackTrace();
+		return studentDAO.createNewStudent(p_newStuYear, p_newStuOrder, rsName, p_id, p_dcode);
+	}catch(SQLException e){
+        return -1;
     }finally{
     	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 	      if(conn != null) try{conn.close();}catch(SQLException sqle){}
-    }
-	
-	return 0;
+    	}
 	}
 }

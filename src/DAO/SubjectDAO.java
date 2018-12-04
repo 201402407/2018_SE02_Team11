@@ -25,14 +25,15 @@ public class SubjectDAO extends DAOBase {
 		SUCCESS,
 		MISSING_FIELD,
 		COLLISION_SUBJNAME,
-		SQL_FAILED
+		NULL_IN_DB
 	}
 	
 	/** 과목이름조회
 	 * @param p_scode 과목코드
 	 * @return 과목명(String)
+	 * @throws SQLException DB오류
 	 * ! DAO에 조회 결과 없는 경우도 써야하는지 ? */
-	public String getSubjectNameBySCode(int p_scode) {
+	public String getSubjectNameBySCode(int p_scode) throws SQLException{
 		try {
 			String SQL = "SELECT subjectName FROM Subject WHERE subjectCode = ?";
 			conn = getConnection();
@@ -46,20 +47,20 @@ public class SubjectDAO extends DAOBase {
 			}
 			
 			return rs.getString("subjectName");
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return null;
 	}
 	
 	/** 과목세부정보조회 
 	 * @param p_scode 과목코드
 	 * @return 과목세부정보(과목명,학점)
+	 * @throws SQLException DB오류
 	 * ! DAO 조회결과없음 수정해야 하는지?*/
-	public Subject getSubjectInfoBySCode(int p_scode) {
+	public Subject getSubjectInfoBySCode(int p_scode) throws SQLException {
 		try {
 			String SQL = "SELECT subjectName, score FROM Subject WHERE subjectCode = ?";
 			conn = getConnection();
@@ -81,19 +82,20 @@ public class SubjectDAO extends DAOBase {
 					);
 			return subject;
 			
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return null;
 	}
+	
 	/** 학점조회 
 	 * @param p_scode 과목코드
 	 * @return 학점(double)
+	 * @throws SQLException DB오류
 	 * ! DAO 조회결과없음 수정해야 하는지?*/
-	public double getScoreBySCode(int p_scode) {
+	public double getScoreBySCode(int p_scode) throws SQLException {
 		try {
 			String SQL = "SELECT score FROM Subject WHERE subjectCode = ?";
 			conn = getConnection();
@@ -109,19 +111,19 @@ public class SubjectDAO extends DAOBase {
 			return rs.getDouble("score");
 			
 		}catch(Exception e){
-	        e.printStackTrace();
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return -1;
 	}
 	
 	/** 과목존재여부조회 
 	 * @param p_scode 과목코드
 	 * @return 존재여부(boolean)
+	 * @throws SQLException DB 오류
 	 * ! DAO 알고리즘 return 조건 수정 필요 */
-	public boolean isSubjectExistBySCode(int p_scode) {
+	public boolean isSubjectExistBySCode(int p_scode) throws SQLException{
 		try {
 			String SQL = "SELECT * FROM Subject WHERE subjectCode = ?";
 			conn = getConnection();
@@ -133,21 +135,21 @@ public class SubjectDAO extends DAOBase {
 			if(!rs.next())
 				return false;
 			return true;
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+			throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return false;
 	}
 	
 	/** 교과목 추가
 	 * @param p_subjectname 과목명
 	 * @param p_score 학점
 	 * @return 교과목추가결과(enum)
+	 * @throws SQLException DB오류
 	 * ! DAO sql 실행 실패에 따른 결과 enum 추가 및 알고리즘 수정 필요 */
-	public AddSubjectResult addSubject(String p_subjectname, double p_score) {
+	public AddSubjectResult addSubject(String p_subjectname, double p_score) throw SQLException {
 		if(p_subjectname.isEmpty() || p_score < 0) {
 			return AddSubjectResult.MISSING_FIELD;
 		}
@@ -172,22 +174,22 @@ public class SubjectDAO extends DAOBase {
 			int result = pstmt.executeUpdate(); // -> SQL 실패한 경우도 넣어야 하나 ?
 			
 			if(result != 1) // 1개의 행만 추가하므로 1이 아닌가?
-		    	return AddSubjectResult.SQL_FAILED;
+		    	return AddSubjectResult.NULL_IN_DB;
 			return AddSubjectResult.SUCCESS;
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return AddSubjectResult.SQL_FAILED;
 	}
 	
 	/** 당학기운용과목조회 
 	 * @param p_dcode 학과코드
 	 * @return 과목정보리스트(과목코드, 과목명)
+	 * @throws SQLException DB오류
 	 * ! DAO 현재 시간에 따른 조회 가능 여부에 대한 알고리즘 추가 필요*/
-	public List<Subject> getThisSemesterSubjectByDCode(int p_dcode) {
+	public List<Subject> getThisSemesterSubjectByDCode(int p_dcode) throws SQLException {
 		List<Subject> arrayList = new ArrayList<Subject>();
 		
 		try {
@@ -222,12 +224,11 @@ public class SubjectDAO extends DAOBase {
 			}
 		return arrayList;
 		
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return null;
 	}
 }

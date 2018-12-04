@@ -13,6 +13,7 @@ import ClassObject.Attendance;
 import ClassObject.AttendanceListByLCode;
 import ClassObject.AttendanceListBySID;
 import ClassObject.AttendanceTimeList;
+import ClassObject.LectureDetail;
 import ClassObject.StudentIDRequest;
 import Util.OurTimes;
 
@@ -48,9 +49,10 @@ public class AttendanceDAO extends DAOBase {
 	/** 학생의수강목록조회 
 	 * @param p_sid 학번
 	 * @return 학생의수강목록(수강번호, 분반코드, 과목명, 재수강여부, 등록학기, 강의요일, 강의시작시각, 강의종료시작, 학점)
+	 * @throws SQLException DB오류
 	 * + 현재 학기(LegisterTerm) 구하는 법 수정필요
 	 * !DAO 경우에 따른 조건 추가 필요*/
-	public List<AttendanceListBySID> getAttendanceListBySID(int p_sid) {
+	public List<AttendanceListBySID> getAttendanceListBySID(int p_sid) throws SQLException {
 			List<AttendanceListBySID> arrayList = new ArrayList<AttendanceListBySID>();
 			
 				try {
@@ -113,22 +115,22 @@ public class AttendanceDAO extends DAOBase {
 					
 					return arrayList;
 					
-				}catch(Exception e) {
-				      e.printStackTrace();
+				}catch(SQLException e) {
+				      throw e;
 				      
 				}finally {
 				      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 				      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 				}
-			return null;
 	}
 	
 	/** 수강시간목록조회 
 	 * @param p_sid 학번
 	 * @return 수강시간목록(과목명, 강의요일, 강의시작시각, 강의종료시각)
+	 * @throws SQLException DB오류
 	 * + 현재학기(LegisterTerm) 구하는법 수정 필요
 	 * ! DAO 경우에 따른 결과 추가 필요*/
-	public List<AttendanceTimeList> getAttendanceTimeListBySID(int p_sid) {
+	public List<AttendanceTimeList> getAttendanceTimeListBySID(int p_sid) throws SQLException {
 		List<AttendanceTimeList> arrayList = new ArrayList<AttendanceTimeList>();
 		try {
 			String SQL = "SELECT S.subjectName, L.dayOfWeek, L.startTime, L.endTime"
@@ -180,23 +182,22 @@ public class AttendanceDAO extends DAOBase {
 			
 		return arrayList;
 		
-		}catch(Exception e) {
-		      e.printStackTrace();
-		      
+		}catch(SQLException e) {
+		      throw e;
 		}finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-	return null;
 	}
 	
 	/** 수강신청 
 	 * @param p_lcode 분반코드
 	 * @param p_sid 학번
 	 * @return 수강신청성공결과(enum)
+	 * @throws SQLException DB오류
 	 * ! 구현 필요*/
-	public attendanceResult addAttendance(int p_lcode, int p_sid) {
-		ArrayList<ArrayList> lectureInfoList = lectureDAO.getLectureInfoByLCode(p_lcode);
+	public attendanceResult addAttendance(int p_lcode, int p_sid) throws SQLException {
+		LectureDetail lectureInfoList = lectureDAO.getLectureInfoByLCode(p_lcode);
 		List<AttendanceListBySID> attendanceList = attendanceDAO.getAttendanceListBySID(p_sid);
 		
 	}
@@ -215,9 +216,10 @@ public class AttendanceDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @param p_semester 이수학기
 	 * @return 학기별성적리스트(과목명, 평점보여짐여부, 평점, 재수강여부, 이전수강당시평점)
+	 * @throws SQLException DB오류
 	 * ! DAO 경우에 따른 결과 수정 필요
 	 * ! GradeInfoDAO 구현 필요*/
-	public ArrayList<Integer> getGradeInfo(int p_sid, int p_semester) {
+	public ArrayList<Integer> getGradeInfo(int p_sid, int p_semester) throws SQLException {
 		ArrayList<Integer> attlist = new ArrayList<Integer>();
 		try {
 			String SQL = "SELECT A.attendanceNum"
@@ -243,25 +245,26 @@ public class AttendanceDAO extends DAOBase {
 				int rsAttendanceNum = rs.getInt("attendanceNum");
 				attlist.add(rsAttendanceNum);
 			}
-			
-		}catch(Exception e) {
-		      e.printStackTrace();
+		
+			GradeInfoDAO.getGradeListByAttCodeList(attlist);
+		}catch(SQLException e) {
+		      throw e;
 		      
 		}finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
 		
-		GradeInfoDAO.getGradeListByAttCodeList(attlist);
 	}
 	
 	/** 해당분반수강목록조회 
 	 * @param p_lcode 분반코드
 	 * @return 해당분반수강목록(과목명 ,수강번호, 재수강여부, 학번, 학생이름)
+	 * @throws SQLException DB오류
 	 * ! DAO 경우에 따른 결과, 반환값 수정 및 순서, SQL 코드 변경 필요
 	 * ! 현재 시간 체크 필요 여부 ??
 	 * ! 학생의이름!*/
-	public List<AttendanceListByLCode> getAttendanceListbyLCode(int p_lcode) {
+	public List<AttendanceListByLCode> getAttendanceListbyLCode(int p_lcode) throws SQLException{
 		List<AttendanceListByLCode> arrayList = new ArrayList<AttendanceListByLCode>();
 		
 		try {
@@ -301,14 +304,13 @@ public class AttendanceDAO extends DAOBase {
 				
 				arrayList.add(attendanceListByLCode);
 			}
-		
-		}catch(Exception e) {
-		      e.printStackTrace();
+			return arrayList;
+		}catch(SQLException e) {
+		      throw e;
 		      
 		}finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-		return arrayList;
 	}
 }

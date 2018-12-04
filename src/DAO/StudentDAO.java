@@ -24,7 +24,7 @@ public class StudentDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @return 학적상태(이름, 학과명, 학년, 이수중인학기, 휴학여부, 졸업여부, 은행계좌번호)
 	 * */
-	public List<StudentInfo> getStudentInfoBySID(int p_sid) {
+	public List<StudentInfo> getStudentInfoBySID(int p_sid) throws SQLException {
 		
 		List<StudentInfo> arrayList = new ArrayList<StudentInfo>();
 		
@@ -66,19 +66,22 @@ public class StudentDAO extends DAOBase {
 		   	
 			return arrayList;
 			
-		}catch(Exception e) {
-		      e.printStackTrace();
+		}catch(SQLException e) {
+		      throw e;
 		      
 		}finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
 		
-		return null;
 	}
 	
-	/* 휴복학설정 */
-	public boolean setTimeOff(int p_sid, boolean p_changetype) {
+	/** 휴복학설정
+	 * @param p_sid 학번
+	 * @param p_changetype 휴복학여부
+	 * @return 성공결과(boolean)
+	 * @throws SQLException DB오류 */
+	public boolean setTimeOff(int p_sid, boolean p_changetype) throws SQLException {
 		
 		try {
 			String SQL = "UPDATE Student" + 
@@ -91,15 +94,15 @@ public class StudentDAO extends DAOBase {
 			int result = pstmt.executeUpdate(); // 변경된 row수 만큼 리턴
 			if(result == 1) // 1줄만 변경하므로 성공
 				return true;
-		}catch(Exception e) {
-		      e.printStackTrace();
+			return false;
+		}catch(SQLException e) {
+		      throw e;
 		      
 		}finally { // 삭제는 반대 순서
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
 		
-		return false;
 	}
 	/* 휴복학설정 */
 	
@@ -134,8 +137,9 @@ public class StudentDAO extends DAOBase {
 	/** 휴학여부조회
 	 * @param p_sid 학번
 	 * @return 휴학여부(boolean) -> true : 휴학, false : 재학
+	 * @throws SQLException DB오류
 	 * ! DAO if절 추가해야 하나 ? */
-	public boolean getTimeOffBySID(int p_sid) {
+	public boolean getTimeOffBySID(int p_sid) throws SQLException {
 		
 		try {
 			String SQL = "SELECT isTimeOff FROM Student" + 
@@ -150,8 +154,8 @@ public class StudentDAO extends DAOBase {
 				return rs.getBoolean("isTimeOff");
 			}
 			
-		}catch(Exception e) {
-		      e.printStackTrace();
+		}catch(SQLException e) {
+		      throw e;
 		      
 		}finally { // 삭제는 반대 순서
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
@@ -167,9 +171,11 @@ public class StudentDAO extends DAOBase {
 	 * @param p_name 학생이름
 	 * @param p_accountID 계정아이디
 	 * @param p_dcode 학과코드
-	 * @return 학번
+	 * @return 학번 (실패시 -1)
+	 * @throws SQLException DB오류
 	 * ! DAO 리턴값 + 알고리즘 수정해야 함*/ //-> 리턴값?
-	public int createNewStudent(int p_newStuYear, int p_newStuOrder, String p_name, String p_accountID, int p_dcode) {
+	public int createNewStudent(int p_newStuYear, int p_newStuOrder, String p_name, String p_accountID, int p_dcode) 
+	throws SQLException {
 		
 		int newStuID = p_newStuYear * 100000 + p_newStuOrder;
 		
@@ -185,22 +191,22 @@ public class StudentDAO extends DAOBase {
 			pstmt.setInt(4, p_dcode);
 		    int result = pstmt.executeUpdate(); // 성공 결과를 모르겠음
 		    if(result != 1)
-		    	return 0;
-		}catch(Exception e) {
-		      e.printStackTrace();
+		    	return -1;
+		    return newStuID;
+		}catch(SQLException e) {
+		      throw e;
 		}finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-		
-		return newStuID;
 	}
 	
 	/** 학생존재여부
 	 * @param p_sid 학번
 	 * @return 존재여부(boolean) -> 존재 : true, 미존재 : false
+	 * @throws SQLException DB오류
 	 * */
-	public boolean isStudentExist(int p_sid) {
+	public boolean isStudentExist(int p_sid) throws SQLException {
 		try {
 			String SQL = "SELECT * FROM Student" + 
 					" WHERE studentID = ?";
@@ -213,14 +219,13 @@ public class StudentDAO extends DAOBase {
 			if(rs.next()) {
 				return true;
 			}
-			
-		}catch(Exception e) {
-		      e.printStackTrace();
+			return false;	
+		}catch(SQLException e) {
+		      throw e;
 		      
 		}finally { // 삭제는 반대 순서
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-		return false;
 	}
 }

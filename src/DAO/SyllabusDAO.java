@@ -18,8 +18,9 @@ public class SyllabusDAO extends DAOBase {
 	/** 강의계획서 조회
 	 * @param p_sylcode 강의계획서번호
 	 * @return 강의계획서내용(String)
+	 * @throws SQLException DB오류
 	 * ! DAO 알고리즘 syllabusText로 변경*/
-	public String getTextBySYLCode(int p_sylcode) {
+	public String getTextBySYLCode(int p_sylcode) throws SQLException {
 		
 		try {
 			String SQL = "SELECT syllabusText FROM Syllabus WHERE syllabusCode = ?";
@@ -33,20 +34,20 @@ public class SyllabusDAO extends DAOBase {
 				return null;	
 			
 			return rs.getString("syllabusText");
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-	return null;
 	}
 	
 	/** 강의계획서 등록
 	 * @param p_text 내용
 	 * @return 성공여부(boolean)
+	 * @throws SQLException DB오류
 	 * */
-	public boolean addSyllabus(String p_text) {
+	public boolean addSyllabus(String p_text) throws SQLException {
 		try {
 			String SQL = "INSERT INTO Syllabus (text) VALUES (?)";
 			conn = getConnection();
@@ -60,12 +61,11 @@ public class SyllabusDAO extends DAOBase {
 			
 			return true;
 			
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return false;
 	}
 }

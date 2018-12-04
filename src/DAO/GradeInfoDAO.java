@@ -17,8 +17,9 @@ public class GradeInfoDAO extends DAOBase {
 	/** 성적부여
 	 * @param p_attendancenum 수강번호
 	 * @param p_grade 평점
+	 * @throws SQLException DB오류
 	 * @return 성공결과(boolean) */
-	public boolean addGrade(int p_attendancenum, double p_grade) {
+	public boolean addGrade(int p_attendancenum, double p_grade) throws SQLException {
 		
 		try {
 			String SQL = "INSERT INTO GradeInfo (grade, attendanceNum)" + 
@@ -35,13 +36,13 @@ public class GradeInfoDAO extends DAOBase {
 			
 			return true;
 			
-		}catch(Exception e){
-	        e.printStackTrace();
+		}catch(SQLException e){
+	        throw e;
 	    }finally{
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
-		return false;
+		
 	}
 	
 	/** 성적정보리스트 조회 
