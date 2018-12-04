@@ -29,7 +29,7 @@ public class ScholarshipAwardDAO extends DAOBase {
 		studentDAO = new StudentDAO();
 	}
 	
-	public enum awardToStudentResult {
+	public enum AwardToStudentResult {
 		SUCCESS,
 		NOT_FOUND_SCHOLAR,
 		NOT_FOUND_STUDENT,
@@ -39,14 +39,14 @@ public class ScholarshipAwardDAO extends DAOBase {
 	 * @param p_scnum 장학번호
 	 * @param p_money 장학금
 	 * @param p_sid 학번
-	 * @return 성공여부결과(awardToStudentResult)
+	 * @return 성공여부결과(AwardToStudentResult)
 	 * @throws SQLException DB오류
 	 * */
-	public awardToStudentResult awardToStudent(int p_scnum, int p_money, int p_sid) throws SQLException {
+	public AwardToStudentResult awardToStudent(int p_scnum, int p_money, int p_sid) throws SQLException {
 		if(!scholarshipDAO.isScholarshipExist(p_scnum))
-			return awardToStudentResult.NOT_FOUND_SCHOLAR;
+			return AwardToStudentResult.NOT_FOUND_SCHOLAR;
 		if(!studentDAO.isStudentExist(p_sid))
-			return awardToStudentResult.NOT_FOUND_STUDENT;
+			return AwardToStudentResult.NOT_FOUND_STUDENT;
 		
 		try {
 			String SQL = "INSERT INTO ScholarshipAward "
@@ -62,9 +62,9 @@ public class ScholarshipAwardDAO extends DAOBase {
 			
 			// SQL 실패
 			if(result != 1)
-				return awardToStudentResult.NULL_IN_DB;
+				return AwardToStudentResult.NULL_IN_DB;
 			
-			return awardToStudentResult.SUCCESS;
+			return AwardToStudentResult.SUCCESS;
 		}catch(SQLException e){
 	        throw e;
 	    }finally{

@@ -139,10 +139,7 @@ public class StudentIDRequestDAO extends DAOBase {
 			String rsAccountID = rs.getString("accountID");
 						
 			// 년도만 뽑아오는 과정
-			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-			String temp = transFormat.format(rsReqSIDdate);
-			temp = temp.substring(0, 4);
-			int reqnum_earliest_from_that_year = Integer.valueOf(temp);
+			int reqnum_earliest_from_that_year = OurTimes.dateNow().getYear();
 			
 			// 요청년도가 년도(r.reqSIDdate)에 속하는 요청정보 중 가장 이른 것의 요청번호를 가져온다.
 			SQL = "SELECT reqSIDnum FROM StudentIDRequest"
@@ -152,16 +149,20 @@ public class StudentIDRequestDAO extends DAOBase {
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, reqnum_earliest_from_that_year);
 			rs = pstmt.executeQuery(); // ResultSet
-		   	
-			// 조회결과 아무것도 없음
-			if(!rs.next()) {
-				return false;
+			
+			int rsSID;
+			// 올 해 하나라도 존재하는 경우
+			if(rs.next()) {
+				rsSID = rs.getInt("reqSIDnum");
+				// 년도당_요청번호 <- r.reqnum - reqnum_earliest_from_that_year??
+				int year_reqnum = p_reqnum - rsSID;
+					
 			}
-			
-			int rsSID = rs.getInt("reqSIDnum");
-			// 년도당_요청번호 <- r.reqnum - reqnum_earliest_from_that_year??
+			// 존재하지 않으면 최초가 되므로 첫 번째가 됨.
+			else {
+				rsSID = p_reqnum - 1;
+			}
 			int year_reqnum = p_reqnum - rsSID;
-			
 			// 학번 요청
 			AccountDAO accountDAO = new AccountDAO();
 			if(accountDAO.requestSID(rsAccountID, reqnum_earliest_from_that_year, year_reqnum, p_dcode) == -1) {
@@ -171,7 +172,7 @@ public class StudentIDRequestDAO extends DAOBase {
 			// 삭제
 			if(deleteReqSID(p_reqnum))
 				return true;
-			
+			return false;	
 		}catch(SQLException e) {
 		      throw e;
 		      
@@ -179,7 +180,6 @@ public class StudentIDRequestDAO extends DAOBase {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-		return false;
 	}
 	
 	/** 학번부여거절
