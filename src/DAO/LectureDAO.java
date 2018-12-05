@@ -128,8 +128,9 @@ public class LectureDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @param p_subjectname 과목명
 	 * @return 수강신청가능리스트 중 주어진 과목명에 해당하는 것
+	 * @throws SQLException DB오류
 	 */
-	public List<LectureDetail> getLectureByName(int p_sid, String p_subjectname)
+	public List<LectureDetail> getLectureByName(int p_sid, String p_subjectname) throws SQLException
 	{
 		try
 		{
@@ -192,8 +193,7 @@ public class LectureDAO extends DAOBase {
 		}
 		catch (SQLException sqle)
 		{
-			sqle.printStackTrace();
-			return null;
+			throw sqle;
 		}
 		finally
 		{
