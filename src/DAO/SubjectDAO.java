@@ -22,7 +22,7 @@ public class SubjectDAO extends DAOBase {
 	}
 	
 	// 교과목추가결과 enum
-	enum AddSubjectResult {
+	public enum AddSubjectResult {
 		SUCCESS,
 		MISSING_FIELD,
 		COLLISION_SUBJNAME,
@@ -58,7 +58,7 @@ public class SubjectDAO extends DAOBase {
 	
 	/** 과목세부정보조회 
 	 * @param p_scode 과목코드
-	 * @return 과목세부정보(과목명,학점)
+	 * @return 과목세부정보(과목명,학점) Subject
 	 * @throws SQLException DB오류
 	 * ! DAO 조회결과없음 수정해야 하는지?*/
 	public Subject getSubjectInfoBySCode(int p_scode) throws SQLException {
