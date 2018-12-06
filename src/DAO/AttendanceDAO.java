@@ -7,12 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import ClassObject.Attendance;
 import ClassObject.AttendanceListByLCode;
 import ClassObject.AttendanceListBySID;
 import ClassObject.AttendanceTimeList;
+import ClassObject.GradeInfo;
+import ClassObject.GradeInfoOfTerm;
 import ClassObject.LectureDetail;
 import ClassObject.StudentIDRequest;
 import Util.OurTimes;
@@ -212,34 +215,70 @@ public class AttendanceDAO extends DAOBase {
 	/** 성적정보조회
 	 * @param p_sid 학번
 	 * @param p_semester 이수학기
-	 * @return 학기별성적리스트(과목명, 평점보여짐여부, 평점, 재수강여부, 이전수강당시평점)
+	 * @return 학기별성적리스트(과목명, 평점보여짐여부, 평점, 재수강여부, 이전수강당시평점);
+	 * 성적부여되지 않은 수강은 제외된다.
 	 * @throws SQLException DB오류
-	 * ! DAO 경우에 따른 결과 수정 필요
-	 * ! GradeInfoDAO 구현 필요*/
-	public ArrayList<Integer> getGradeInfo(int p_sid, int p_semester) throws SQLException {
-		ArrayList<Integer> attlist = new ArrayList<Integer>();
+	 * ! DAO - 경우에 따른 결과 수정 필요
+	 * ! DAO - SELECT문 가져오는 칼럼이 더 많아짐.
+	 * ! DAO - 재수강 당시 성적을 가져오는 알고리즘
+	 */
+	public ArrayList<GradeInfoOfTerm> getGradeInfo(int p_sid, int p_semester) throws SQLException {
 		try {
-			String SQL = "SELECT A.attendanceNum"
+			String SQL = "SELECT A.attendanceNum, A.isRetake, S.subjectCode, S.subjectName"
 					+ " FROM Attendance A"
-					+ " WHERE A.studentID = ? AND L.registerTerm = ?"
 					+ " LEFT JOIN Lecture L"
-					+ " ON L.lectureCode = A.lectureCode";
+					+ " ON A.lectureCode = L.lectureCode"
+					+ " LEFT JOIN Subject S"
+					+ " ON L.subjectCode = S.subjectCode"
+					+ " WHERE A.studentID = ? AND L.registerTerm = ?";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, p_sid);
 			pstmt.setInt(2, p_semester);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
 			
-			// 목록 꺼내오기
+			// 목록 꺼내오기 - 해당학기,해당학생의 수강코드 리스트에서.
+			List<MyAttendance> myAttendanceList = new ArrayList<MyAttendance>(); //col: A.attendanceNum, A.isRetake, S.subjectName
+			List<Integer> attNumList = new ArrayList<Integer>();  //col: A.attendanceNum
 			while(rs.next()) {
 				int rsAttendanceNum = rs.getInt("attendanceNum");
-				attlist.add(rsAttendanceNum);
+				boolean rsIsRetake = rs.getBoolean("isRetake");
+				int rsSubjectCode = rs.getInt("subjectCode");
+				String rsSubjectName = rs.getString("subjectName");
+				myAttendanceList.add(
+						new MyAttendance(rsAttendanceNum, rsIsRetake, rsSubjectCode, rsSubjectName)
+						);
+				attNumList.add(rsAttendanceNum);
 			}
-		
-			gradeInfoDAO.getGradeListByAttCodeList(attlist);
-			return attlist;
-		}catch(SQLException e) {
-		      throw e;
+			
+			List<GradeInfo> gradeInfoList = gradeInfoDAO.getGradeListByAttCodeList(attNumList);
+			
+			ArrayList<GradeInfoOfTerm> myGITList = new ArrayList<GradeInfoOfTerm>(); //학기별성적리스트 - 결과물
+			// 각 수강에 해당하는 모든 성적정보에 대해...
+			// gradeInfoList의 길이 = attNumList의 길이 = myAttendanceList의 길이
+			for(int i = 0; i < myAttendanceList.size(); i++)
+			{
+				GradeInfo gi = gradeInfoList.get(i);
+				// 성적부여되지 않은 것은 제한다.
+				if(gi == null)
+					continue;
+				// 재수강인 경우, 전 수강 당시의 성적.평점을 가져온다.
+				double gradeBefore = myGradeLastTerm(p_sid, p_semester, myAttendanceList.get(i).subjectCode);
+				// 레코드 추가
+				GradeInfoOfTerm myGIT = new GradeInfoOfTerm(
+						gi.isVisibleGrade(), 
+						gi.getGrade(), 
+						myAttendanceList.get(i).isRetake, 
+						gradeBefore, 
+						myAttendanceList.get(i).subjectName
+						);
+				myGITList.add(myGIT);
+			}
+			
+			return myGITList;
+			
+		}catch(SQLException sqle) {
+		      throw sqle;
 		      
 		}finally {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
@@ -247,6 +286,53 @@ public class AttendanceDAO extends DAOBase {
 		}
 		
 	}
+	private class MyAttendance {
+		@SuppressWarnings("unused")
+		int attNum;
+		boolean isRetake;
+		int subjectCode;
+		String subjectName;
+		MyAttendance(int attNum, boolean isRetake, int subjectCode, String subjectName) {
+			super();
+			this.attNum = attNum;
+			this.isRetake = isRetake;
+			this.subjectCode = subjectCode;
+			this.subjectName = subjectName;
+		}
+	}
+	private double myGradeLastTerm(int p_sid, int p_semesterBefore, int p_subjcode) throws SQLException
+	{
+		PreparedStatement pstmt2 = null;
+		try {
+			String sql = "SELECT G.grade\r\n" + 
+					"FROM GradeInfo G\r\n" + 
+					"LEFT JOIN Attendance A\r\n" + 
+					"ON G.attendanceNum = A.attendanceNum\r\n" + 
+					"LEFT JOIN Lecture L\r\n" + 
+					"ON A.lectureCode = L.lectureCode\r\n" + 
+					"WHERE A.studentID = ? AND L.registerTerm < ? AND L.subjectCode = ?\r\n" + 
+					"ORDER BY L.registerTerm DESC\r\n" + 
+					"LIMIT 1;";
+			pstmt2 = conn.prepareStatement(sql);
+			pstmt2.setInt(1, p_sid);
+			pstmt2.setInt(2, p_semesterBefore);
+			pstmt2.setInt(3, p_subjcode);
+			ResultSet rs = pstmt2.executeQuery();
+			
+			if(!rs.next())
+				return -1;
+			else
+				return rs.getDouble("grade");
+		}
+		catch(SQLException sqle) {
+		      throw sqle;
+		      
+		}finally {
+		      if(pstmt2 != null) try{pstmt2.close();}catch(SQLException sqle){}
+		}
+	}
+	
+	
 	
 	/** 해당분반수강목록조회 
 	 * @param p_lcode 분반코드

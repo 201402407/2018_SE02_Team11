@@ -2,25 +2,23 @@ package ClassObject;
 
 public class GradeInfo {
 	private double grade;
-	private int attendanceNum;
+	private boolean visibleGrade;
 	
-	public GradeInfo(double grade, int attendanceNum) {
+	public GradeInfo(double grade, boolean visibleGrade) {
 		super();
 		this.grade = grade;
-		this.attendanceNum = attendanceNum;
+		this.visibleGrade = visibleGrade;
 	}
-	
 	public double getGrade() {
 		return grade;
 	}
 	public void setGrade(double grade) {
 		this.grade = grade;
 	}
-	public int getAttendanceNum() {
-		return attendanceNum;
+	public boolean isVisibleGrade() {
+		return visibleGrade;
 	}
-	public void setAttendanceNum(int attendanceNum) {
-		this.attendanceNum = attendanceNum;
+	public void setVisibleGrade(boolean visibleGrade) {
+		this.visibleGrade = visibleGrade;
 	}
-	
 }
