@@ -19,11 +19,6 @@ CREATE TABLE Department (
     tuition int
 );
 
-CREATE TABLE Bank (
-	bankAccountNum integer(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    bankName varchar(16)
-);
-
 CREATE TABLE Student (
 	studentID integer(9) NOT NULL PRIMARY KEY,  -- AUTO_INCREMENT가 아님에 주의 (즉 Student데이터를 INSERT해줄 때 학번을 정해줘야 한다는 뜻이다.)
     studentName varchar(5) NOT NULL,
@@ -32,12 +27,9 @@ CREATE TABLE Student (
     isTimeOff bool NOT NULL,
     isGraduate bool NOT NULL,
     accountID varchar(20) NOT NULL,
-    bankAccountNum integer(10),
     departmentCode integer(5) NOT NULL,
     CONSTRAINT Student_accountID_FK
     FOREIGN KEY (accountID) REFERENCES Account(AccountID),
-    CONSTRAINT Student_bankAccountNum_FK
-    FOREIGN KEY (bankAccountNum) REFERENCES Bank(bankAccountNum),
     CONSTRAINT Student_departmentCode_FK
     FOREIGN KEY (departmentCode) REFERENCES Department(departmentCode)
 );
