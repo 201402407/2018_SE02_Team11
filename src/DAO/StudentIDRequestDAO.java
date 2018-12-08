@@ -111,7 +111,7 @@ public class StudentIDRequestDAO extends DAOBase {
 	 * @throws SQLException DB오류
 	 * + 요청날짜 사용하는 법 수정 필요
 	 * ! DAO - 반환값 수정 필요 
-	 * ! DAO - 해당 년도의 가장 이른 학번 구하기
+	 * ! DAO - 해당 년도의 가장 늦은 학번 구해오기
 	 * */
 	public boolean permitReqSID(int p_reqnum, int p_dcode) throws SQLException{
 		
@@ -131,32 +131,7 @@ public class StudentIDRequestDAO extends DAOBase {
 			// 학번요청 정보 가져오기 (일단은 java.util.Date로 했고 안되면 getDate로 변경)
 			
 			String rsAccountID = rs.getString("accountID");
-						
-			// 년도만 뽑아오는 과정
-			/*
-			int reqnum_earliest_from_that_year = OurTimes.dateNow().getYear();
 			
-			// 요청년도가 년도(r.reqSIDdate)에 속하는 요청정보 중 가장 이른 것의 요청번호를 가져온다.
-			SQL = "SELECT reqSIDnum FROM StudentIDRequest"
-					+ " WHERE YEAR(reqSIDdate) = ?"
-					+ " ORDER BY reqSIDdate ASC LIMIT 1";
-			pstmt.clearParameters(); // 초기화
-			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, reqnum_earliest_from_that_year);
-			rs = pstmt.executeQuery(); // ResultSet
-			
-			int rsSID;
-			// 올 해 하나라도 존재하는 경우
-			if(rs.next()) {
-				rsSID = rs.getInt("reqSIDnum");
-					
-			}
-			// 존재하지 않으면 최초가 되므로 첫 번째가 됨.
-			else {
-				rsSID = p_reqnum - 1;
-			}
-			int year_reqnum = p_reqnum - rsSID;
-			*/
 			
 			// 학생테이블에서 해당 년도의 가장 늦은 학번을 구해온다. 그리고 부여학번은 그것의 더하기 1이 된다. 
 			int year_now = OurTimes.dateNow().getYear();
@@ -170,13 +145,26 @@ public class StudentIDRequestDAO extends DAOBase {
 			pstmt.setInt(1, year_now);
 			rs = pstmt.executeQuery(); // ResultSet
 			
-			// 학생 중 
+			int newStuOrder;
+			// newStuOrder = (해당 년도의 가장 늦은 학번)의 해당년도순서 + 1
+			// e.g. 해당 년도의 가장 늦은 학번 = 201300006
+			// e.g. 그것의 해당년도순서 = 00006 = 6
+			// e.g. 따라서 newStuOrder = 6+1 = 7
+			if(rs.next())
+				newStuOrder = (rs.getInt("studentID") % 100000) + 1;
+			// 해당 년도의 처음 학생이면 newStuOrder = 1
+			else
+				newStuOrder = 1;
 			
 			// 학번 요청
 			AccountDAO accountDAO = new AccountDAO();
-			if(accountDAO.requestSID(rsAccountID, year_now, reqnum_earliest_from_that_year, p_dcode) == -1) {
+			if(accountDAO.requestSID(rsAccountID, year_now, newStuOrder, p_dcode) == -1) {
 				return false; // -1이면 실패
 			}
+			deleteReqSID(p_reqnum);
+			
+			return true;
+			
 		}catch(SQLException e) {
 		      throw e;
 		      

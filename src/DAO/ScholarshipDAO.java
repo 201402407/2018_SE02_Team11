@@ -20,8 +20,7 @@ public class ScholarshipDAO extends DAOBase {
 	
 	public enum addScholarshipResult {
 		SUCCESS,
-		INVALID_SCNAME,
-		ANOMAL
+		INVALID_SCNAME
 	}
 	/** 
 	 * 장학존재여부조회
@@ -53,11 +52,9 @@ public class ScholarshipDAO extends DAOBase {
 	 * @param p_scname 장학이름, 2자 이상 20자 이하여야 한다.
 	 * @return 성공여부결과(addScholarshipResult)
 	 * @throws SQLException DB오류
-	 * ! String 문자열이 인자로 들어오면 좌우 공백처리는 어떻게 ? 
 	 * ! SQL 실패하는 경우의 enum DAO에 추가 필요 */
 	public addScholarshipResult addScholarship(String p_scname) throws SQLException{
 		
-		p_scname = p_scname.trim(); // 좌우 공백제거
 		if( !(p_scname.length() >= 2 && p_scname.length() <= 20) )
 			return addScholarshipResult.INVALID_SCNAME;
 		
@@ -70,7 +67,7 @@ public class ScholarshipDAO extends DAOBase {
 			
 			// SQL 실패
 			if(result != 1)
-				return addScholarshipResult.ANOMAL;
+		    	throw new SQLException("Affected rows: " + result);
 			
 			return addScholarshipResult.SUCCESS;
 		}catch(SQLException e){

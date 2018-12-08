@@ -4,34 +4,36 @@
 <%@page import="DAO.*"%>
 <%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.SQLException" %>
 <%!
 
 private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
 {	
 	String subj_name;
+	String rp_subj_name = "subj_name";
 	double score;
+	String rp_score = "score";
 	
 	// 1. Install Parameters
-	subj_name = req.getParameter("subj_name");
+	subj_name = req.getParameter(rp_subj_name);
 	if(OurProcResp.reqParamVoidString(subj_name))
 	{
 		OurProcResp.printResp(
 				out,
 				"과목명이 비었습니다",
-				"subj_name",
+				rp_subj_name,
 				null);
 		return;
 	}
 	
 	try {
-		score = Double.parseDouble(req.getParameter("score"));
+		score = Double.parseDouble(req.getParameter(rp_score));
 	}
 	catch(Exception e){
 		OurProcResp.printResp(
 				out,
 				"학점은 숫자여야 합니다.",
-				"score",
+				rp_score,
 				null);
 		return;
 	}
@@ -47,31 +49,31 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 					null,
 					null,
 					null);
-			break;
+			return;
 			
 		case INVALID_SUBJNAME:
 			OurProcResp.printResp(
 					out,
 					"올바르지 못한 과목명입니다.",
-					"subj_name",
+					rp_subj_name,
 					null);
-			break;
+			return;
 			
 		case INVALID_SCORE:
 			OurProcResp.printResp(
 					out,
 					"올바르지 못한 학점입니다.",
-					"score",
+					rp_score,
 					null);
-			break;
+			return;
 			
 		case COLLISION_SUBJNAME:
 			OurProcResp.printResp(
 					out,
 					"이미 동일한 과목명이 있습니다.",
-					"subj_name",
+					rp_subj_name,
 					null);
-			break;
+			return;
 		}
 		
 	}
@@ -89,7 +91,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 %>
 <%
 // Parameter: subj_name=과목명, score=평점
-// 과목에 추가가 이루어진다.
+// 과목에 추가가 한 줄 이루어진다.
 // data 없음
 request.setCharacterEncoding("euc-kr");
 makeMyResponse(request, out);
