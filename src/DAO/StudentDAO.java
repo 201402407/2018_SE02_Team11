@@ -35,7 +35,7 @@ public class StudentDAO extends DAOBase {
 		List<StudentInfo> arrayList = new ArrayList<StudentInfo>();
 		
 		try {
-			String SQL = "SELECT S.studentName, D.departmentName, S.year, S.semester,"
+			String SQL = "SELECT S.studentName, D.departmentName, S.studentYear, S.semester,"
 					+ " S.isTimeOff, S.isGraduate"
 					+ " FROM Student S"
 					+ " LEFT JOIN Department D" 
@@ -46,27 +46,25 @@ public class StudentDAO extends DAOBase {
 			pstmt.setInt(1, p_sid);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
 			
-			// 조회결과 아무것도 없음
-			if(!rs.next()) {
-				return null;	
-			}
-			
 			// 꺼내오기
-			String rsSName = rs.getString("studentName");
-			String rsDName = rs.getString("departmentName");
-			int rsYear = rs.getInt("studentYear");
-			int rsSemester = rs.getInt("semester");
-			boolean rsTimeOff = rs.getBoolean("isTimeOff");
-			boolean rsGraduate = rs.getBoolean("isGraduate");
-		
-			StudentInfo studentInfo = new StudentInfo(rsSName,
-					rsDName,
-					rsYear,
-					rsSemester,
-					rsTimeOff,
-					rsGraduate
-			);
-			arrayList.add(studentInfo);
+			if (rs.next())
+			{
+				String rsSName = rs.getString("studentName");
+				String rsDName = rs.getString("departmentName");
+				int rsYear = rs.getInt("studentYear");
+				int rsSemester = rs.getInt("semester");
+				boolean rsTimeOff = rs.getBoolean("isTimeOff");
+				boolean rsGraduate = rs.getBoolean("isGraduate");
+			
+				StudentInfo studentInfo = new StudentInfo(rsSName,
+						rsDName,
+						rsYear,
+						rsSemester,
+						rsTimeOff,
+						rsGraduate
+				);
+				arrayList.add(studentInfo);
+			}
 		   	
 			return arrayList;
 			
