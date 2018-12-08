@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ClassObject.ChangeType;
-import ClassObject.Subject;
 import ClassObject.TimeoffRequest;
-import DAO.ProfessorDAO.AddProfessorResult;
 import Util.OurTimes;
 
 public class TimeoffRequestDAO extends DAOBase {
@@ -24,7 +22,7 @@ public class TimeoffRequestDAO extends DAOBase {
 	
 	public TimeoffRequestDAO() {
 		super();
-		changeRecordDAO = new ChangeRecordDAO();
+		changeRecordDAO = null;
 	}
 	
 	/** 
@@ -91,7 +89,7 @@ public class TimeoffRequestDAO extends DAOBase {
 				temp.setEndSemester(rs.getInt("endSemester"));
 				temp.setStudentID(rs.getInt("studentID"));
 			}
-			
+			changeRecordDAO = new ChangeRecordDAO();
 			if(changeRecordDAO.addChangeRecord(temp.getReqDate(), temp.getChangeType(),
 					temp.getStartSemester(), temp.getEndSemester(), temp.getStudentID())) {
 				if(deleteTimeoffReq(p_reqnum))

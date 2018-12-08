@@ -25,12 +25,11 @@ public class ChangeRecordDAO extends DAOBase {
 		super();
 		
 		studentDAO = new StudentDAO();
-		timeoffRequestDAO = new TimeoffRequestDAO();
+		timeoffRequestDAO = null;
 	}
 	
 	public enum RequestTimeOnOffsResult {
 		SUCCESS,
-		NULL_IN_DB,
 		CURRENTLY_UNAVAILABLE
 	}
 	
@@ -129,10 +128,11 @@ public class ChangeRecordDAO extends DAOBase {
 			if(OurTimes.isNowOnTerm())
 				return RequestTimeOnOffsResult.CURRENTLY_UNAVAILABLE;
 			
+			timeoffRequestDAO = new TimeoffRequestDAO();
 			if(timeoffRequestDAO.addTimeOnOff(OurTimes.dateNow(), p_change, p_start, p_end, p_reason, p_sid))
 				return RequestTimeOnOffsResult.SUCCESS;
 			else 
-				return RequestTimeOnOffsResult.NULL_IN_DB;
+				throw new SQLException("timeoffRequestDAO.addTimeOnOff has Failed.");
 		}
 		catch(SQLException e) {
 			throw e;
