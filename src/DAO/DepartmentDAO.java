@@ -15,6 +15,7 @@ public class DepartmentDAO extends DAOBase {
 	}
 	
 	/**
+	 * (2018-12-08 확인)
 	 * 학생학과코드조회: 해당하는 학생의 학과코드를 구한다.
 	 * @param p_sid 학번
 	 * @return 학과코드. 해당하는 학생이 없으면 (주어진 학번의 데이터가 없으면) -1
@@ -59,6 +60,7 @@ public class DepartmentDAO extends DAOBase {
 	}
 	
 	/**
+	 * (2018-12-08 확인)
 	 * 학과존재여부조회
 	 * @param p_dcode 학과코드
 	 * @return 존재여부

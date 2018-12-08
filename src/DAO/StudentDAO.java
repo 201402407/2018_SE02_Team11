@@ -28,6 +28,7 @@ public class StudentDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @return 학적상태(이름, 학과명, 학년, 이수중인학기, 휴학여부, 졸업여부, 은행계좌번호)
 	 * @throws SQLException DB오류
+	 * ! DAO수정 - 은행정보를 제거
 	 * */
 	public List<StudentInfo> getStudentInfoBySID(int p_sid) throws SQLException {
 		
@@ -142,8 +143,8 @@ public class StudentDAO extends DAOBase {
 	/** 휴학여부조회
 	 * @param p_sid 학번
 	 * @return 휴학여부(boolean) -> true : 휴학, false : 재학
-	 * @throws SQLException DB오류
-	 * ! DAO if절 추가해야 하나 ? */
+	 * @throws SQLException DB오류, p_sid 존재안함
+	 * ! DAO  */
 	public boolean getTimeOffBySID(int p_sid) throws SQLException {
 		
 		try {
@@ -158,6 +159,9 @@ public class StudentDAO extends DAOBase {
 			if(rs.next()) {
 				return rs.getBoolean("isTimeOff");
 			}
+			else {
+				throw new SQLException("No such student ID.");
+			}
 			
 		}catch(SQLException e) {
 		      throw e;
@@ -166,8 +170,6 @@ public class StudentDAO extends DAOBase {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-		// 존재하지 않을 시. -> 오류 메세지도 같이 ??
-		return false;
 	}
 	
 	/** 신규학번설정 
@@ -178,14 +180,15 @@ public class StudentDAO extends DAOBase {
 	 * @param p_dcode 학과코드
 	 * @return 학번 (실패시 -1)
 	 * @throws SQLException DB오류
-	 * ! DAO 리턴값 + 알고리즘 수정해야 함*/ //-> 리턴값?
+	 * ! DAO 리턴값 + 알고리즘 수정해야 함, year->studentYear
+	 * */
 	public int createNewStudent(int p_newStuYear, int p_newStuOrder, String p_name, String p_accountID, int p_dcode) 
 	throws SQLException {
 		
 		int newStuID = p_newStuYear * 100000 + p_newStuOrder;
 		
 		try {
-			String SQL = "INSERT INTO Student (studentID, studentName, year,"
+			String SQL = "INSERT INTO Student (studentID, studentName, studentYear,"
 					+ " semester, isTimeOff, isGraduate, accountID, departmentCode)"
 					+ " VALUES (?, ?, 1, 1, FALSE, FALSE, ?, ?)";
 			conn = getConnection();
@@ -194,7 +197,7 @@ public class StudentDAO extends DAOBase {
 			pstmt.setString(2, p_name);
 			pstmt.setString(3, p_accountID);
 			pstmt.setInt(4, p_dcode);
-		    int result = pstmt.executeUpdate(); // 성공 결과를 모르겠음
+		    int result = pstmt.executeUpdate();
 		    if(result != 1)
 		    	return -1;
 		    return newStuID;
