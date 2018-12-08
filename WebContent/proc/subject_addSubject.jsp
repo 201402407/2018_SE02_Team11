@@ -1,73 +1,97 @@
-<%@page import="org.json.simple.JSONArray"%>
-<%@page import="Util.OurProcResp"%>
-<%@page import="ClassObject.Subject"%>
-<%@page import="DAO.SubjectDAO.AddSubjectResult"%>
+<%@page import="java.io.IOException"%>
+<%@page import="Util.*"%>
+<%@page import="ClassObject.*"%>
+<%@page import="DAO.*"%>
 <%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.*" %>
-<%
-	request.setCharacterEncoding("euc-kr");
-%>
+<%!
 
+private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
+{	
+	String subj_name;
+	double score;
+	
+	// 1. Install Parameters
+	subj_name = req.getParameter("subj_name");
+	if(OurProcResp.reqParamVoidString(subj_name))
+	{
+		OurProcResp.printResp(
+				out,
+				"과목명이 비었습니다",
+				"subj_name",
+				null);
+		return;
+	}
+	
+	try {
+		score = Double.parseDouble(req.getParameter("score"));
+	}
+	catch(Exception e){
+		OurProcResp.printResp(
+				out,
+				"학점은 숫자여야 합니다.",
+				"score",
+				null);
+		return;
+	}
+	
+	// 2. Do DAO Job
+	try {
+		SubjectDAO subjDao = new SubjectDAO();
+		switch(subjDao.addSubject(subj_name, score))
+		{
+		case SUCCESS:
+			OurProcResp.printResp(
+					out,
+					null,
+					null,
+					null);
+			break;
+			
+		case INVALID_SUBJNAME:
+			OurProcResp.printResp(
+					out,
+					"올바르지 못한 과목명입니다.",
+					"subj_name",
+					null);
+			break;
+			
+		case INVALID_SCORE:
+			OurProcResp.printResp(
+					out,
+					"올바르지 못한 학점입니다.",
+					"score",
+					null);
+			break;
+			
+		case COLLISION_SUBJNAME:
+			OurProcResp.printResp(
+					out,
+					"이미 동일한 과목명이 있습니다.",
+					"subj_name",
+					null);
+			break;
+		}
+		
+	}
+	catch(SQLException sqle)
+	{ 
+		OurProcResp.printResp(
+				out,
+				"DB오류가 발생하였습니다.",
+				null,
+				null);
+		sqle.printStackTrace();
+	}
+	
+}
+%>
 <%
 // Parameter: subj_name=과목명, score=평점
 // 과목에 추가가 이루어진다.
-// data = true/false
+// data 없음
+request.setCharacterEncoding("euc-kr");
+makeMyResponse(request, out);
 
-String error = null;
-String attention_field = null;
-Object data = null;
-
-// 1.
-String sName = request.getParameter("subj_name");
-if(OurProcResp.reqParamVoidString(sName))
-{
-	error = "과목명이 비었습니다.";
-	attention_field = "subj_name";
-}
-
-double score = 0.0;
-try {score = Double.parseDouble(request.getParameter("score"));}
-catch(Exception e){
-	error = "평점은 숫자여야 합니다.";
-	attention_field = "score";
-}
-
-if (error != null)
-{
-	
-}
-else
-{
-	
-}
-
-/*
-SubjectDAO subjectDAO = new SubjectDAO();
-
-AddSubjectResult result;
-
-try {
-	result = subjectDAO.addSubject(sName, score);
-	
-	 // NOT_IN_DB
-	if(result == AddSubjectResult.NULL_IN_DB) {
-	 
-	}
-	 
-	// 중복이름 존재할 때
-	if(result == AddSubjectResult.COLLISION_SUBJNAME) {
-	 
-	}
-	
-	// 성공
-	if(result == AddSubjectResult.SUCCESS) {
-	 
-	}
-}
-
-catch(SQLException e) {
-	e.printStackTrace();
-}
-*/
 %>
