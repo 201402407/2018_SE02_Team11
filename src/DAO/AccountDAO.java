@@ -65,8 +65,7 @@ public class AccountDAO extends DAOBase {
 	 * @return 결과(signUpResult).
 	 * @throws SQLException DB오류
 	 * 각각의 경우에 따른 enum 리턴.
-	 * + 생년월일 변수 int -> Date 변경, 입력한 생일과 현재날짜 비교 추가해야 함.
-	 * ! DAO명세서 수정 필요 (signUpResult개편, 아이디의 형식제한, 비밀번호의 형식제한, 이름 제한, 생년월일 제한)
+	 * ! DAO 수정 완료
 	 */
 	public signUpResult signUp(String p_id, String p_pwd, String p_name, LocalDate p_birth) throws SQLException {
 		Account account = new Account();

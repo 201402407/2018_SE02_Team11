@@ -61,7 +61,7 @@ public class LectureDAO extends DAOBase {
 	 * @return 분반상세정보리스트(분반코드, 과목명, 교수이름, 등록학기, 신청인원, 전체인원, 강의요일, 강의시작시각, 강의종료시각, 학점).
 	 * 선조건이 맞지 않는 경우 null
 	 * @throws SQLException DB오류.
-	 * ! DAO명세서 수정 필요
+	 * ! DAO명세서 수정
 	 */
 	public List<LectureDetail> getApplyLectureList(int p_sid) throws SQLException
 	{

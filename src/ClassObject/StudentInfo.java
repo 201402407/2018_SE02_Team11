@@ -7,17 +7,15 @@ public class StudentInfo {
 	private int semester;
 	private boolean isTimeOff;
 	private boolean isGraduate;
-	private int bankAccountNum;
 	
 	public StudentInfo(String studentName, String departmentName, int year, int semester, boolean isTimeOff,
-			boolean isGraduate, int bankAccountNum) {
+			boolean isGraduate) {
 		this.studentName = studentName;
 		this.departmentName = departmentName;
 		this.year = year;
 		this.semester = semester;
 		this.isTimeOff = isTimeOff;
 		this.isGraduate = isGraduate;
-		this.bankAccountNum = bankAccountNum;
 	}
 	
 	public String getStudentName() {
@@ -56,12 +54,4 @@ public class StudentInfo {
 	public void setGraduate(boolean isGraduate) {
 		this.isGraduate = isGraduate;
 	}
-	public int getBankAccountNum() {
-		return bankAccountNum;
-	}
-	public void setBankAccountNum(int bankAccountNum) {
-		this.bankAccountNum = bankAccountNum;
-	}
-	
-	
 }

@@ -30,7 +30,7 @@ public class StudentIDRequestDAO extends DAOBase {
 	 * @param p_accountID 계정아이디
 	 * @return 요청추가성공여부(boolean)
 	 * @throws SQLException DB오류
-	 * ! DAO SQL 실패 경우 추가
+	 * ! DAO 수정 완료
 	 * */
 	public boolean addReqSID(LocalDate p_date, String p_accountID) throws SQLException { // 아이디 이므로 accountID로 이름 변경
 		StudentIDRequest studentIDRequest = new StudentIDRequest();
@@ -62,6 +62,7 @@ public class StudentIDRequestDAO extends DAOBase {
 	 * @return 학번요청대기열목록(요청번호, 요청일자, 아이디)
 	 * @throws SQLException DB오류
 	 * ! rs.beforeFirst() 테스트해보기
+	 * ! DAO 완료
 	 * */
 	public ArrayList<StudentIDRequest> getReqSIDList() throws SQLException { // DAO 명세서에 ArrayList로 표기하는지 ?
 		ArrayList<StudentIDRequest> resultArrayList = new ArrayList<StudentIDRequest>();
@@ -110,8 +111,7 @@ public class StudentIDRequestDAO extends DAOBase {
 	 * @return 부여허가결과(boolean)
 	 * @throws SQLException DB오류
 	 * + 요청날짜 사용하는 법 수정 필요
-	 * ! DAO - 반환값 수정 필요 
-	 * ! DAO - 해당 년도의 가장 늦은 학번 구해오기
+	 * ! DAO 수정 완료
 	 * */
 	public boolean permitReqSID(int p_reqnum, int p_dcode) throws SQLException{
 		
@@ -128,10 +128,7 @@ public class StudentIDRequestDAO extends DAOBase {
 				return false;	
 			}
 
-			// 학번요청 정보 가져오기 (일단은 java.util.Date로 했고 안되면 getDate로 변경)
-			
 			String rsAccountID = rs.getString("accountID");
-			
 			
 			// 학생테이블에서 해당 년도의 가장 늦은 학번을 구해온다. 그리고 부여학번은 그것의 더하기 1이 된다. 
 			int year_now = OurTimes.dateNow().getYear();
@@ -196,7 +193,7 @@ public class StudentIDRequestDAO extends DAOBase {
 	 * @param p_reqnum 요청번호
 	 * @return 삭제결과(boolean)
 	 * @throw SQLException DB오류
-	 * ! DAO SQL 실패 경우도 추가해야함 */
+	 * ! DAO 완료 */
 	public boolean deleteReqSID(int p_reqnum) throws SQLException{
 		
 		

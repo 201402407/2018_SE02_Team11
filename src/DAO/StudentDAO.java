@@ -36,7 +36,7 @@ public class StudentDAO extends DAOBase {
 		
 		try {
 			String SQL = "SELECT S.studentName, D.departmentName, S.year, S.semester,"
-					+ " S.isTimeOff, S.isGraduate, S.bankAccountNum"
+					+ " S.isTimeOff, S.isGraduate"
 					+ " FROM Student S"
 					+ " LEFT JOIN Department D" 
 					+ " ON S.departmentCode = D.departmentCode"
@@ -58,15 +58,13 @@ public class StudentDAO extends DAOBase {
 			int rsSemester = rs.getInt("semester");
 			boolean rsTimeOff = rs.getBoolean("isTimeOff");
 			boolean rsGraduate = rs.getBoolean("isGraduate");
-			int rsBankAccountNum = rs.getInt("bankAccountNum");
 		
 			StudentInfo studentInfo = new StudentInfo(rsSName,
 					rsDName,
 					rsYear,
 					rsSemester,
 					rsTimeOff,
-					rsGraduate,
-					rsBankAccountNum
+					rsGraduate
 			);
 			arrayList.add(studentInfo);
 		   	
@@ -144,7 +142,7 @@ public class StudentDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @return 휴학여부(boolean) -> true : 휴학, false : 재학
 	 * @throws SQLException DB오류, p_sid 존재안함
-	 * ! DAO  */
+	 * ! DAO 완료 */
 	public boolean getTimeOffBySID(int p_sid) throws SQLException {
 		
 		try {
