@@ -34,10 +34,10 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 	try
 	{
 		DAO dao = new DAO();
-		List<> list = dao.;
+		List<$$> list = dao.;
 				
 		JSONArray listJson = new JSONArray();
-		for( elem : list)
+		for($$ elem : list)
 		{
 			JSONObject elemJson = new JSONObject();
 			elemJson.put("", elem.);

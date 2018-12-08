@@ -219,7 +219,6 @@ public class AccountDAO extends DAOBase {
 	 * ! DAO 수정 필요 */
 	public int requestSID(String p_id, int p_newStuYear, int p_newStuOrder, int p_dcode) throws SQLException
 	{
-		Account account = new Account();
 		
 	// 주어진 아이디의 계정정보 가져오기 -> acc -> 학생 이름만 가져오면 되나요 ??
 		try {
@@ -235,11 +234,6 @@ public class AccountDAO extends DAOBase {
 			}
 			
 			String rsName = rs.getString("accountName"); // 학생 이름 받기
-			
-			//account.setAccountID(p_id);
-			//account.setPwd(p_pwd);
-			account.setAccountName(rsName);
-			//account.setBirth(p_birth);
 			
 			// 학번 생성 함수 실행
 			return studentDAO.createNewStudent(p_newStuYear, p_newStuOrder, rsName, p_id, p_dcode);
