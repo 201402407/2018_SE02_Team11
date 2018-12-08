@@ -1,6 +1,3 @@
-<%@page import="org.json.simple.JSONArray"%>
-<%@page import="org.json.simple.JSONObject"%>
-<%@page import="java.util.List"%>
 <%@page import="java.io.IOException"%>
 <%@page import="Util.*"%>
 <%@page import="ClassObject.*"%>
@@ -13,27 +10,31 @@
 <%!
 private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
 {	
+	@@ ##;
+	final String rp_## = "##";
+	
 	// 1. Install Parameters (문자열 공백검사 + 형변환실패 검사)
-	// 없음
+	## = req.getParameter(rp_##);
+	if(OurProcResp.reqParamVoidString(##))
+	{
+		//문자열공백
+		OurProcResp.printResp(out, " 비었습니다", rp_##, null);
+		return;
+	}
+	
+	try {
+		## =  req.getParameter(rp_##)
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, " 제대로 입력해주세요.", rp_##, null);
+		return;
+	}
 	
 	// 2. do DAO Job
 	try
 	{
-		StudentIDRequestDAO dao = new StudentIDRequestDAO();
-		List<StudentIDRequest> list = dao.getReqSIDList();
+		DAO dao = new DAO();
 		
-		JSONArray listJson = new JSONArray();
-		for(StudentIDRequest elem : list)
-		{
-			JSONObject elemJson = new JSONObject();
-			elemJson.put("reqSIDnum", elem.getReqSIDnum());
-			elemJson.put("reqSIDdata", elem.getReqSIDdate().toString());
-			elemJson.put("accountID", elem.getAccountID());
-			 
-			listJson.add(elemJson);
-		}
-		OurProcResp.printResp(out, null, null, listJson);
-		return;
 	}
 	catch(SQLException sqle)
 	{
