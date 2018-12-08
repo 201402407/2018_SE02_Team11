@@ -19,14 +19,34 @@
 		    scriptCharset: "utf-8",
 		    contentType: "application/json; charset=utf-8"
 		});
+		appendYear();
+		
+		$(function(){
+			$("#year").change(function() {
+				$("#month").empty();
+				appendMonth();
+			})
+		})
+		
+		$(function(){
+			$("#month").change(function() {
+				$("#day").empty();
+				appendDay(this.value);
+			})
+		})
 	});
 	
-	/* 로그인 버튼 클릭 시 발생 */
-	function login() {
+	/* 회원가입 버튼 클릭 시 발생 */
+	function signup() {
+		var birth = $("#year option:selected").val() + "-" + $("#month option:selected").val() +
+		"-" + $("#day option:selected").val();
 		$.ajax({
+		
 			  type: 'post',
-			  url: "<%=request.getContextPath() %>/proc/account_login.jsp",
+			  url: "<%=request.getContextPath() %>/proc/account_signup.jsp",
 			  data:  {
+				  "name" : $("#inputName").val(),
+				  "birth" : birth,
 					"id" : $("#inputAccountID").val(),
 					"pwd" : $("#inputPwd").val()
 				  },
@@ -53,6 +73,44 @@
 			  }
 			});
 	}
+	
+	/* 년도 추가 */
+	function appendYear(){
+		var date = new Date();
+		var year = date.getFullYear();
+		var selectValue = document.getElementById("year");
+		var optionIndex = 0;
+		for(var i=year-100;i<=year;i++){
+				selectValue.add(new Option(i+"년",i),optionIndex++);                        
+		}
+	}
+	
+	/* 월 추가 */
+	function appendMonth(){
+		var selectValue = document.getElementById("month"); 
+		var optionIndex = 0;
+		for(var i=1;i<=12;i++){
+				selectValue.add(new Option(i+"월",i),optionIndex++);
+		}
+	}
+	
+	/* 일 추가 */
+	function appendDay(temp){
+		var month = temp;
+		var selectValue = document.getElementById("day");
+		var optionIndex = 0;
+		var day;
+		if(month == 2)
+			day = 28;
+		else if((month == 1) || (month == 3) || (month == 5) || (month == 7) || (month == 8) || (month == 10) || (month == 12))
+			day = 31;
+		else 
+			day = 30;
+		for(var i=1;i<=day;i++){
+				selectValue.add(new Option(i+"일",i),optionIndex++);
+		}
+	}
+	
 </script>
 </head>
 <body>
@@ -62,21 +120,31 @@
    <div id="LoginMenu">
      <!-- ID를 입력받으면 서버로 전송 -->
      <form class="Login" action="login.jsp" method="post">
-       <div id="LoginID_css" class="login_area">
-         아이디  <input type="text" name="LoginID" id="inputAccountID"> <br />
-         비밀번호  <input type="password" name="LoginPwd" id="inputPwd">
+       <div id="LoginID_css" class="sign_area">
+   	이름  <input type="text" name="SignupName" id="inputName"> <br />
+        생년월일 
+	<input type="hidden" name="memBirth"> 
+	<select id="year" class="select">
+	 <option>----년</option>
+	</select>
+	<select id="month" class="select">
+	<option>--월</option>
+	</select>
+	<select id="day" class="select">
+	<option>--일</option>
+	</select>
+	<br />
+         아이디  <input type="text" name="signupID" id="inputAccountID"> <br />
+         비밀번호  <input type="password" name="signupPwd" id="inputPwd">
        </div>
        <div id="error">
        <%
             // 아이디, 비밀번호가 틀릴경우 화면에 메시지 표시
-           // login.jsp에서 로그인 처리 결과에 따른 메시지를 보낸다.
-            
         %>
       	</div>
      <!-- 회원가입 버튼 -->
-      <button type="button" class="button" name="JoinButton" id="JoinButton" onclick="signup()">회원가입</button>
      </form>
-     <button type="button" class="button" id="loginButton" onclick="login()">로그인</button>
+     <button type="button" class="button" id="signupButton" onclick="signup()">회원가입</button>
    </div>
 </body>
 </html>

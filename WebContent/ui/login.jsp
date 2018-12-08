@@ -67,7 +67,6 @@
 	<!-- 로그인 공간 -->
    <div id="LoginMenu">
      <!-- ID를 입력받으면 서버로 전송 -->
-     <form class="Login" action="login.jsp" method="post">
        <div id="LoginID_css" class="login_area">
          아이디  <input type="text" name="LoginID" id="inputAccountID"> <br />
          비밀번호  <input type="password" name="LoginPwd" id="inputPwd">
@@ -81,7 +80,6 @@
       	</div>
      <!-- 회원가입 버튼 -->
       <button type="button" class="button" name="JoinButton" id="JoinButton" onclick="signup()">회원가입</button>
-     </form>
      <button type="button" class="button" id="loginButton" onclick="login()">로그인</button>
    </div>
 </body>
