@@ -79,7 +79,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 	catch(SQLException sqle)
 	{
 		sqle.printStackTrace();
-		OurProcResp.printResp(out, "DB오류가 발생하였습니다.", null, null);
+		OurProcResp.printResp(out, "DB오류가 발생하였습니다. 혹시 아이디 중복일 수 있습니다.", null, null);
 		return;
 	}
 }
