@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/login.css" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/signup.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" type="text/css" href="loginpage.css?ver=1">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
@@ -20,12 +20,6 @@
 		    contentType: "application/json; charset=utf-8"
 		});
 	});
-
-	/* 가입 버튼 클릭 시 */
-	function signup() {
-		// 페이지 이동
-		 location.href = "<%=request.getContextPath() %>/ui/signup.jsp"; 
-	}
 	
 	/* 로그인 버튼 클릭 시 발생 */
 	function login() {
