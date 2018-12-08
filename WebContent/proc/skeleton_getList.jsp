@@ -13,7 +13,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 	@@ ##;
 	final String rp_## = "##";
 	
-	// 1. Install Parameters (문자열 공백검사 + 형변환실패 검사)
+	// 1. Install Parameters (DAO에 넣을 수 있게)
 	## = req.getParameter(rp_##);
 	if(OurProcResp.reqParamVoidString(##))
 	{

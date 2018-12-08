@@ -176,12 +176,25 @@ public class AccountDAO extends DAOBase {
 			
 			// 관리자인지 검사
 			if(isAdmin(account.getAccountID()))
+			{
+				// 관리자로 활성화
+				p_session.setAttribute("accountID", p_id);
+				p_session.setAttribute("isAdmin", "yes");
 				return loginResult.SUCCESS_ADMIN;
+			}
+			
 			// 학생인지 검사 (학번부여를 받지 못해 학생 테이블에 올라오지 않은 상태인지 검사하게 된다.)
-			if(isStudent(account.getAccountID()))
-				return loginResult.SUCCESS_STUDENT;
-			else
+			// 이 때 학번도 알 수 있다.
+			int sid = isStudent(account.getAccountID());
+			if(sid == 0)
 				return loginResult.FAIL_STUDENT;
+			else {
+				// 학생으로 활성화
+				p_session.setAttribute("accountID", p_id);
+				p_session.setAttribute("sid", Integer.toString(sid));
+				return loginResult.SUCCESS_STUDENT;
+			}
+				
 		
 		}catch(SQLException e){
 	        throw e;
@@ -194,7 +207,7 @@ public class AccountDAO extends DAOBase {
 	{
 		return id.equals("admin");
 	}
-	private boolean isStudent(String id) throws SQLException
+	private int isStudent(String id) throws SQLException //학번을 리턴 (0=학생아님, 혹은 학번이 없음)
 	{
 		String SQL = "SELECT *\r\n" + 
 				"FROM Student\r\n" + 
@@ -203,7 +216,14 @@ public class AccountDAO extends DAOBase {
 		pstmt.setString(1, id);
 		ResultSet rs = pstmt.executeQuery();
 		
-		return rs.next();
+		if(rs.next())
+		{
+			return rs.getInt("studentID");
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	
 	/** 
