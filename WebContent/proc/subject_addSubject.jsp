@@ -79,12 +79,13 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 	}
 	catch(SQLException sqle)
 	{ 
+		sqle.printStackTrace();
 		OurProcResp.printResp(
 				out,
 				"DB오류가 발생하였습니다.",
 				null,
 				null);
-		sqle.printStackTrace();
+		return;
 	}
 	
 }

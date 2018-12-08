@@ -101,7 +101,7 @@ public class AccountDAO extends DAOBase {
 		    if(result != 1)
 		    	throw new SQLException("Affected row is " + result);
 		    
-		    if(studentIDRequestDAO.addReqSID(account.getBirth(), account.getAccountID())) {
+		    if(studentIDRequestDAO.addReqSID(OurTimes.dateNow(), account.getAccountID())) {
 		    	return signUpResult.SUCCESS;
 		    }
 		    else
