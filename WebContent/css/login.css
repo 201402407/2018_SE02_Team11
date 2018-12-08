@@ -61,3 +61,13 @@ body {
 	background-color: #00649F;
 	color: white;
 }
+
+#error {
+	height: 20px;
+	display: inline-block;
+	margin-top: 20px;
+	line-height: 8px;
+	color: red;
+	font-family : sans-serif;
+	margin-left: 110px;
+}

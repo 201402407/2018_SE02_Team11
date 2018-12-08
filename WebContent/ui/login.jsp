@@ -21,21 +21,26 @@
 		});
 	});
 
+	/* 로그인 버튼 클릭 시 발생 */
 	function login() {
-		alert($("#inputAccountID").val());
-		alert($("#inputPwd").val());
 		$.ajax({
 			  type: 'post',
 			  url: "<%=request.getContextPath() %>/proc/account_login.jsp",
 			  data:  {
-					"accountID" : $("#inputAccountID").val(),
+					"id" : $("#inputAccountID").val(),
 					"pwd" : $("#inputPwd").val()
 				  },
 			  //async: false,
-			  dataType : "text",
+			  dataType : "json",
 			  success: function(success) {
 				  if(success) { // 전송 완료 시.
-					  
+					  if(success.error != null) { // 실패
+						  $("#error").empty(); // 비우기
+						  $("#error").append(success.error); // 추가
+					  }
+					  else {
+						  <!-- location.href = "<%=request.getContextPath() %>/proc/account_login.jsp"; // 로그인 페이지로 이동.-->						 
+					  }
 				  }
 				  else {
 					  alert("잠시 후에 시도해주세요.");
