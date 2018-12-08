@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import ClassObject.StudentIDRequest;
 import Util.OurTimes;
@@ -61,9 +62,8 @@ public class StudentIDRequestDAO extends DAOBase {
 	/** 학번요청대기열목록조회 
 	 * @return 학번요청대기열목록(요청번호, 요청일자, 아이디)
 	 * @throws SQLException DB오류
-	 * ! rs.beforeFirst() 테스트해보기
 	 * */
-	public ArrayList<StudentIDRequest> getReqSIDList() throws SQLException { // DAO 명세서에 ArrayList로 표기하는지 ?
+	public List<StudentIDRequest> getReqSIDList() throws SQLException {
 		ArrayList<StudentIDRequest> resultArrayList = new ArrayList<StudentIDRequest>();
 		
 		try {
@@ -71,13 +71,6 @@ public class StudentIDRequestDAO extends DAOBase {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			ResultSet rs = pstmt.executeQuery(); // ResultSet
-			
-			// 조회결과 아무것도 없음
-			if(!rs.next()) {
-				return null;	
-			}
-			
-			rs.beforeFirst(); // 첫 행으로 이동  -> 이게 맞나 ?
 			
 			// 목록 꺼내오기
 			while(rs.next()) {
@@ -90,7 +83,7 @@ public class StudentIDRequestDAO extends DAOBase {
 				studentIDRequest.setReqSIDdate(rsDate);
 				studentIDRequest.setAccountID(rsAccountID);
 				
-				resultArrayList.add(studentIDRequest); // ArrayList로 담기
+				resultArrayList.add(studentIDRequest); // 리스트로 담기
 			}
 		   	
 			return resultArrayList;
