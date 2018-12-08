@@ -1,0 +1,63 @@
+body {
+	margin-top: 8%;
+	min-width: 800px;
+	max-width: 800px;
+	min-height: 400px;
+	max-height: 400px;
+	padding: 20px;
+}
+
+#mainImageSrc {
+	width: 500px;
+	height: auto;
+	float: left;
+	
+}
+
+.login_area {
+  margin-top: 10%;
+  height: 70px;
+  line-height: 20px;
+  text-indent: 3px;
+  font-family : sans-serif;
+  margin-bottom: 15px;
+  display: block;
+  margin-left: 20%;
+  color: #707070;
+}
+#inputAccountID {
+	border-radius: 8px;
+	margin-left: 50px;
+	border-color: #707070;
+	font-family : sans-serif;
+	text-indent: 5px;
+	width: 180px;
+}
+#inputPwd {
+	margin-top: 40px;
+	border-radius: 8px;
+	border-color: #707070;
+	font-family : sans-serif;
+	text-indent: 5px;
+	margin-left: 40px;
+	width: 180px;
+}
+
+#JoinButton {
+	color:  #ADADAD;
+	margin-top: 60px;
+	border: none;
+	margin-left: 230px;
+	background-color: white;
+}
+#loginButton {
+	border-radius: 8px;
+	border: none;
+	margin-top: 30px;
+	margin-left: 110px;
+	line-height: 20px;
+	height: 60px;
+	width: 180px;
+	background-color: #00649F;
+	color: white;
+}

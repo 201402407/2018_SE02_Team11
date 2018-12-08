@@ -221,6 +221,7 @@ public class AttendanceDAO extends DAOBase {
 	 * ! DAO - 경우에 따른 결과 수정 필요
 	 * ! DAO - SELECT문 가져오는 칼럼이 더 많아짐.
 	 * ! DAO - 재수강 당시 성적을 가져오는 알고리즘
+	 * ! DAO 한번 봐주세요!
 	 */
 	public ArrayList<GradeInfoOfTerm> getGradeInfo(int p_sid, int p_semester) throws SQLException {
 		try {
