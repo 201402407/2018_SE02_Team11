@@ -15,19 +15,19 @@
    
    loginResult result;
    try {
-	   result = accountDAO.login(id, passwd);
+	   result = accountDAO.login(id, passwd, session);
 	   
 		switch(result) {
-		case SUCCESS: // 성공한 경우
+		case SUCCESS_STUDENT: // 성공한 경우 (학생으로 로그인)
 			break;
-		case NULL_IN_DB: // DB에 저장된 데이터가 하나도 없는 경우
+		case SUCCESS_ADMIN: // 성공한 경우 (관리자로 로그인)
+			break;
+		case FAIL_STUDENT:  // 학생이 아직 학번부여를 받지 못함
 			break;
 		case NOT_FOUND_ID: // 아이디를 찾을 수 없는 경우
 			break;
 		case INCORRECT_PWD: // 비번이 틀린경우
 			break;
-			default:
-				break;
 		}   
    }
    catch(SQLException e) {

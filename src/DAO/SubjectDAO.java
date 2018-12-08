@@ -24,9 +24,9 @@ public class SubjectDAO extends DAOBase {
 	// 교과목추가결과 enum
 	public enum AddSubjectResult {
 		SUCCESS,
-		MISSING_FIELD,
-		COLLISION_SUBJNAME,
-		NULL_IN_DB
+		INVALID_SUBJNAME,
+		INVALID_SCORE,
+		COLLISION_SUBJNAME
 	}
 	
 	/** 과목이름조회
@@ -144,16 +144,21 @@ public class SubjectDAO extends DAOBase {
 	    }
 	}
 	
-	/** 교과목 추가
-	 * @param p_subjectname 과목명
-	 * @param p_score 학점
+	/**
+	 * (2018-12-08 확인)
+	 * 교과목 추가
+	 * @param p_subjectname 과목명, 1글자 이상 20글자 이하여야 하며 기존 과목명과 같은 것이 있으면 안된다.
+	 * @param p_score 학점, 1.0점 이상 10.0점 이하여야 한다.
 	 * @return 교과목추가결과(enum)
 	 * @throws SQLException DB오류
 	 * ! DAO sql 실행 실패에 따른 결과 enum 추가 및 알고리즘 수정 필요 */
 	public AddSubjectResult addSubject(String p_subjectname, double p_score) throws SQLException {
-		if(p_subjectname.isEmpty() || p_score < 0) {
-			return AddSubjectResult.MISSING_FIELD;
-		}
+		
+		// 검사
+		if(! (p_subjectname.length() >= 1 && p_subjectname.length() <= 20))
+			return AddSubjectResult.INVALID_SUBJNAME;
+		if(! (p_score >= 1.0 && p_score <= 10.0))
+			return AddSubjectResult.INVALID_SCORE;
 		
 		try {
 			String SQL = "SELECT * FROM Subject WHERE subjectName = ?";
@@ -162,20 +167,21 @@ public class SubjectDAO extends DAOBase {
 			pstmt.setString(1, p_subjectname);
 			ResultSet rs = pstmt.executeQuery();
 			
-			// 조회결과 중복 존재
+			// 검사 - 조회결과 중복 존재
 			if(rs.next())
 				return AddSubjectResult.COLLISION_SUBJNAME;
 			
+			// 본격 - 추가
 			SQL = "INSERT INTO Subject (subjectName, score)" 
 			+ " VALUES (?, ?)";
 			pstmt.clearParameters();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, p_subjectname);
 			pstmt.setDouble(2, p_score);
-			int result = pstmt.executeUpdate(); // -> SQL 실패한 경우도 넣어야 하나 ?
+			int result = pstmt.executeUpdate();
 			
-			if(result != 1) // 1개의 행만 추가하므로 1이 아닌가?
-		    	return AddSubjectResult.NULL_IN_DB;
+			if(result != 1)
+		    	throw new SQLException("Affected rows: " + result);
 			return AddSubjectResult.SUCCESS;
 		}catch(SQLException e){
 	        throw e;

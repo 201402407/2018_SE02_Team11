@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import javax.servlet.http.HttpSession;
+
 import ClassObject.Account;
 import Util.OurTimes;
 
@@ -21,7 +23,10 @@ public class AccountDAO extends DAOBase {
 	
 	public enum signUpResult { // È¸¿ø°¡ÀÔ °á°ú enum
 		SUCCESS,
-		INVALID_FORM
+		INVALID_ID,
+		INVALID_PWD,
+		INVALID_NAME,
+		INVALID_BIRTH
 	}
 
 	public enum loginResult { // ·Î±×ÀÎ °á°ú enum
@@ -53,10 +58,10 @@ public class AccountDAO extends DAOBase {
 	
 	/**
 	 * È¸¿ø°¡ÀÔ
-	 * @param p_id ¾ÆÀÌµð 
-	 * @param p_pwd ºñ¹Ð¹øÈ£ 
-	 * @param p_name ÀÌ¸§ 
-	 * @param p_birth »ý³â¿ùÀÏ
+	 * @param p_id ¾ÆÀÌµð, 5±ÛÀÚ ÀÌ»ó 12±ÛÀÚ ÀÌÇÏ ¿µ¹®¿Í ¼ýÀÚ·Î ÀÌ·ç¾îÁ®¾ß ÇÑ´Ù.
+	 * @param p_pwd ºñ¹Ð¹øÈ£, 5±ÛÀÚ ÀÌ»ó 20±ÛÀÚ ÀÌÇÏ¿©¾ß ÇÑ´Ù.
+	 * @param p_name ÀÌ¸§, 2±ÛÀÚ ÀÌ»ó 5±ÛÀÚ ÀÌÇÏ ÇÑ±ÛÀÌ¾î¾ß ÇÑ´Ù.
+	 * @param p_birth »ý³â¿ùÀÏ, ÇöÀç ³¯Â¥º¸´Ù ÀüÀÌ¾î¾ß ÇÑ´Ù.
 	 * @return °á°ú(signUpResult).
 	 * @throws SQLException DB¿À·ù
 	 * °¢°¢ÀÇ °æ¿ì¿¡ µû¸¥ enum ¸®ÅÏ.
@@ -69,16 +74,19 @@ public class AccountDAO extends DAOBase {
 		account.setPwd(p_pwd);
 		account.setAccountName(p_name);
 		account.setBirth(p_birth);
-
-		// °èÁ¤Àº 5±ÛÀÚ ÀÌ»ó 12±ÛÀÚ ÀÌÇÏ, ¿µ¹®¿Í ¼ýÀÚ·Î ÀÌ·ç¾îÁ®¾ß ÇÑ´Ù.
 		
+		// °èÁ¤Àº 5±ÛÀÚ ÀÌ»ó 12±ÛÀÚ ÀÌÇÏ, ¿µ¹®¿Í ¼ýÀÚ·Î ÀÌ·ç¾îÁ®¾ß ÇÑ´Ù.
+		if(!isValidAccountId(account.getAccountID()))
+			return signUpResult.INVALID_ID;
 		// ºñ¹Ð¹øÈ£´Â 5±ÛÀÚ ÀÌ»ó 20±ÛÀÚ ÀÌÇÏ¿©¾ß ÇÑ´Ù.
+		if(!isValidPwd(account.getPwd()))
+			return signUpResult.INVALID_PWD;
 		// ÀÌ¸§Àº 2±ÛÀÚ ÀÌ»ó 5±ÛÀÚ ÀÌÇÏ, ÇÑ±ÛÀÌ¾î¾ß ÇÑ´Ù.
+		if(!isValidAccountName(account.getAccountName()))
+			return signUpResult.INVALID_NAME;
 		// »ýÀÏÀÌ ÇöÀç ³¯Â¥º¸´Ù ÀüÀÌ¾î¾ß ÇÑ´Ù.
-		if(isIncludeNumber(account.getAccountName()) ||
-				(OurTimes.compareDateWithoutYear(account.getBirth(),OurTimes.dateNow()) > 0)) {
-			return signUpResult.INVALID_FORM;
-		}
+		if(!isValidBirth(account.getBirth()))
+			return signUpResult.INVALID_BIRTH;
 		
 		try {
 			String SQL = "INSERT INTO Account (accountID, pwd, accountName, birth) VALUES (?, ?, ?, ?)";
@@ -91,12 +99,13 @@ public class AccountDAO extends DAOBase {
 		    int result = pstmt.executeUpdate(); // -> SQL ½ÇÆÐÇÑ °æ¿ìµµ ³Ö¾î¾ß ÇÏ³ª ?
 		    
 		    if(result != 1)
-		    	throw new SQLException("Affected row is not one.");
+		    	throw new SQLException("Affected row is " + result);
 		    
 		    if(studentIDRequestDAO.addReqSID(account.getBirth(), account.getAccountID())) {
 		    	return signUpResult.SUCCESS;
 		    }
-		    return signUpResult.SUCCESS;
+		    else
+		    	throw new SQLException("studentIDRequestDAO.addReqSID Failed.");
 		}catch(SQLException e) {
 		      throw e;
 		}
@@ -104,20 +113,39 @@ public class AccountDAO extends DAOBase {
 		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
-}
+	}
+	private boolean isValidAccountId(String id)
+	{
+		return id.length() >= 5 && id.length() <= 12 && id.matches("^[A-Za-z0-9]+$");
+
+	}
+	private boolean isValidPwd(String pwd)
+	{
+		return pwd.length() >= 5 && pwd.length() <= 20;
+	}
+	private boolean isValidAccountName(String name)
+	{
+		return name.length() >= 2 && name.length() <= 5 && name.matches("^[°¡-ÆR]+$");
+	}
+	private boolean isValidBirth(LocalDate birth)
+	{
+		return birth.compareTo(OurTimes.dateNow()) < 0;
+	}
 
 	/** 
-	 * ·Î±×ÀÎ - ÇØ´ç ·Î±×ÀÎÁ¤º¸°¡ ÇÐ»ýÀ¸·Î ¹Þ¾Æµé¿©Áö´ÂÁö °ü¸®ÀÚ·Î ¹Þ¾Æµé¿©Áö´ÂÁö¸¦ ¾Ë·ÁÁØ´Ù.
+	 * (2018-12-08 È®ÀÎ)
+	 * ·Î±×ÀÎ - ÇØ´ç ·Î±×ÀÎÁ¤º¸°¡ ÇÐ»ýÀ¸·Î ¹Þ¾Æµé¿©Áö´ÂÁö °ü¸®ÀÚ·Î ¹Þ¾Æµé¿©Áö´ÂÁö¸¦ ¾Ë·ÁÁÖ°í ¼¼¼Ç È°¼ºÈ­¸¦ ÇÑ´Ù.
 	 * @param p_id ¾ÆÀÌµð
 	 * @param p_pwd ºñ¹Ð¹øÈ£
+	 * @param p_session HTTP ¼¼¼Ç µ¥ÀÌÅÍ (¼¼¼Ç È°¼ºÈ­¸¦ À§ÇÔ)
 	 * @return °á°ú(LoginResult)
 	 * @throws SQLException DB ¿À·ù
 	 * °¢°¢ÀÇ °æ¿ì¿¡ µû¸¥ enum ¸®ÅÏ
 	 * + ÇöÀç ¼¼¼ÇÀ» ÇØ´ç °èÁ¤À¸·Î È°¼ºÈ­ Ãß°¡ ÇÊ¿ä
-	 * !DAO ¼öÁ¤ - ¸®ÅÏÀÌ ´Þ¶óÁü
+	 * !DAO ¼öÁ¤ - ¸®ÅÏÀÌ ´Þ¶óÁü, HttpSession p_sessionÃß°¡(¼¼¼ÇÈ°¼ºÈ­¸¦ À§ÇÔ)
 	 * !ClassDiagram ¼öÁ¤ - °ü¸®ÀÚ Å¬·¡½º ÇÊ¿ä¾ø¾îÁü.
 	 */
-	public loginResult login(String p_id, String p_pwd) throws SQLException {
+	public loginResult login(String p_id, String p_pwd, HttpSession p_session) throws SQLException {
 		Account account = new Account();
 		account.setAccountID(p_id);
 		account.setPwd(p_pwd);
@@ -139,7 +167,7 @@ public class AccountDAO extends DAOBase {
 			String rsPWD = rs.getString("pwd");
 			
 			// ºñ¹Ð¹øÈ£°¡ ¸ÂÁö ¾ÊÀ½
-			if(!rsPWD.equals(rsPWD)) {
+			if(!p_pwd.equals(rsPWD)) {
 				return loginResult.INCORRECT_PWD;
 			}
 			
@@ -185,7 +213,7 @@ public class AccountDAO extends DAOBase {
 	 * @param p_newStuYear µî·Ï³âµµ, 
 	 * @param p_newStuOrder µî·Ï¼ø¼­ 
 	 * @param p_dcode ÇÐ°ú¹øÈ£
-	 * @return ÇÐ¹ø -> -1Àº ¾øÀ½
+	 * @return ÇÐ¹ø
 	 * @throws SQLException DB¿À·ù
 	 * + StudentDAO.createNewStudent ÇÔ¼ö ½ÇÇà Ãß°¡
 	 * ! DAO ¼öÁ¤ ÇÊ¿ä */
@@ -194,32 +222,33 @@ public class AccountDAO extends DAOBase {
 		Account account = new Account();
 		
 	// ÁÖ¾îÁø ¾ÆÀÌµðÀÇ °èÁ¤Á¤º¸ °¡Á®¿À±â -> acc -> ÇÐ»ý ÀÌ¸§¸¸ °¡Á®¿À¸é µÇ³ª¿ä ??
-	try {
-		String SQL = "SELECT * FROM Account A WHERE A.accountID = ?";
-		conn = getConnection();
-		pstmt = conn.prepareStatement(SQL);
-		pstmt.setString(1, p_id);
-		ResultSet rs = pstmt.executeQuery();
-		
-		// Á¶È¸°á°ú °èÁ¤Á¤º¸ ¾øÀ½
-		if(!rs.next()) {
-			return -1;	
-		}
-		
-		String rsName = rs.getString("accountName"); // ÇÐ»ý ÀÌ¸§ ¹Þ±â
-		
-		//account.setAccountID(p_id);
-		//account.setPwd(p_pwd);
-		account.setAccountName(rsName);
-		//account.setBirth(p_birth);
-		
-		// ÇÐ¹ø »ý¼º ÇÔ¼ö ½ÇÇà
-		return studentDAO.createNewStudent(p_newStuYear, p_newStuOrder, rsName, p_id, p_dcode);
-	}catch(SQLException e){
-        return -1;
-    }finally{
-    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
-	      if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		try {
+			String SQL = "SELECT * FROM Account A WHERE A.accountID = ?";
+			conn = getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, p_id);
+			ResultSet rs = pstmt.executeQuery();
+			
+			// Á¶È¸°á°ú °èÁ¤Á¤º¸ ¾øÀ½
+			if(!rs.next()) {
+				return -1;	
+			}
+			
+			String rsName = rs.getString("accountName"); // ÇÐ»ý ÀÌ¸§ ¹Þ±â
+			
+			//account.setAccountID(p_id);
+			//account.setPwd(p_pwd);
+			account.setAccountName(rsName);
+			//account.setBirth(p_birth);
+			
+			// ÇÐ¹ø »ý¼º ÇÔ¼ö ½ÇÇà
+			return studentDAO.createNewStudent(p_newStuYear, p_newStuOrder, rsName, p_id, p_dcode);
+		}catch(SQLException e){
+	        throw e;
+	    }finally{
+	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
     	}
 	}
+	
 }

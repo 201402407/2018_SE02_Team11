@@ -20,9 +20,11 @@ public class ScholarshipDAO extends DAOBase {
 	
 	public enum addScholarshipResult {
 		SUCCESS,
-		NULL_IN_DB
+		INVALID_SCNAME,
+		ANOMAL
 	}
-	/** 장학존재여부조회
+	/** 
+	 * 장학존재여부조회
 	 * @param p_scnum 장학번호
 	 * @return 존재여부(boolean)
 	 * @throws SQLException DB오류*/
@@ -48,7 +50,7 @@ public class ScholarshipDAO extends DAOBase {
 	}
 	
 	/** 장학추가
-	 * @param p_scname 장학이름
+	 * @param p_scname 장학이름, 2자 이상 20자 이하여야 한다.
 	 * @return 성공여부결과(addScholarshipResult)
 	 * @throws SQLException DB오류
 	 * ! String 문자열이 인자로 들어오면 좌우 공백처리는 어떻게 ? 
@@ -56,8 +58,11 @@ public class ScholarshipDAO extends DAOBase {
 	public addScholarshipResult addScholarship(String p_scname) throws SQLException{
 		
 		p_scname = p_scname.trim(); // 좌우 공백제거
+		if( !(p_scname.length() >= 2 && p_scname.length() <= 20) )
+			return addScholarshipResult.INVALID_SCNAME;
+		
 		try {
-			String SQL = "INSERT INTO Scholar (scholarshipName) VALUES (?)";
+			String SQL = "INSERT INTO Scholarship (scholarshipName) VALUES (?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, p_scname);
@@ -65,7 +70,7 @@ public class ScholarshipDAO extends DAOBase {
 			
 			// SQL 실패
 			if(result != 1)
-				return addScholarshipResult.NULL_IN_DB;
+				return addScholarshipResult.ANOMAL;
 			
 			return addScholarshipResult.SUCCESS;
 		}catch(SQLException e){

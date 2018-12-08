@@ -24,17 +24,8 @@ public class StudentIDRequestDAO extends DAOBase {
 		super();
 	}
 	
-	public boolean isIncludeNumber(String string) {
-		for(int i = 0 ; i < string.length(); i ++)
-	    {    
-	        // 48 ~ 57은 아스키 코드로 0~9이다.
-	        if(48 <= string.charAt(i) && string.charAt(i) <= 57)
-	            return true;
-	    }
-		return false;
-	}
-	
-	/** 학번요청추가 
+	/** (2018-12-08 확인완료)
+	 * 학번요청추가 
 	 * @param p_date 요청일자
 	 * @param p_accountID 계정아이디
 	 * @return 요청추가성공여부(boolean)
@@ -47,7 +38,8 @@ public class StudentIDRequestDAO extends DAOBase {
 		studentIDRequest.setAccountID(p_accountID);
 
 		try {
-			String SQL = "INSERT INTO StudentIDRequest VALUES (?, ?)";
+			String SQL = "INSERT INTO StudentIDRequest (reqSIDdate, accountID) "
+					+ " VALUES (?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 		    pstmt.setDate(1,OurTimes.LocalDateTosqlDate(studentIDRequest.getReqSIDdate()));
@@ -118,7 +110,9 @@ public class StudentIDRequestDAO extends DAOBase {
 	 * @return 부여허가결과(boolean)
 	 * @throws SQLException DB오류
 	 * + 요청날짜 사용하는 법 수정 필요
-	 * ! DAO 반환값 수정 필요 */
+	 * ! DAO - 반환값 수정 필요 
+	 * ! DAO - 해당 년도의 가장 이른 학번 구하기
+	 * */
 	public boolean permitReqSID(int p_reqnum, int p_dcode) throws SQLException{
 		
 		try {
@@ -139,6 +133,7 @@ public class StudentIDRequestDAO extends DAOBase {
 			String rsAccountID = rs.getString("accountID");
 						
 			// 년도만 뽑아오는 과정
+			/*
 			int reqnum_earliest_from_that_year = OurTimes.dateNow().getYear();
 			
 			// 요청년도가 년도(r.reqSIDdate)에 속하는 요청정보 중 가장 이른 것의 요청번호를 가져온다.
@@ -161,16 +156,27 @@ public class StudentIDRequestDAO extends DAOBase {
 				rsSID = p_reqnum - 1;
 			}
 			int year_reqnum = p_reqnum - rsSID;
+			*/
+			
+			// 학생테이블에서 해당 년도의 가장 늦은 학번을 구해온다. 그리고 부여학번은 그것의 더하기 1이 된다. 
+			int year_now = OurTimes.dateNow().getYear();
+			SQL = "SELECT studentID\r\n" + 
+					"FROM Student\r\n" + 
+					"WHERE FLOOR(studentID/100000) = ?\r\n" + 
+					"ORDER BY studentID DESC\r\n" + 
+					"LIMIT 1;";
+			pstmt.clearParameters(); // 초기화
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, year_now);
+			rs = pstmt.executeQuery(); // ResultSet
+			
+			// 학생 중 
+			
 			// 학번 요청
 			AccountDAO accountDAO = new AccountDAO();
-			if(accountDAO.requestSID(rsAccountID, reqnum_earliest_from_that_year, year_reqnum, p_dcode) == -1) {
+			if(accountDAO.requestSID(rsAccountID, year_now, reqnum_earliest_from_that_year, p_dcode) == -1) {
 				return false; // -1이면 실패
 			}
-			
-			// 삭제
-			if(deleteReqSID(p_reqnum))
-				return true;
-			return false;	
 		}catch(SQLException e) {
 		      throw e;
 		      
@@ -197,12 +203,15 @@ public class StudentIDRequestDAO extends DAOBase {
 		}
 	}
 	
-	/** 학번요청삭제
+	/** 
+	 * 학번요청삭제
 	 * @param p_reqnum 요청번호
 	 * @return 삭제결과(boolean)
 	 * @throw SQLException DB오류
 	 * ! DAO SQL 실패 경우도 추가해야함 */
 	public boolean deleteReqSID(int p_reqnum) throws SQLException{
+		
+		
 		try {
 			String SQL = "DELETE FROM StudentIDRequest" + 
 					" WHERE StudentIDRequest.reqSIDNum = ?";
