@@ -1,43 +1,52 @@
-<%@page import="DAO.ProfessorDAO.AddProfessorResult"%>
-<%@page import="java.sql.SQLException"%>
-<%@page import="DAO.ProfessorDAO"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.List"%>
-<%@ page import="java.util.Stack"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
+<%@page import="java.io.IOException"%>
+<%@page import="Util.*"%>
+<%@page import="ClassObject.*"%>
+<%@page import="DAO.*"%>
+<%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
-<%@ page import="java.sql.Date" %>
+<%@ page import="java.sql.SQLException" %>
 <% request.setCharacterEncoding("euc-kr"); %>
 
-<%
-	String profName = request.getParameter("professorName");
+<%!
+private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
+{	
 	
-	ProfessorDAO professorDAO = new ProfessorDAO();
-	AddProfessorResult result;
+	String profname;
+	final String rp_profname = "profname";
 	
-	
-	// 목록 객체
-	try {
-		result = professorDAO.addProfessor(profName);	
-		
-		// 성공
-		if(result == AddProfessorResult.SUCCESS) {
-			
-		}
-		
-		// 이름에 숫자가 들어간 경우
-		if(result == AddProfessorResult.INVALID_NAME) {
-			
-		}
-		
-		// DB에 null이 들어간 경우
-		if(result == AddProfessorResult.INSERT_NULL) {
-			
-		}
-		
+	// 1. Install Parameters (DAO에 넣을 수 있게)
+	 profname= req.getParameter(rp_profname);
+	if(OurProcResp.reqParamVoidString(profname))
+	{
+		//문자열공백
+		OurProcResp.printResp(out, "교수명이 비었습니다", rp_profname, null);
+		return;
 	}
-	catch(SQLException e) {
+	
+	// 2. do DAO Job
+	try
+	{
+		ProfessorDAO dao = new ProfessorDAO();
+		switch(dao.addProfessor(profname))
+		{
+		case SUCCESS:
+			OurProcResp.printResp(out, null, null, null);
+			return;
+		case INVALID_NAME:
+			OurProcResp.printResp(out, "올바르지 못한 교수명입니다.", rp_profname, null);
+			return;
+		}
+	}
+	catch(Exception e)
+	{
 		e.printStackTrace();
+		OurProcResp.printResp(out, "DB오류가 발생하였습니다.", null, null);
+		return;
 	}
-   
+}
+%>
+
+<%
+request.setCharacterEncoding("euc-kr");
+makeMyResponse(request, out);
 %>

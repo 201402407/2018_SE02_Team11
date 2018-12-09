@@ -17,8 +17,7 @@ public class ProfessorDAO extends DAOBase {
 	
 	public enum AddProfessorResult {
 		SUCCESS,
-		INVALID_NAME,
-		INSERT_NULL
+		INVALID_NAME
 	}
 	/* ÇØ´ç String ¹®ÀÚ¿­ ³»ºÎ¿¡ ¼ýÀÚ°¡ Á¸ÀçÇÏ´ÂÁö Ã¼Å© */
 	public static boolean isIncludeNumber(String string) {
@@ -61,7 +60,7 @@ public class ProfessorDAO extends DAOBase {
 	}
 	
 	/** ±³¼ö Ãß°¡ 
-	 * @param p_name ±³¼öÀÌ¸§
+	 * @param p_name ±³¼öÀÌ¸§, 2±ÛÀÚ ÀÌ»ó 5±ÛÀÚ ÀÌÇÏ ÇÑ±ÛÀÌ¾î¾ß ÇÑ´Ù.
 	 * @return ±³¼öÃß°¡°á°ú(boolean)
 	 * @throws SQLException DB¿À·ù
 	 * ! DAO °æ¿ì¿¡µû¸¥°á°ú Ãß°¡ ÇÊ¿ä
@@ -69,7 +68,7 @@ public class ProfessorDAO extends DAOBase {
 	 * */
 	public AddProfessorResult addProfessor(String p_profname) throws SQLException {
 		// ¼ýÀÚ°¡ Æ÷ÇÔµÇ¾î ÀÖ´ÂÁö ¿©ºÎ
-		if(isIncludeNumber(p_profname)) {
+		if(!isValidProfName(p_profname)) {
 			return AddProfessorResult.INVALID_NAME;
 		}	
 		try {
@@ -81,7 +80,7 @@ public class ProfessorDAO extends DAOBase {
 			
 			// SQL ½ÇÆÐ
 			if(result != 1)
-				return AddProfessorResult.INSERT_NULL;
+				throw new SQLException("Affected Rows: " + result);
 			
 			return AddProfessorResult.SUCCESS;
 			
@@ -91,6 +90,10 @@ public class ProfessorDAO extends DAOBase {
 	    	 if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 	    }
+	}
+	private boolean isValidProfName(String name)
+	{
+		return name.length() >= 2 && name.length() <= 5 && name.matches("^[°¡-ÆR]+$");
 	}
 	
 	/** ±³¼öÁ¸Àç¿©ºÎÁ¶È¸ 
