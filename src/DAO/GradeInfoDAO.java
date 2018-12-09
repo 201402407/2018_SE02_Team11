@@ -78,8 +78,7 @@ public class GradeInfoDAO extends DAOBase {
 		// 10013    ->  2.5, false
 		
 		// 입력물과 반환물의 리스트 길이는 똑같아야 한다.
-		List<GradeInfo> gradeInfoList = new ArrayList<GradeInfo>( p_attnumlist.size() );
-		
+		List<GradeInfo> gradeInfoList = new ArrayList<GradeInfo>( Collections.nCopies(p_attnumlist.size(), null) );
 		try {
 			String sql_beforePlaceHolders = "SELECT * FROM GradeInfo\r\n" + 
 					"WHERE attendanceNum in (%s)";

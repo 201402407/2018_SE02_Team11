@@ -34,11 +34,10 @@ public class LectureEvaluationDAO extends DAOBase {
 					+ " WHERE attendanceNum = ?";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			int i = 0;
 			
 			// 강의평가리스트 조회하기
-			while(i < p_list.size()) {
-				pstmt.setInt(1, p_list.get(i));
+			for(Integer attnumLP : p_list) {
+				pstmt.setInt(1, attnumLP);
 				ResultSet rs = pstmt.executeQuery();
 				
 				// DB에 존재하지 않는 경우
@@ -55,7 +54,6 @@ public class LectureEvaluationDAO extends DAOBase {
 						
 				temp.add(lectureEvaluation);
 				pstmt.clearParameters(); // set 한 인자 초기화
-				i++;
 			}	
 		}catch(SQLException e){
 	        throw e;
