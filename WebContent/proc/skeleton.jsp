@@ -15,23 +15,23 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 	return;
 	*/
 	
-	@@ ##;
-	final String rp_## = "##";
+	;
+	final String rp_ = "";
 	
 	// 1. Install Parameters (DAO에 넣을 수 있게)
-	## = req.getParameter(rp_##);
-	if(OurProcResp.reqParamVoidString(##))
+	 = req.getParameter(rp_);
+	if(OurProcResp.reqParamVoidString())
 	{
 		//문자열공백
-		OurProcResp.printResp(out, " 비었습니다", rp_##, null);
+		OurProcResp.printResp(out, " 비었습니다", rp_, null);
 		return;
 	}
 	
 	try {
-		## =  req.getParameter(rp_##)
+		 =  req.getParameter(rp_)
 	} catch (Exception e) {
 		//형변환실패
-		OurProcResp.printResp(out, " 제대로 입력해주세요.", rp_##, null);
+		OurProcResp.printResp(out, " 제대로 입력해주세요.", rp_, null);
 		return;
 	}
 	

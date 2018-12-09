@@ -1,18 +1,21 @@
 package ClassObject;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+
 public class AttendanceListBySID {
 	private int reqSIDnum;
 	private int lcode;
 	private String subjectName;
 	private boolean isRetake;
 	private int registerTerm;
-	private String dayOfWeek;
-	private String startTime;
-	private String endTime;
+	private DayOfWeek dayOfWeek;
+	private LocalTime startTime;
+	private LocalTime endTime;
 	private double score;
 	
 	public AttendanceListBySID(int reqSIDnum, int lcode, String subjectName, boolean isRetake, int registerTerm,
-	String dayOfWeek, String startTime, String endTime, double score) {
+	DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, double score) {
 		setReqSIDnum(reqSIDnum);
 		setLcode(lcode);
 		setSubjectName(subjectName);
@@ -54,22 +57,22 @@ public class AttendanceListBySID {
 	public void setRegisterTerm(int registerTerm) {
 		this.registerTerm = registerTerm;
 	}
-	public String getDayOfWeek() {
+	public DayOfWeek getDayOfWeek() {
 		return dayOfWeek;
 	}
-	public void setDayOfWeek(String dayOfWeek) {
+	public void setDayOfWeek(DayOfWeek dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;
 	}
-	public String getStartTime() {
+	public LocalTime getStartTime() {
 		return startTime;
 	}
-	public void setStartTime(String startTime) {
+	public void setStartTime(LocalTime startTime) {
 		this.startTime = startTime;
 	}
-	public String getEndTime() {
+	public LocalTime getEndTime() {
 		return endTime;
 	}
-	public void setEndTime(String endTime) {
+	public void setEndTime(LocalTime endTime) {
 		this.endTime = endTime;
 	}
 	public double getScore() {

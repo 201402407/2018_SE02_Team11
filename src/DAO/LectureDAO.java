@@ -29,7 +29,6 @@ public class LectureDAO extends DAOBase {
 		INVALID_ALLNUM, // !DAO에 추가되야 할 것 (addLecture 참고)
 		INVALID_DAY_OF_WEEK,  // !DAO에 추가되야 할 것 (addLecture 참고)
 		INVALID_S_E_TIME,  // !DAO에 추가되야 할 것 (addLecture 참고)
-		NULL_IN_DB  // DB접근은 성공하였으나, 그 삽입 결과가 정상적이지 않은 경우  !DAO에 추가되야 할 것 (addLecture 참고)
 	}
 	
 	// 협업하는 DAO
@@ -377,7 +376,7 @@ public class LectureDAO extends DAOBase {
 			// 이후 결과 처리...
 			
 			if (result != 1)
-				return AddLectureResult.NULL_IN_DB;
+				throw new SQLException("Affected Rows: " + result);
 			else
 				return AddLectureResult.SUCCESS;
 		}
@@ -400,6 +399,6 @@ public class LectureDAO extends DAOBase {
 		return dow == DayOfWeek.MONDAY || dow == DayOfWeek.TUESDAY || dow == DayOfWeek.WEDNESDAY || dow == DayOfWeek.THURSDAY || dow == DayOfWeek.FRIDAY;
 	}
 	private boolean isValidStartEndTime(LocalTime p_starttime, LocalTime p_endtime) {
-		return p_starttime.compareTo(p_endtime) > 0;
+		return p_starttime.compareTo(p_endtime) < 0;
 	}
 }

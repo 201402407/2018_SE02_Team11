@@ -1,26 +1,21 @@
 package DAO;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
-import ClassObject.Attendance;
 import ClassObject.AttendanceListByLCode;
 import ClassObject.AttendanceListBySID;
 import ClassObject.AttendanceTimeList;
 import ClassObject.GradeInfo;
 import ClassObject.GradeInfoOfTerm;
 import ClassObject.LectureDetail;
-import ClassObject.StudentIDRequest;
 import Util.OurTimes;
-
-import java.sql.Date;
 
 public class AttendanceDAO extends DAOBase {
 	
@@ -30,14 +25,14 @@ public class AttendanceDAO extends DAOBase {
 	// 같이 협업하는 DAO 선언.
 	LectureEvaluationDAO lectureEvaluationDAO;
 	LectureDAO lectureDAO;
-	AttendanceDAO attendanceDAO;
 	GradeInfoDAO gradeInfoDAO;
 	
-	 // 회원가입 결과 enum
+	 // 수강 결과 enum
 	public enum attendanceResult {
 		SUCCESS,
-		NOT_ENOUGH_SCORE,
-		COLLISION_TIMETABLE 
+		NOT_ENOUGH_NUM, //여석부족
+		NOT_ENOUGH_SCORE, //잔여신청학점부족
+		COLLISION_TIMETABLE  //시간충돌
 	}
 	
 	// 생성자 생성과 동시에 jbdc 설정.
@@ -45,13 +40,13 @@ public class AttendanceDAO extends DAOBase {
 		super();
 		lectureEvaluationDAO = new LectureEvaluationDAO();
 		lectureDAO = new LectureDAO();
-		attendanceDAO = new AttendanceDAO();
 		gradeInfoDAO = new GradeInfoDAO();
 	}
 	
 	/** 학생의수강목록조회 
 	 * @param p_sid 학번
-	 * @return 학생의수강목록(수강번호, 분반코드, 과목명, 재수강여부, 등록학기, 강의요일, 강의시작시각, 강의종료시작, 학점)
+	 * @return 학생의수강목록(수강번호, 분반코드, 과목명, 재수강여부, 등록학기, 강의요일, 강의시작시각, 강의종료시작, 학점).
+	 * 학기중이 아니면 null
 	 * @throws SQLException DB오류
 	 * + 현재 학기(LegisterTerm) 구하는 법 수정필요
 	 * !DAO 경우에 따른 조건 추가 필요*/
@@ -62,9 +57,9 @@ public class AttendanceDAO extends DAOBase {
 					String SQL = "SELECT A.attendanceNum, A.lectureCode, S.subjectName,"
 							+ " A.isRetake, L.registerTerm, L.dayOfWeek, L.startTime, L.endTime, S.score"
 							+ " FROM Attendance A"
-							+ " WHERE A.studentID = ? AND L.registerTerm = ?"
 							+ " LEFT JOIN Lecture L ON A.lectureCode = L.lectureCode"
-							+ " LEFT JOIN Subject S ON L.subjectCode = S.subjectCode";
+							+ " LEFT JOIN Subject S ON L.subjectCode = S.subjectCode"
+							+ " WHERE A.studentID = ? AND L.registerTerm = ?";
 					conn = getConnection();
 					pstmt = conn.prepareStatement(SQL);
 
@@ -86,9 +81,9 @@ public class AttendanceDAO extends DAOBase {
 						String rsSubjectName = rs.getString("subjectName");
 						boolean isRetake = rs.getBoolean("isRetake");
 						int rsRegisterTerm = rs.getInt("registerTerm");
-						String rsDayOfWeek = rs.getString("dayOfWeek");
-						String rsStartTime = rs.getString("startTime");
-						String rsEndTime = rs.getString("endTime");
+						DayOfWeek rsDayOfWeek = OurTimes.intToDayOfWeek(rs.getInt("dayOfWeek"));
+						LocalTime rsStartTime = OurTimes.sqlTimeToLocalTime(rs.getTime("startTime"));
+						LocalTime rsEndTime = OurTimes.sqlTimeToLocalTime(rs.getTime("endTime"));
 						double rsScore = rs.getDouble("score");
 						
 						AttendanceListBySID attendanceListBySID = new AttendanceListBySID(
@@ -176,25 +171,93 @@ public class AttendanceDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @return 수강신청성공결과(enum)
 	 * @throws SQLException DB오류
-	 * ! 구현 필요*/
+	 * ! DAO 수정*/
 	public attendanceResult addAttendance(int p_lcode, int p_sid) throws SQLException {
-		LectureDetail lectureInfoList = lectureDAO.getLectureInfoByLCode(p_lcode);
-		List<AttendanceListBySID> attendanceList = attendanceDAO.getAttendanceListBySID(p_sid);
+		LectureDetail targetLectureInfo = lectureDAO.getLectureInfoByLCode(p_lcode);
+		List<AttendanceListBySID> attendanceList = getAttendanceListBySID(p_sid);
+		int currentApplyTerm = OurTimes.closestFutureTerm();
 		
+		// - 여석존재 검사하기
+		if(targetLectureInfo.getApplyNum() >= targetLectureInfo.getAllNum())
+			return attendanceResult.NOT_ENOUGH_NUM;
+		
+		// - 잔여학점 검사하기
 		// 지금까지 수강한 목록의 총 학점 구하기
-		int i = 0;
 		double attendanceScore = 0;
-		while(i < attendanceList.size()) {
-			attendanceScore += attendanceList.get(i).getScore();
+		for(AttendanceListBySID att : attendanceList) {
+			attendanceScore += att.getScore();
 		}
 		// 분반의 학점 구하기
-		double lectureScore = lectureInfoList.getScore();
+		double targetLectureScore = targetLectureInfo.getScore();
 		// 일정기준보다 초과하면
-		if(attendanceScore + lectureScore > 18) {
+		if(attendanceScore + targetLectureScore > 18) {
 			return attendanceResult.NOT_ENOUGH_SCORE;
 		}
 		
+		// -시간표 겹침 검사하기
+		for(AttendanceListBySID att : attendanceList)
+		{
+			if( checkTimeCollision(att, targetLectureInfo) )
+				return attendanceResult.COLLISION_TIMETABLE;
+		}
 		
+		// 재수강여부를 검사한다.
+		boolean isRetake = false;
+		try
+		{
+			String sql = "SELECT * FROM Attendance A\r\n" + 
+					"LEFT JOIN Lecture L\r\n" + 
+					"ON A.lectureCode = L.lectureCode\r\n" + 
+					"LEFT JOIN Subject S\r\n" + 
+					"ON L.subjectCode = S.subjectCode\r\n" + 
+					"WHERE A.studentID = ? AND S.SubjectName = ? AND L.registerTerm < ?";
+			conn = getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, p_sid);
+			pstmt.setString(2, targetLectureInfo.getSubjectName());
+			pstmt.setInt(3, currentApplyTerm);
+			ResultSet rs = pstmt.executeQuery();
+			
+			if(rs.next())
+				isRetake = true;
+					
+		} catch(SQLException sqle){
+			throw sqle;
+		}finally {
+		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		}
+		
+		// 모든 조건 충족, 이제 추가를 한다
+		try
+		{
+			String sql = "INSRET INTO Attendance (isRetake, studentID, lectureCode) "
+					+ "VALUES (?, ?, ?)";
+			conn = getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setBoolean(1, isRetake);
+			pstmt.setInt(2, p_sid);
+			pstmt.setInt(3, p_lcode);
+			int result = pstmt.executeUpdate();
+			if(result != 1)
+				throw new SQLException("Affected Row is " + result);
+			
+			return attendanceResult.SUCCESS;
+					
+		} catch(SQLException sqle){
+			throw sqle;
+		}finally {
+		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		}
+		
+	}
+	private boolean checkTimeCollision(AttendanceListBySID att, LectureDetail target)
+	{
+		return
+				(att.getDayOfWeek() == target.getDayOfWeek()) &&
+				(att.getStartTime().compareTo(target.getEndTime()) < 0) &&
+				(att.getEndTime().compareTo(target.getStartTime()) > 0);
 	}
 	
 	/** 강의평가여부 

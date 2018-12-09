@@ -48,11 +48,11 @@ public class SyllabusDAO extends DAOBase {
 	 * @param p_text 내용
 	 * @return 신규 강의계획서 번호
 	 * @throws SQLException DB오류
-	 * ! DAO명세서 수정바람 (성공여부(Boolean)에서 강의계획서번호(int)로 리턴 형식이 바뀌었음.)
+	 * ! DAO명세서 수정바람 (성공여부(Boolean)에서 강의계획서번호(int)로 리턴 형식이 바뀌었음. text->syllabusText)
 	 * */
 	public int addSyllabus(String p_text) throws SQLException {
 		try {
-			String SQL = "INSERT INTO Syllabus (text) VALUES (?)";
+			String SQL = "INSERT INTO Syllabus (syllabusText) VALUES (?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
 			pstmt.setString(1, p_text);

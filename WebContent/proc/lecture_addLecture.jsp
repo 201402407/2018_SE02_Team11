@@ -1,67 +1,148 @@
-<%@page import="ClassObject.LectureDetail"%>
-<%@page import="DAO.LectureDAO"%>
-<%@page import="DAO.LectureDAO.AddLectureResult"%>
-<%@ page import="java.util.Stack"%>
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.time.DayOfWeek"%>
-<%@ page import="java.time.LocalTime"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
+<%@page import="java.time.LocalTime"%>
+<%@page import="java.time.DayOfWeek"%>
+<%@page import="java.io.IOException"%>
+<%@page import="Util.*"%>
+<%@page import="ClassObject.*"%>
+<%@page import="DAO.*"%>
+<%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.SQLException" %>
 <% request.setCharacterEncoding("euc-kr"); %>
 
-<%
-	int scode = Integer.valueOf(request.getParameter("subjectCode"));
-	int pcode = Integer.valueOf(request.getParameter("professorCode"));
-	int dcode = Integer.valueOf(request.getParameter("departmentCode"));
-	int registerterm = Integer.valueOf(request.getParameter("registerTerm"));
-	int allnum = Integer.valueOf(request.getParameter("allNum"));
-	DayOfWeek dayofweek = DayOfWeek.valueOf(request.getParameter("dayOfWeek"));
+<%!
+private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
+{	
 	
-	// 시작시간
-	String startTimeStr = request.getParameter("startTime");
-	int starthour = Integer.valueOf(startTimeStr.substring(0, 2)); // 시간 쪼개기
-	int startminute = Integer.valueOf(startTimeStr.substring(2, 4)); // 시간 쪼개기
-	LocalTime start = LocalTime.of(starthour, startminute);
+	int subjcode;
+	final String rp_subjcode = "subjcode";
+	int profcode;
+	final String rp_profcode = "profcode";
+	int depcode;
+	final String rp_depcode = "depcode";
+	int registerterm;
+	final String rp_registerterm = "registerterm";
+	int allnum;
+	final String rp_allnum = "allnum";
+	DayOfWeek dayofweek;
+	final String rp_dayofweek = "dayofweek";
+	LocalTime starttime;
+	final String rp_starttime = "starttime";
+	LocalTime endtime;
+	final String rp_endtime = "endtime";
+	String syltext;
+	final String rp_syltext = "syltext";
 	
-	// 종료시간
-	String endTimeStr = request.getParameter("endTime");
-	int endhour = Integer.valueOf(startTimeStr.substring(0, 2)); // 시간 쪼개기
-	int endminute = Integer.valueOf(startTimeStr.substring(2, 4)); // 시간 쪼개기
-	LocalTime end = LocalTime.of(endhour, endminute);
-	
-	String syltext = request.getParameter("syllabusText");
-	
-	LectureDAO lectureDAO = new LectureDAO();
-	AddLectureResult result;
-   
+	// 1. Install Parameters (DAO에 넣을 수 있게)
 	try {
-		result = lectureDAO.addLecture(scode, pcode, dcode, registerterm,
-				allnum, dayofweek, start, end, syltext);
-	 
-		switch(result) {
-		case SUCCESS: // 성공
-			break;
-		case NULL_IN_DB: // DB에 데이터가 없을 때
-			break;
-		case INVALID_ALLNUM: // 유효하지 않은 전체인원
-			break;
-		case INVALID_DAY_OF_WEEK: // 유효하지 않은 요일
-			break;
-		case INVALID_S_E_TIME: // 유효하지 않은 시간
-			break;
-		case INVALID_TERM: // 유효하지 않은 기간
-			break;
-		case NOT_FOUND_DEPCODE: // 등록된 학과코드를 찾을 수 없을 때
-			break;
-		case NOT_FOUND_PROFCODE: // 등록된 교수코드를 찾을 수 없을 때
-			break;
-		case NOT_FOUND_SUBJCODE: // 등록된 과목코드를 찾을 수 없을 때
-			break;
+		subjcode = Integer.parseInt( req.getParameter(rp_subjcode) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "과목코드를 제대로 입력해주세요.", rp_subjcode, null);
+		return;
+	}
+	
+	try {
+		profcode = Integer.parseInt( req.getParameter(rp_profcode) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "교수등록번호를 제대로 입력해주세요.", rp_profcode, null);
+		return;
+	}
+	
+	try {
+		depcode = Integer.parseInt( req.getParameter(rp_depcode) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "학과코드를 제대로 입력해주세요.", rp_depcode, null);
+		return;
+	}
+	
+	try {
+		registerterm = OurProcResp.getValidSemester( req.getParameter(rp_registerterm) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "등록학기를 제대로 입력해주세요.", rp_registerterm, null);
+		return;
+	}
+	
+	try {
+		allnum = Integer.parseInt( req.getParameter(rp_allnum) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "전체인원을 제대로 입력해주세요.", rp_allnum, null);
+		return;
+	}
+	
+	try {
+		dayofweek = OurProcResp.getValidDayOfWeek( req.getParameter(rp_dayofweek) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "요일을 제대로 입력해주세요.", rp_dayofweek, null);
+		return;
+	}
+	
+	try {
+		starttime = OurProcResp.getValidLocalTime( req.getParameter(rp_starttime) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "강의시작시각을 제대로 입력해주세요.", rp_starttime, null);
+		return;
+	}
+	
+	try {
+		endtime = OurProcResp.getValidLocalTime( req.getParameter(rp_endtime) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "강의종료시각을 제대로 입력해주세요.", rp_endtime, null);
+		return;
+	}
+	
+	syltext = req.getParameter(rp_syltext);
+	// syltext = 강의계획서는 null이어도, ""이어도 된다.
+	
+	
+	// 2. do DAO Job
+	try
+	{
+		LectureDAO dao = new LectureDAO();
+		switch (dao.addLecture(subjcode, profcode, depcode, registerterm, allnum, dayofweek, starttime, endtime, syltext) )
+		{
+		case SUCCESS:
+			OurProcResp.printResp(out, null, null, null);
+			return;
+		case NOT_FOUND_SUBJCODE:
+			OurProcResp.printResp(out, "없는 과목명입니다.", rp_subjcode, null);
+			return;
+		case NOT_FOUND_DEPCODE:
+			OurProcResp.printResp(out, "없는 학과코드입니다.", rp_depcode, null);
+			return;
+		case NOT_FOUND_PROFCODE:
+			OurProcResp.printResp(out, "없는 교수등록번호입니다.", rp_profcode, null);
+			return;
+		case INVALID_TERM:
+			OurProcResp.printResp(out, "등록학기가 잘돗되었습니다.", rp_registerterm, null);
+			return;
+		case INVALID_ALLNUM:
+			OurProcResp.printResp(out, "전체인원 수가 잘못되었습니다.", rp_allnum, null);
+			return;
+		case INVALID_DAY_OF_WEEK:
+			OurProcResp.printResp(out, "요일이 잘못되었습니다.", rp_dayofweek, null);
+			return;
+		case INVALID_S_E_TIME:
+			OurProcResp.printResp(out, "시각시각과 종료시각을 다시 확인해주세요.", rp_starttime, null);
+			return;
 		}
-   }
-   catch(SQLException e) {
-	   e.printStackTrace();
-   }
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		OurProcResp.printResp(out, "DB오류가 발생하였습니다.", null, null);
+		return;
+	}
+}
+%>
+
+<%
+request.setCharacterEncoding("euc-kr");
+makeMyResponse(request, out);
 %>

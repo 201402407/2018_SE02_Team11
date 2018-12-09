@@ -1,6 +1,9 @@
 package Util;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.servlet.jsp.JspWriter;
 
@@ -44,6 +47,43 @@ public class OurProcResp {
 			return ChangeType.RESUME;
 		else
 			throw new IllegalArgumentException("neither 'takeoff' nor 'resume'");
+	}
+	
+	/**
+	 * 문자열로 받은 요일을 올바르게
+	 * 요일은 월~금으로 제한된다.
+	 */
+	public static DayOfWeek getValidDayOfWeek(String rp_dayofweek) throws Exception
+	{
+		if(rp_dayofweek == null)
+			throw new NullPointerException("dayofweek parameter is null");
+		
+		DayOfWeek dow;
+		dow = DayOfWeek.valueOf(rp_dayofweek);
+		switch(dow)
+		{
+		case FRIDAY:
+		case MONDAY:
+		case THURSDAY:
+		case TUESDAY:
+		case WEDNESDAY:
+			break;
+		default:
+			throw new IllegalArgumentException("Day of week should be MONDAY~FRIDAY");
+		
+		}
+		return dow;
+	}
+	
+	/**
+	 * 문자열로 받은 시각을 올바르게
+	 */
+	public static LocalTime getValidLocalTime(String rp_time) throws Exception
+	{
+		if(rp_time == null)
+			throw new NullPointerException("time parameter is null");
+		
+		return LocalTime.parse(rp_time, DateTimeFormatter.ISO_LOCAL_TIME);
 	}
 	
 	public static String respToJSONString(String error, String attention_field, Object data)
