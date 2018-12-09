@@ -50,15 +50,18 @@
 					  alert(success.error);
 				  }
 				  else {
+					  /* 요일에 맞게 과목명과 시작시간, 종료시간 넣기 */
 					  $.each(success.arrjson, function(index, arrjson) {
 						  	var dayInt = dayOfWeekToInt(arrjson.dayOfWeek); // index로 변환
 						  	// 과목명과 시작시간, 종료시간 넣기.
 						  	day_list[dayInt].push(arrjson.subjectName);
 						  	day_list[dayInt].push(arrjson.startTime);
 						  	day_list[dayInt].push(arrjson.endTime);
-						  
 						});
-					  
+					  // 강의 별 색깔의 차이를 두어 구별
+					  var color = {"red" , "yellow", "green", "blue", "pink", "brown", "orange"};
+					 // 처음 9시부터니까 -9를 한 뒤 :로 스플릿 해서 뒤에 게 30이면 0.5로 치환
+					 // 다음 다 합쳐서 그거 * 2한 값의 id로 가서 해당 요일에 index 색칠
 				  }
 			  }
 			  else {
@@ -97,7 +100,7 @@
    <div id="currentTerm"></div>
    		<table id="timeTable" cellspacing="5" align="center" border="1">
 
-        <tr align="center">
+        <tr align="center" id="1"> 
             <td width="50" bgcolor="#D4DDE2"></td>
             <td width="100" bgcolor="#D4DDE2">월</td>
             <td width="100" bgcolor="#D4DDE2">화</td>
@@ -105,8 +108,7 @@
             <td width="100" bgcolor="#D4DDE2">목</td>
             <td width="100" bgcolor="#D4DDE2">금</td>
         </tr>
- 
-        <tr align="center">
+        <tr align="center" id="2">
             <td bgcolor="#D4DDE2">1</td>
             <td></td>
             <td></td>
@@ -114,7 +116,7 @@
             <td></td>
             <td></td>
         </tr>
- 		<tr align="center">
+ 		<tr align="center" id="3">
             <td bgcolor="#D4DDE2">1.5</td>
             <td></td>
             <td></td>
@@ -122,7 +124,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="4">
             <td bgcolor="#D4DDE2">2</td>
             <td></td>
             <td></td>
@@ -130,7 +132,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="5">
             <td bgcolor="#D4DDE2">2.5</td>
             <td></td>
             <td></td>
@@ -138,7 +140,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="6">
             <td bgcolor="#D4DDE2">3</td>
             <td></td>
             <td></td>
@@ -146,7 +148,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="7">
             <td bgcolor="#D4DDE2">3.5</td>
             <td></td>
             <td></td>
@@ -154,7 +156,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="8">
             <td bgcolor="#D4DDE2">4</td>
             <td></td>
             <td></td>
@@ -162,7 +164,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="9">
             <td bgcolor="#D4DDE2">4.5</td>
             <td></td>
             <td></td>
@@ -170,7 +172,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="10">
             <td bgcolor="#D4DDE2">5</td>
             <td></td>
             <td></td>
@@ -178,7 +180,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="11">
             <td bgcolor="#D4DDE2">5.5</td>
             <td></td>
             <td></td>
@@ -186,7 +188,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="12">
             <td bgcolor="#D4DDE2">6</td>
             <td></td>
             <td></td>
@@ -194,7 +196,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="13">
             <td bgcolor="#D4DDE2">6.5</td>
             <td></td>
             <td></td>
@@ -202,7 +204,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="14">
             <td bgcolor="#D4DDE2">7</td>
             <td></td>
             <td></td>
@@ -210,7 +212,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="15">
             <td bgcolor="#D4DDE2">7.5</td>
             <td></td>
             <td></td>
@@ -218,7 +220,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="16">
             <td bgcolor="#D4DDE2">8</td>
             <td></td>
             <td></td>
@@ -226,7 +228,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="17">
             <td bgcolor="#D4DDE2">8.5</td>
             <td></td>
             <td></td>
@@ -234,7 +236,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="18">
             <td bgcolor="#D4DDE2">9</td>
             <td></td>
             <td></td>
@@ -242,7 +244,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr align="center">
+        <tr align="center" id="19">
             <td bgcolor="#D4DDE2">9.5</td>
             <td></td>
             <td></td>
