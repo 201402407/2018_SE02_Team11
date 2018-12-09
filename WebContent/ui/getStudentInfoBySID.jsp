@@ -11,55 +11,43 @@
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script src="js/login.js?ver=1"></script>
   <script>
+  
 	/* 생성 시 실행 */
 	$(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
-			
-		$.ajaxSetup({
-		    scriptCharset: "utf-8",
-		    contentType: "application/json; charset=utf-8"
-		});
-		appendYear();
-		
-		$(function(){
-			$("#year").change(function() {
-				$("#month").empty();
-				appendMonth();
-			})
-		})
-		
-		$(function(){
-			$("#month").change(function() {
-				$("#day").empty();
-				appendDay(this.value);
-			})
-		})
+		getStudentInfo();
 	});
 	
-	/* 회원가입 버튼 클릭 시 발생 */
-	function signup() {
-		var birth = $("#year option:selected").val() + "-" + $("#month option:selected").val() +
-		"-" + $("#day option:selected").val();
+	/* 페이지 들어올 시 바로 실행 */
+	function getStudentInfo() {
 		$.ajax({
 		
 			  type: 'post',
-			  url: "<%=request.getContextPath() %>/proc/account_signup.jsp",
+			  url: "<%=request.getContextPath() %>/proc/student_getStudentInfoBySID.jsp",
 			  data:  {
-				  "name" : $("#inputName").val(),
-				  "birth" : birth,
-					"id" : $("#inputAccountID").val(),
-					"pwd" : $("#inputPwd").val()
+				  "sid" : <%=session.getAttribute("sID") %>
 				  },
 			  //async: false,
 			  dataType : "json",
 			  success: function(success) {
+				  alert(success);
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
-						  $("#error").empty(); // 비우기
-						  $("#error").append(success.error); // 추가
+						  
 					  }
 					  else {
-						  <!-- location.href = "<%=request.getContextPath() %>/proc/account_login.jsp"; // 로그인 페이지로 이동.-->						 
+						  var name = success.name;
+						  var departmentName = success.departmentName;	
+						  var semester = success.semester;
+						  var isTimeOff = success.isTimeOff;
+						  var isGraduate = success.isGraduate;
+						  
+						  $("#nameArea").append(name);
+						  $("#departnameArea").append(departmentName);
+						  $("#yearArea").append(year);
+						  $("#startSemesterArea").append(semester);
+						  $("#isTakeoffArea").append(isTimeOff);
+						  $("#isGraduateArea").append(isGraduate);
 					  }
 				  }
 				  else {
@@ -67,48 +55,9 @@
 				  }
 			  },
 			  error: function(xhr, request,error) {
-				
-				  
-				  
+
 			  }
 			});
-	}
-	
-	/* 년도 추가 */
-	function appendYear(){
-		var date = new Date();
-		var year = date.getFullYear();
-		var selectValue = document.getElementById("year");
-		var optionIndex = 0;
-		for(var i=year-100;i<=year;i++){
-				selectValue.add(new Option(i+"년",i),optionIndex++);                        
-		}
-	}
-	
-	/* 월 추가 */
-	function appendMonth(){
-		var selectValue = document.getElementById("month"); 
-		var optionIndex = 0;
-		for(var i=1;i<=12;i++){
-				selectValue.add(new Option(i+"월",i),optionIndex++);
-		}
-	}
-	
-	/* 일 추가 */
-	function appendDay(temp){
-		var month = temp;
-		var selectValue = document.getElementById("day");
-		var optionIndex = 0;
-		var day;
-		if(month == 2)
-			day = 28;
-		else if((month == 1) || (month == 3) || (month == 5) || (month == 7) || (month == 8) || (month == 10) || (month == 12))
-			day = 31;
-		else 
-			day = 30;
-		for(var i=1;i<=day;i++){
-				selectValue.add(new Option(i+"일",i),optionIndex++);
-		}
 	}
 	
 </script>
@@ -125,6 +74,18 @@
      asdaf
    </div>
 	<!-- 메인 화면 이미지 공간 -->
-	<!-- <img src="<%=request.getContextPath() %>/image/mainImage.png" id="mainImageSrc"> -->
+	 <img src="<%=request.getContextPath() %>/image/mainImage.png" id="mainImageSrc"> 
+	 <div id="studentInfoArea">
+	 	<div id="firstline">
+	 			학년<div id="yearArea" class="area"></div>
+	 			이름<div id="nameArea" class="area"></div>
+	 			휴복학여부<div id="isTakeoffArea" class="area"></div>
+	 	</div>
+	 	<div id="secondline">
+	 			학과명<div id="departnameArea" class="area"></div>
+	 			이수학기<div id="startSemesterArea" class="area"></div>
+	 			졸업여부<div id="isGraduateArea" class="area"></div>
+	 	</div>
+	 </div>
 </body>
 </html>
