@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/signup.css" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/getStudentInfoBySID.css?ver=1" rel="stylesheet" type="text/css">
   <link rel="stylesheet" type="text/css" href="loginpage.css?ver=1">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
@@ -116,14 +116,15 @@
 <body>
  <!-- 홈페이지의 메뉴 바 -->
    <div id="header">
-        <span id="NowLogin"><%=session.getAttribute("sessionID") %></span>
-        <button type="button" class="logout_button" id="logoutButton">로그아웃</button>
+   <button type="button" class="logout_button" id="logoutButton">로그아웃</button>
+        <span id="nowLoginSID"><%=session.getAttribute("sID") %></span>
+        
  </div>
  <!-- 좌측 메뉴 공간 -->
    <div id="studentMenu">
-     
+     asdaf
    </div>
 	<!-- 메인 화면 이미지 공간 -->
-	<img src="<%=request.getContextPath() %>/image/mainImage.png" id="mainImageSrc">
+	<!-- <img src="<%=request.getContextPath() %>/image/mainImage.png" id="mainImageSrc"> -->
 </body>
 </html>
