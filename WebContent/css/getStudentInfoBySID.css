@@ -1,0 +1,19 @@
+body {
+	min-width: 800px;
+	max-width: 800px;
+	min-height: 400px;
+	max-height: 400px;
+}
+
+#header {
+	height: 30px;
+	color: #707070;
+	display: block;
+}
+
+#studentMenu {
+	width: 18%;
+	float: left;
+	height: 100%;
+	color: #00649Fl
+}

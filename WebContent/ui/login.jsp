@@ -15,10 +15,6 @@
 	$(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 			
-		$.ajaxSetup({
-		    scriptCharset: "utf-8",
-		    contentType: "application/json; charset=utf-8"
-		});
 	});
 
 	/* 가입 버튼 클릭 시 */

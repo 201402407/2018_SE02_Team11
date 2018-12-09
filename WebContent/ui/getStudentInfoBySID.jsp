@@ -15,6 +15,10 @@
 	$(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 			
+		$.ajaxSetup({
+		    scriptCharset: "utf-8",
+		    contentType: "application/json; charset=utf-8"
+		});
 		appendYear();
 		
 		$(function(){
@@ -110,37 +114,16 @@
 </script>
 </head>
 <body>
+ <!-- 홈페이지의 메뉴 바 -->
+   <div id="header">
+        <span id="NowLogin"><%=session.getAttribute("sessionID") %></span>
+        <button type="button" class="logout_button" id="logoutButton">로그아웃</button>
+ </div>
+ <!-- 좌측 메뉴 공간 -->
+   <div id="studentMenu">
+     
+   </div>
 	<!-- 메인 화면 이미지 공간 -->
 	<img src="<%=request.getContextPath() %>/image/mainImage.png" id="mainImageSrc">
-	<!-- 로그인 공간 -->
-   <div id="LoginMenu">
-     <!-- ID를 입력받으면 서버로 전송 -->
-     <form class="Login" action="login.jsp" method="post">
-       <div id="LoginID_css" class="sign_area">
-   	이름  <input type="text" name="SignupName" id="inputName"> <br />
-        생년월일 
-	<input type="hidden" name="memBirth"> 
-	<select id="year" class="select">
-	 <option>----년</option>
-	</select>
-	<select id="month" class="select">
-	<option>--월</option>
-	</select>
-	<select id="day" class="select">
-	<option>--일</option>
-	</select>
-	<br />
-         아이디  <input type="text" name="signupID" id="inputAccountID"> <br />
-         비밀번호  <input type="password" name="signupPwd" id="inputPwd">
-       </div>
-       <div id="error">
-       <%
-            // 아이디, 비밀번호가 틀릴경우 화면에 메시지 표시
-        %>
-      	</div>
-     <!-- 회원가입 버튼 -->
-     </form>
-     <button type="button" class="button" id="signupButton" onclick="signup()">회원가입</button>
-   </div>
 </body>
 </html>
