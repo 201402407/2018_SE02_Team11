@@ -30,7 +30,10 @@ public class ChangeRecordDAO extends DAOBase {
 	
 	public enum RequestTimeOnOffsResult {
 		SUCCESS,
-		CURRENTLY_UNAVAILABLE
+		CURRENTLY_UNAVAILABLE,
+		TAKEOFF_ON_TIMEOFF,
+		RESUME_ON_TIMEON,
+		INVALID_SEMESTER,
 	}
 	
 	/** 
@@ -128,6 +131,21 @@ public class ChangeRecordDAO extends DAOBase {
 			if(OurTimes.isNowOnTerm())
 				return RequestTimeOnOffsResult.CURRENTLY_UNAVAILABLE;
 			
+			// 휴학중일때 복학신청, 재학중일때 휴학신청이어야 한다.
+			boolean isTimeoff = studentDAO.getTimeOffBySID(p_sid);
+			if( isTimeoff == true)
+				if(p_change == ChangeType.TAKEOFF)
+					return RequestTimeOnOffsResult.TAKEOFF_ON_TIMEOFF;
+			if( isTimeoff == false )
+				if(p_change == ChangeType.RESUME)
+					return RequestTimeOnOffsResult.RESUME_ON_TIMEON;
+			
+			// 올바르지 않은 학기
+			if( p_end <= p_start)
+				return RequestTimeOnOffsResult.INVALID_SEMESTER;
+			if (p_start < OurTimes.closestFutureTerm())
+				return RequestTimeOnOffsResult.INVALID_SEMESTER;
+				
 			timeoffRequestDAO = new TimeoffRequestDAO();
 			if(timeoffRequestDAO.addTimeOnOff(OurTimes.dateNow(), p_change, p_start, p_end, p_reason, p_sid))
 				return RequestTimeOnOffsResult.SUCCESS;

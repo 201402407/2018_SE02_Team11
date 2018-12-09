@@ -10,6 +10,11 @@
 <%!
 private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
 {	
+	/*
+	OurProcResp.printResp(out, null, null, null);
+	return;
+	*/
+	
 	@@ ##;
 	final String rp_## = "##";
 	
