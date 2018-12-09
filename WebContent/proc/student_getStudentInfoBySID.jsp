@@ -42,6 +42,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 		resultJson.put("semester", elem.getSemester());
 		resultJson.put("isTimeOff", elem.isTimeOff());
 		resultJson.put("isGraduate", elem.isGraduate());
+		resultJson.put("year", elem.getYear());
 		
 		OurProcResp.printResp(out, null, null, resultJson);
 		return;
