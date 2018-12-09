@@ -80,8 +80,10 @@ public class ScholarshipAwardDAO extends DAOBase {
 	 * @throws SQLException DB오류
 	 * ! DAO 알고리즘 오류(SA.schoalrshipName) 수정 필요
 	 * ! Date 타입인지 LocalDate 타입인지 명확히 해야 할 필요
-	 * ! DAO 조회결과 X 조건 추가 필요*/
-	public List<AwardInfoBySID> getAwardInfoBySID(String p_awardname, int p_money, int p_sid) throws SQLException{
+	 * ! DAO 조회결과 X 조건 추가 필요
+	 * ! DAO 매개변수는 오직 p_sid뿐
+	 * */
+	public List<AwardInfoBySID> getAwardInfoBySID(int p_sid) throws SQLException{
 		List<AwardInfoBySID> scholarshipAwards = new ArrayList<>();
 		
 		try {
