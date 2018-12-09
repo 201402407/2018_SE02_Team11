@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/signup.css" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/signup.css?ver=1" rel="stylesheet" type="text/css">
   <link rel="stylesheet" type="text/css" href="loginpage.css?ver=1">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
