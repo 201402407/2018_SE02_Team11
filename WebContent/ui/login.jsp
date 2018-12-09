@@ -13,8 +13,7 @@
   <script>
 	/* 생성 시 실행 */
 	$(document).ready(function(){
-	    jQuery.ajaxSettings.traditional = true;
-			
+	    jQuery.ajaxSettings.traditional = true;	
 	});
 
 	/* 가입 버튼 클릭 시 */

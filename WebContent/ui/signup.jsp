@@ -16,7 +16,6 @@
 	    jQuery.ajaxSettings.traditional = true;
 			
 		appendYear();
-		
 		$(function(){
 			$("#year").change(function() {
 				$("#month").empty();
