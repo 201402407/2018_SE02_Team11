@@ -27,7 +27,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out, HttpSession s
 	if(OurProcResp.reqParamVoidString(id))
 	{
 		//문자열공백
-		OurProcResp.printResp(out, "아이디가 비었습니다", rp_id, null);
+		OurProcResp.printResp(out, "아이디가 비었습니다" + id, rp_id, null);
 		return;
 	}
 	pwd = req.getParameter(rp_pwd);

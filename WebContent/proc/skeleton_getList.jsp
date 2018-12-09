@@ -1,3 +1,6 @@
+<%@page import="java.util.List"%>
+<%@page import="org.json.simple.JSONArray"%>
+<%@page import="org.json.simple.JSONObject"%>
 <%@page import="java.io.IOException"%>
 <%@page import="Util.*"%>
 <%@page import="ClassObject.*"%>
@@ -48,9 +51,9 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 		OurProcResp.printResp(out, null, null, list);
 		return;
 	}
-	catch(SQLException sqle)
+	catch(Exception e)
 	{
-		sqle.printStackTrace();
+		e.printStackTrace();
 		OurProcResp.printResp(out, "DB오류가 발생하였습니다.", null, null);
 		return;
 	}

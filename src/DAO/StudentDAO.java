@@ -91,7 +91,8 @@ public class StudentDAO extends DAOBase {
 					+ " WHERE Student.studentID = ?";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, ChangeType.gotTinyInt(p_changetype));
+			boolean isTimeoff = (p_changetype == ChangeType.TAKEOFF) ? true : false;
+			pstmt.setBoolean(1, isTimeoff);
 			pstmt.setInt(2, p_sid);
 			int result = pstmt.executeUpdate(); // 변경된 row수 만큼 리턴
 			if(result == 1) // 1줄만 변경하므로 성공

@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ClassObject.ChangeType;
-import ClassObject.Subject;
 import ClassObject.TimeoffRequest;
-import DAO.ProfessorDAO.AddProfessorResult;
 import Util.OurTimes;
 
 public class TimeoffRequestDAO extends DAOBase {
@@ -24,7 +22,7 @@ public class TimeoffRequestDAO extends DAOBase {
 	
 	public TimeoffRequestDAO() {
 		super();
-		changeRecordDAO = new ChangeRecordDAO();
+		changeRecordDAO = null;
 	}
 	
 	/** 
@@ -75,11 +73,12 @@ public class TimeoffRequestDAO extends DAOBase {
 	 * */
 	public boolean permitTimeoffRequest(int p_reqnum) throws SQLException {
 		try {
-			String SQL = "SELECT reqDate, changeType, startSemester, endSemester, studentID" + 
+			String SQL = "SELECT reqDate, changeType, startSemester, endSemester, studentID, reason" + 
 					" FROM TimeoffRequest"
 					+ " WHERE reqNum = ?";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, p_reqnum);
 			ResultSet rs = pstmt.executeQuery();
 			TimeoffRequest temp = new TimeoffRequest();
 			
@@ -90,10 +89,14 @@ public class TimeoffRequestDAO extends DAOBase {
 				temp.setStartSemester(rs.getInt("startSemester"));
 				temp.setEndSemester(rs.getInt("endSemester"));
 				temp.setStudentID(rs.getInt("studentID"));
+				temp.setReason(rs.getString("reason"));
+			} else {
+				//해당 요청번호를 찾지 못한다.
+				return false;
 			}
-			
+			changeRecordDAO = new ChangeRecordDAO();
 			if(changeRecordDAO.addChangeRecord(temp.getReqDate(), temp.getChangeType(),
-					temp.getStartSemester(), temp.getEndSemester(), temp.getStudentID())) {
+					temp.getStartSemester(), temp.getEndSemester(), temp.getStudentID(), temp.getReason())) {
 				if(deleteTimeoffReq(p_reqnum))
 					return true;
 			}

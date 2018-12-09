@@ -25,13 +25,15 @@ public class ChangeRecordDAO extends DAOBase {
 		super();
 		
 		studentDAO = new StudentDAO();
-		timeoffRequestDAO = new TimeoffRequestDAO();
+		timeoffRequestDAO = null;
 	}
 	
 	public enum RequestTimeOnOffsResult {
 		SUCCESS,
-		NULL_IN_DB,
-		CURRENTLY_UNAVAILABLE
+		CURRENTLY_UNAVAILABLE,
+		TAKEOFF_ON_TIMEOFF,
+		RESUME_ON_TIMEON,
+		INVALID_SEMESTER,
 	}
 	
 	/** 
@@ -83,19 +85,22 @@ public class ChangeRecordDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @return 성공여부결과(boolean)
 	 * @throws SQLException
+	 * ! p_reason도 추가됨
 	 * */
-	public boolean addChangeRecord(LocalDate p_date, ChangeType p_change, int p_start, int p_end, int p_sid) 
+	public boolean addChangeRecord(LocalDate p_date, ChangeType p_change, int p_start, int p_end, int p_sid, String p_reason) 
 	throws SQLException {
 		try {
-			String SQL = "INSERT INTO ChangeRecord (changeDate, changeType, startSemester, endSemester, studentID)"
-					+ " VALUES (?, ?, ?, ?, ?)";
+			String SQL = "INSERT INTO ChangeRecord (changeDate, changeType, startSemester, endSemester, studentID, reason)"
+					+ " VALUES (?, ?, ?, ?, ?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 		    pstmt.setDate(1,OurTimes.LocalDateTosqlDate(p_date));
-		    pstmt.setInt(2, ChangeType.gotTinyInt(p_change));
+		    boolean isTimeoff = (p_change == ChangeType.TAKEOFF) ? true : false;
+		    pstmt.setBoolean(2, isTimeoff);
 		    pstmt.setInt(3, p_start);
 		    pstmt.setInt(4, p_end);
 		    pstmt.setInt(5, p_sid);
+		    pstmt.setString(6, p_reason);
 		    
 		    int result = pstmt.executeUpdate();
 		    if(result == 1) {
@@ -129,10 +134,26 @@ public class ChangeRecordDAO extends DAOBase {
 			if(OurTimes.isNowOnTerm())
 				return RequestTimeOnOffsResult.CURRENTLY_UNAVAILABLE;
 			
+			// 휴학중일때 복학신청, 재학중일때 휴학신청이어야 한다.
+			boolean isTimeoff = studentDAO.getTimeOffBySID(p_sid);
+			if( isTimeoff == true)
+				if(p_change == ChangeType.TAKEOFF)
+					return RequestTimeOnOffsResult.TAKEOFF_ON_TIMEOFF;
+			if( isTimeoff == false )
+				if(p_change == ChangeType.RESUME)
+					return RequestTimeOnOffsResult.RESUME_ON_TIMEON;
+			
+			// 올바르지 않은 학기
+			if( p_end <= p_start)
+				return RequestTimeOnOffsResult.INVALID_SEMESTER;
+			if (p_start < OurTimes.closestFutureTerm())
+				return RequestTimeOnOffsResult.INVALID_SEMESTER;
+				
+			timeoffRequestDAO = new TimeoffRequestDAO();
 			if(timeoffRequestDAO.addTimeOnOff(OurTimes.dateNow(), p_change, p_start, p_end, p_reason, p_sid))
 				return RequestTimeOnOffsResult.SUCCESS;
 			else 
-				return RequestTimeOnOffsResult.NULL_IN_DB;
+				throw new SQLException("timeoffRequestDAO.addTimeOnOff has Failed.");
 		}
 		catch(SQLException e) {
 			throw e;
