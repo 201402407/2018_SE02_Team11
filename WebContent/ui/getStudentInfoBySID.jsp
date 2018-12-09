@@ -71,7 +71,17 @@
  </div>
  <!-- 좌측 메뉴 공간 -->
    <div id="studentMenu">
-     asdaf
+     <ul>
+        <li id="first">학적상태 조회</li>
+        <li>휴복학 요청</li>
+        <li>당학기 운영과목 조회</li>
+        <li>신청 시간표 조회</li>
+        <li>수강신청 가능 리스트 조회</li>
+        <li>강의평가</li>
+        <li>성적 조회</li>
+        <li>학생 장학내역 조회</li>
+        <li>전체 장학 목록</li>
+	</ul>
    </div>
 	<!-- 메인 화면 이미지 공간 -->
 	 <img src="<%=request.getContextPath() %>/image/mainImage.png" id="mainImageSrc"> 

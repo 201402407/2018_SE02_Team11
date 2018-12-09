@@ -61,57 +61,28 @@ li {
 	margin-top: 50px;
 }
 
-#mainImageSrc {
-	width: 450px;
-	height: auto;
-	float: left;
-	margin-left: 25%;
+#subjectTable {
+	width: 500px;
+	height: 100px auto;
+	margin: 10%;
+	margin-left: 10%;
+
 }
 
-#studentInfoArea {
-	border-radius: 8px;
-	display: block;
-	width: 64%;
-	height: 25%;
-	margin-left: 9.5%;
-	margin-top: 4%;
-	background-color: #F1F1F1;
-	display: inline-block;
-	color: "#707070";
+#timeTable {
+	 width:75%;
+	 height: 600px;
+	 border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+	 color: #707070;
+	 margin-top: 8%;
 }
-
-#firstline {
-	width: 100%;
-	display: block;
-	color: #707070;
-	font-size: 15px;
-	margin-left: 4%;
-	margin-top: 20px;
-}
-
-#secondline {
-	width: 100%;
-	display: block;
-	color: #707070;
-	font-size: 15px;
-	margin-left: 4%;
-	margin-top: 20px;
-}
-
-.area {
-	width: 21%;
-	height: 25px;
-	background-color: white;
-	display: inline-block;
-	font-size: 12px;
-	padding: 2px;
-}
-
-#yearArea {
-	margin-left: 20px;	
-	margin-top:10px;
-	}
-#nameArea {
-	margin-left: 20px;	
-	}	
-	
+th, td {
+    border: 1px solid #ADADAD;
+    width: 50px;
+  }
+  
+  #tableArea{
+  height: 100%;
+  overflow: auto;
+  }

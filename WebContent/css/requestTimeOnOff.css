@@ -12,7 +12,7 @@ body {
 
 #header {
 	height: 30px;
-	background-color: #707070;
+	background-color: #F1F1F1;
 	display: block;
 	width: 100%;
 }
@@ -36,13 +36,29 @@ body {
 }
 
 #studentMenu {
-	width: 200px;
+	width: 240px;
 	height: 100%;
 	float: left;
 	display: inline-block;
 	background-color: #F1F8FC;
 	color: #00649F;
 	 
+}
+ul {
+	background-color: #F1F8FC;
+	color: #00649F;
+	height: 100%;
+}
+li {
+	height: 44px;
+	padding: 2px;
+	font-size: 14px;
+	line-height: 44px;
+	vertical-align: middle;
+    text-align: left;
+}
+#first {
+	margin-top: 50px;
 }
 
 #requestButton {
