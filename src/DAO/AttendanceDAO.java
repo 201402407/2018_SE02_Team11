@@ -470,4 +470,19 @@ public class AttendanceDAO extends DAOBase {
 		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
 		}
 	}
+	
+	/**
+	 * 강의평가
+	 * @param p_attnum 수강번호
+	 * @param p_evaltext 강의평가 텍스트, 1자 이상 255자 이하여야 한다.
+	 * @throws SQLException DB오류
+	 * @return 성공시 true, p_evaltext의 선조건 실패 혹은 추가실패시 fail
+	 * ! DAO명세서에 없는 물건이므로 추가요망
+	 */
+	public boolean doLectureEvaluation(int p_attnum, String p_evaltext) throws SQLException
+	{
+		if(p_evaltext.length() < 1 || p_evaltext.length() > 255)
+			return false;
+		return lectureEvaluationDAO.writeLectureEvaluation(p_attnum, p_evaltext);
+	}
 }

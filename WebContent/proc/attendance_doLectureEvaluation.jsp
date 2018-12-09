@@ -12,7 +12,8 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 {	
 	int attNum;
 	final String rp_attNum = "attNum";
-	
+	String evaltext;
+	final String rp_evaltext = "evaltext";
 	
 	// 1. Install Parameters (DAO에 넣을 수 있게)
 	try {
@@ -22,15 +23,29 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 		OurProcResp.printResp(out, "수강번호를 제대로 입력해주세요.", rp_attNum, null);
 		return;
 	}
-	
+	evaltext = req.getParameter(rp_evaltext);
+	if(OurProcResp.reqParamVoidString(evaltext))
+	{
+		//문자열공백
+		OurProcResp.printResp(out, "강의평가 텍스트가 비었습니다", rp_evaltext, null);
+		return;
+	}
 	
 	// 2. do DAO Job
 	try
 	{
 		AttendanceDAO dao = new AttendanceDAO();
-		boolean eval = dao.getLectureEvaluationByCode(attNum);
-		OurProcResp.printResp(out, null, null, eval);
-		return;
+		if( dao.doLectureEvaluation(attNum, evaltext) )
+		{
+			OurProcResp.printResp(out, null, null, null);
+			return;
+		}
+		else
+		{
+			OurProcResp.printResp(out, "작성에 실패했습니다. 정해진 길이 내로 제출했는지 확인해 주세요.", null, null);
+			return;
+		}
+		
 	}
 	catch(Exception e)
 	{
