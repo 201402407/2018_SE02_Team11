@@ -32,8 +32,7 @@ public class ScholarshipAwardDAO extends DAOBase {
 	public enum AwardToStudentResult {
 		SUCCESS,
 		NOT_FOUND_SCHOLAR,
-		NOT_FOUND_STUDENT,
-		NULL_IN_DB
+		NOT_FOUND_STUDENT
 	}
 	/** 장학수여
 	 * @param p_scnum 장학번호
@@ -62,7 +61,7 @@ public class ScholarshipAwardDAO extends DAOBase {
 			
 			// SQL 실패
 			if(result != 1)
-				return AwardToStudentResult.NULL_IN_DB;
+				throw new SQLException("Affected rows: " + result);
 			
 			return AwardToStudentResult.SUCCESS;
 		}catch(SQLException e){
