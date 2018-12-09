@@ -41,9 +41,9 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 		DAO dao = new DAO();
 		
 	}
-	catch(SQLException sqle)
+	catch(Exception e)
 	{
-		sqle.printStackTrace();
+		e.printStackTrace();
 		OurProcResp.printResp(out, "DB오류가 발생하였습니다.", null, null);
 		return;
 	}

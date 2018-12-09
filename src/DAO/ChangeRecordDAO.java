@@ -85,19 +85,22 @@ public class ChangeRecordDAO extends DAOBase {
 	 * @param p_sid 학번
 	 * @return 성공여부결과(boolean)
 	 * @throws SQLException
+	 * ! p_reason도 추가됨
 	 * */
-	public boolean addChangeRecord(LocalDate p_date, ChangeType p_change, int p_start, int p_end, int p_sid) 
+	public boolean addChangeRecord(LocalDate p_date, ChangeType p_change, int p_start, int p_end, int p_sid, String p_reason) 
 	throws SQLException {
 		try {
-			String SQL = "INSERT INTO ChangeRecord (changeDate, changeType, startSemester, endSemester, studentID)"
-					+ " VALUES (?, ?, ?, ?, ?)";
+			String SQL = "INSERT INTO ChangeRecord (changeDate, changeType, startSemester, endSemester, studentID, reason)"
+					+ " VALUES (?, ?, ?, ?, ?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
 		    pstmt.setDate(1,OurTimes.LocalDateTosqlDate(p_date));
-		    pstmt.setInt(2, ChangeType.gotTinyInt(p_change));
+		    boolean isTimeoff = (p_change == ChangeType.TAKEOFF) ? true : false;
+		    pstmt.setBoolean(2, isTimeoff);
 		    pstmt.setInt(3, p_start);
 		    pstmt.setInt(4, p_end);
 		    pstmt.setInt(5, p_sid);
+		    pstmt.setString(6, p_reason);
 		    
 		    int result = pstmt.executeUpdate();
 		    if(result == 1) {
