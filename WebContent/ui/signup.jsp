@@ -58,7 +58,7 @@
 						  $("#error").append(success.error); // 추가
 					  }
 					  else {
-						  location.href = "<%=request.getContextPath() %>/ui/getStudentInfoBySID.jsp"; // 로그인 페이지로 이동.						 
+						  window.location.href = "getStudentInfoBySID.jsp"; // 로그인 페이지로 이동.						 
 					  }
 				  }
 				  else {
