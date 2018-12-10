@@ -56,9 +56,17 @@
 						  	// 과목명과 시작시간, 종료시간 넣기.
 						  	var starttimesplit[3] = arrjson.startTime.split(":");
 						  	var endtimesplit[3] = arrjson.startTime.split(":");
+						  	var starttime = starttimesplit[0] - 8;
+						  	var endtime = endtimesplit[0] - 8;
+						  	if(starttimesplit[1] == "30") {
+						  		starttime += 0.5;
+						  	}
+						  	if(endtimesplit[1] == "30") {
+						  		endtime += 0.5;
+						  	}
 						  	day_list[dayInt].push(arrjson.subjectName);
-						  	day_list[dayInt].push(arrjson.startTime);
-						  	day_list[dayInt].push(arrjson.endTime);
+						  	day_list[dayInt].push(starttime);
+						  	day_list[dayInt].push(endtime);
 						});
 					  // 강의 별 색깔의 차이를 두어 구별
 					  var color = ["red" , "yellow", "green", "blue", "pink", "brown", "orange"];

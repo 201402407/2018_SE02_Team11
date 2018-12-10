@@ -38,7 +38,6 @@
 	function signup() {
 		var birth = $("#year option:selected").val() + "-" + pad($("#month option:selected").val(), 2) +
 		"-" + pad($("#day option:selected").val(), 2);
-		alert(birth);
 		$.ajax({
 		
 			  type: 'post',
@@ -59,7 +58,7 @@
 						  $("#error").append(success.error); // 추가
 					  }
 					  else {
-						  <!-- location.href = "<%=request.getContextPath() %>/proc/account_login.jsp"; // 로그인 페이지로 이동.-->						 
+						  location.href = "<%=request.getContextPath() %>/ui/getStudentInfoBySID.jsp"; // 로그인 페이지로 이동.						 
 					  }
 				  }
 				  else {
