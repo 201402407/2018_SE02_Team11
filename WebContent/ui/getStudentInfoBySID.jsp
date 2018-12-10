@@ -71,18 +71,16 @@
 							departmentName = result.departmentName;
 							semester = result.semester;
 							isTimeOff = result.isTimeOff;
-							if(result.isTimeOff == "false")
-								alert(isTimeOff);
-								isTimeOff = "ÀçÇÐ";
-							if(result.isTimeOff == "true")
-								isTimeOff = "ÈÞÇÐ";
-							if(result.isGraduate == "false")
-								alert(isGraduate);
-								isGraduate = "No"
-							if(result.isGraduate == "true")
-								isGraduate = "Yes"	
+							
+							/* Ä¡È¯ */
+							if(!result.isTimeOff) 		isTimeOff = "ÀçÇÐ";
+							else						isTimeOff = "ÈÞÇÐ";
+							if(!result.isGraduate) 		isGraduate = "No";
+							else						isGraduate = "Yes";
+							
 							year = result.year;
 						  
+							
 						  /* ÇØ´çÇÏ´Â ºóÄ­¿¡ ³Ö±â */
 						  $("#nameArea").append(name);
 						  $("#departnameArea").append(departmentName);
