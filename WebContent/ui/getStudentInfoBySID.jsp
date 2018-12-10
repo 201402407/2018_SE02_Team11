@@ -6,10 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
   <link href="<%=request.getContextPath() %>/css/getStudentInfoBySID.css?ver=1" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" type="text/css" href="loginpage.css?ver=1">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
-  <script src="js/login.js?ver=1"></script>
   <script>
   
 	/* 생성 시 실행 */
@@ -20,7 +18,30 @@
 		$("#menu").children().eq(0).css("background-color", "#00649F");
 	    $("#menu").children().eq(0).css("color", "white");
 	});
-	
+	  
+	  function logout() {
+			$.ajax({
+				
+				  type: 'post',
+				  url: "<%=request.getContextPath() %>/proc/account_logout.jsp",
+				  data:  {
+					  },
+				  //async: false,
+				  dataType : "json",
+				  success: function(success) {
+					  
+					  if(success) { // 전송 완료 시.
+						  location.href = "login.jsp";
+					  }
+					  else {
+						  alert("잠시 후에 시도해주세요.");
+					  }
+				  },
+				  error: function(xhr, request,error) {
+
+				  }
+				});
+		}
 	/* 페이지 들어올 시 바로 실행 */
 	function getStudentInfo() {
 		$.ajax({
@@ -28,23 +49,41 @@
 			  type: 'post',
 			  url: "<%=request.getContextPath() %>/proc/student_getStudentInfoBySID.jsp",
 			  data:  {
-				  "sid" : <%=session.getAttribute("sID") %>
+				  "sid" : <%=session.getAttribute("sid") %>
 				  },
 			  //async: false,
 			  dataType : "json",
 			  success: function(success) {
-				  alert(success);
+				  
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
-						  
+						  alert(success.error);
 					  }
 					  else {
-						  var name = success.name;
-						  var departmentName = success.departmentName;	
-						  var semester = success.semester;
-						  var isTimeOff = success.isTimeOff;
-						  var isGraduate = success.isGraduate;
+						  /* JSON -> Object 파싱 */
+						  //var list = JSON.stringify(success);
+						 var result = success.data;
+						  //var listLen = list.length;
+						  var name, departmentName, semester, isTimeOff, isGraduate, year;
 						  
+						  /* 데이터 가져오기 */
+							name = result.name;
+							departmentName = result.departmentName;
+							semester = result.semester;
+							isTimeOff = result.isTimeOff;
+							if(result.isTimeOff == "false")
+								alert(isTimeOff);
+								isTimeOff = "재학";
+							if(result.isTimeOff == "true")
+								isTimeOff = "휴학";
+							if(result.isGraduate == "false")
+								alert(isGraduate);
+								isGraduate = "No"
+							if(result.isGraduate == "true")
+								isGraduate = "Yes"	
+							year = result.year;
+						  
+						  /* 해당하는 빈칸에 넣기 */
 						  $("#nameArea").append(name);
 						  $("#departnameArea").append(departmentName);
 						  $("#yearArea").append(year);
@@ -68,8 +107,8 @@
 <body>
  <!-- 홈페이지의 메뉴 바 -->
    <div id="header">
-   <button type="button" class="logout_button" id="logoutButton">로그아웃</button>
-        <span id="nowLoginSID"><%=session.getAttribute("sID") %></span>
+   <button type="button" class="logout_button" id="logoutButton" onclick="logout()">로그아웃</button>
+        <span id="nowLoginSID"><%=session.getAttribute("sid") %></span>
         
  </div>
  <!-- 좌측 메뉴 공간 -->
@@ -92,7 +131,7 @@
 	 	<div id="firstline">
 	 			학년<div id="yearArea" class="area"></div>
 	 			이름<div id="nameArea" class="area"></div>
-	 			휴복학여부<div id="isTakeoffArea" class="area"></div>
+	 			휴학여부<div id="isTakeoffArea" class="area"></div>
 	 	</div>
 	 	<div id="secondline">
 	 			학과명<div id="departnameArea" class="area"></div>

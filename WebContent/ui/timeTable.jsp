@@ -41,6 +41,31 @@
 	    
   });
   
+  
+  function logout() {
+		$.ajax({
+			
+			  type: 'post',
+			  url: "<%=request.getContextPath() %>/proc/account_logout.jsp",
+			  data:  {
+				  },
+			  //async: false,
+			  dataType : "json",
+			  success: function(success) {
+				
+				  if(success) { // 전송 완료 시.
+					  location.href = "login.jsp";
+				  }
+				  else {
+					  alert("잠시 후에 시도해주세요.");
+				  }
+			  },
+			  error: function(xhr, request,error) {
+
+			  }
+			});
+	}
+	
   function dayOfWeekToInt(dayofweek) {
 	switch(dayofweek) {
 	case "MONDAY":		return 0;
@@ -58,7 +83,7 @@
 		  type: 'post',
 		  url: "<%=request.getContextPath() %>/proc/attendance_getAttendanceListBySID.jsp",
 		  data:  {
-			  "sid" : <%=session.getAttribute("sID") %>
+			  "sid" : <%=session.getAttribute("sid") %>
 			  },
 		  //async: false,
 		  dataType : "json",
@@ -156,8 +181,8 @@
 <body>
 <!-- 홈페이지의 메뉴 바 -->
    <div id="header">
-   <button type="button" class="logout_button" id="logoutButton">로그아웃</button>
-        <span id="nowLoginSID"><%=session.getAttribute("sID") %></span>
+   <button type="button" class="logout_button" id="logoutButton" onclick="logout()">로그아웃</button>
+        <span id="nowLoginSID"><%=session.getAttribute("sid") %></span>
         
  </div>
  <!-- 좌측 메뉴 공간 -->

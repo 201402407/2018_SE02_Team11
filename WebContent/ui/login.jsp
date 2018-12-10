@@ -6,10 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
   <link href="<%=request.getContextPath() %>/css/login.css?ver=1" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" type="text/css" href="loginpage.css?ver=1">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
-  <script src="js/login.js?ver=1"></script>
   <script>
 	/* 생성 시 실행 */
 	$(document).ready(function(){
@@ -40,7 +38,13 @@
 						  $("#error").append(success.error); // 추가
 					  }
 					  else {
-						  location.href = "<%=request.getContextPath() %>/ui/getStudentInfoBySID.jsp"; // 로그인 페이지로 이동.						 
+						  if( $("#inputAccountID").val() == "admin") {
+							    
+						  }
+						  else {
+							 
+							 location.href = "<%=request.getContextPath() %>/ui/getStudentInfoBySID.jsp";  // 학생 메인 페이지로 이동.
+						  }				 
 					  }
 				  }
 				  else {
