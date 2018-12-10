@@ -72,7 +72,7 @@
 					  var color = ["red" , "yellow", "green", "blue", "pink", "brown", "orange"];
 					 // 처음 9시부터니까 -9를 한 뒤 :로 스플릿 해서 뒤에 게 30이면 0.5로 치환
 					 // 다음 다 합쳐서 그거 * 2한 값의 id로 가서 해당 요일에 index 색칠
-					 
+					 while()
 				  }
 			  }
 			  else {
@@ -84,6 +84,35 @@
 		  }
 		});
   }
+  
+  function searchList(day_list) {
+	  	  // 월~금까지 꺼내기
+	      for(var i = 0; i < day_list.length; i++) {
+	        var temp = day_list[i];
+	        var j = 0;
+	        // 각 요일별 과목 및 시간 꺼내기
+	        while(j < temp.length) { // j = 과목명, j+1 = 시작시간, j+2 = 종료시간
+	        	
+	        	j += 3;
+	        }
+	        for(var j = 0; j < temp.length; j) {
+	            if(temp[j].title == Search_Keyword_string) {
+	              var temp2 = Div_Find(temp[j]);
+	              temp2[2].style.visibility = "visible";
+	            }
+	          }
+	        }
+	    }
+	    else {
+	      var search_day_list = array_to_day_list(day_value);
+	      for(var i = 0; i < search_day_list.length; i++) {
+	          if(search_day_list[i].title == Search_Keyword_string) {
+	            var temp2 = Div_Find(search_day_list[i]);
+	            temp2[2].style.visibility = "visible";
+	          }
+	        }
+	    }
+	}
   </script>
 </head>
 <body>

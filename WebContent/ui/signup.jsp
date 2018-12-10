@@ -58,7 +58,8 @@
 						  $("#error").append(success.error); // 추가
 					  }
 					  else {
-						  window.location.href = "getStudentInfoBySID.jsp"; // 로그인 페이지로 이동.						 
+						  alert("회원가입이 완료되었습니다 ! \n 학번부여까지 기다려주세요.");
+						  window.location.href = "login.jsp"; // 로그인 페이지로 이동.						 
 					  }
 				  }
 				  else {
