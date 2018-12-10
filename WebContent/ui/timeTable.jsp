@@ -60,19 +60,20 @@
 		});
 	    
 	    
-	    <% if(OurTimes.currentTerm() == 0){
-	    	%> 
-	    	$("#currentTerm").html("학기중이 아닙니다.");
-	    	<%
-	    }
+	    <%
+	    String year, term;
+	    if(OurTimes.isNowOnTerm()) {
+	    	year = String.valueOf(OurTimes.currentTerm()).substring(0, 4);
+	    	term = String.valueOf(OurTimes.currentTerm()).substring(4);
+	    	}
 	    else {
-	    	String year = String.valueOf(OurTimes.currentTerm()).substring(0, 4);
-	    	String term = String.valueOf(OurTimes.currentTerm()).substring(4);
+	    	year = String.valueOf(OurTimes.closestFutureTerm()).substring(0, 4);
+	    	term = String.valueOf(OurTimes.closestFutureTerm()).substring(4);
 	    	%> 
-	    	$("#currentTerm").html(<%= year %> + "년/" + <%= term %> + "학기");
 	    	<%
 	    }
 	    %>
+	    $("#currentTerm").html(<%= year %> + "년/" + <%= term %> + "학기");
 	    
   });
   
@@ -123,18 +124,20 @@
 		  //async: false,
 		  dataType : "json",
 		  success: function(success) {
-			  alert(success);
+			  
 			  if(success) { // 전송 완료 시.
 				  if(success.error != null) { // 실패
 					  alert(success.error);
 				  }
 				  else {
+					  
 					  /* 요일에 맞게 과목명과 시작시간, 종료시간 넣기 */
-					  $.each(success.arrjson, function(index, arrjson) {
+					  $.each(success.data, function(index, arrjson) {
+						  	
 						  	var dayInt = dayOfWeekToInt(arrjson.dayOfWeek); // index로 변환
 						  	// 과목명과 시작시간, 종료시간 넣기.
 						  	var starttimesplit = arrjson.startTime.split(":");
-						  	var endtimesplit = arrjson.startTime.split(":");
+						  	var endtimesplit = arrjson.endTime.split(":");
 						  	var starttime = starttimesplit[0] - 8;
 						  	var endtime = endtimesplit[0] - 8;
 						  	if(starttimesplit[1] == "30") {
@@ -143,6 +146,9 @@
 						  	if(endtimesplit[1] == "30") {
 						  		endtime += 0.5;
 						  	}
+						  	//alert(starttime + " , " + endtime);
+						  	
+						  	/* 과목명, 시작시간, 종료시간 넣기 */
 						  	day_list[dayInt].push(arrjson.subjectName);
 						  	day_list[dayInt].push(starttime);
 						  	day_list[dayInt].push(endtime);
@@ -152,7 +158,7 @@
 					 // 처음 9시부터니까 -9를 한 뒤 :로 스플릿 해서 뒤에 게 30이면 0.5로 치환
 					 // 다음 다 합쳐서 그거 * 2한 값의 id로 가서 해당 요일에 index 색칠
 					 searchList(day_list, color);
-					 mergeTable();
+					 
 				  }
 			  }
 			  else {
@@ -176,40 +182,66 @@
 	        	var start = Math.floor(temp[j+1] * 2);
 	        	var end = Math.floor(temp[j+2] * 2);
 	        	var index = start;
-	        	while(index <= end) {
-	        		
-	        		$("#" + index).children().eq(i+1).css("bgcolor", color[i]);
+	        	while(index < end) {
+	        		/* 색상 및 글자 추가 */
+	        		$("#" + index).children().eq(i+1).css("background-color", color[i]);
 		        	$("#" + index).children().eq(i+1).html(subject);
 		        	index++;
 	        	}
 	        	j += 3;
 	        }
+	        alert(i);
+	        $('#timeTable').rowspan(i);
 	      }
 	    }
   
-  function mergeTable() {
-	  var mergeItem = ""; // 아이템 내용
-	  var mergeCount = 0; // 아이템 갯수
-	  var mergeRowNum = 0; // rowSpan 선언할 tr index 저장.
-	  
-	  $('tr', 'table').each(function(row) {
-		  if(row > 2) {
-			  var thisTr = $(this);
-			  var item = $(':first-child',thisTr).html();
-			  
-			  if(mergeItem != item) {
-				  mergeCount = 1;
-				  mergeItem = item;
-				  mergeRowNum = Number(row);
-			  }
-			  else {
-				  mergeCount = Number(mergeCount) + 1;
-				  $("tr:eq("+mergeRowNum+") > td:first-child").attr("rowspan", mergeCount);
-				  $("td:first-child", thisTr).remove(); // 병합해서 해당 행의 첫 번째 삭제
-			  }
-		  }
-	  })
-  }
+  /* 
+   * 
+   * 같은 값이 있는 열을 병합함
+   * 
+   * 사용법 : $('#테이블 ID').rowspan(0);
+   * 
+   */   
+  $.fn.rowspan = function(colIdx, isStats) {       
+      return this.each(function(){      
+          var that;     
+          colIdx = colIdx+1;
+          $('tr', this).each(function(row) {      
+              $('td:eq('+colIdx+')', this).filter(':visible').each(function(col) {
+                    
+                  if ($(this).html() == $(that).html()
+                      && (!isStats 
+                              || isStats && $(this).prev().html() == $(that).prev().html()
+                              )
+                      ) {
+                	 
+                	  
+                      	
+                      	
+              		  
+              		  
+                      rowspan = $(that).attr("rowspan") || 1;
+                      rowspan = Number(rowspan)+1;
+    
+                      $(that).attr("rowspan",rowspan);
+                        
+                      // do your action for the colspan cell here            
+                      $(this).hide();
+                      //alert($(this).html());
+                      //$(this).remove(); 
+                      // do your action for the old cell here
+                      
+                	  
+                  } else {            
+                      that = this;         
+                  }          
+                    
+                  // set the that if not already set
+                  that = (that == null) ? this : that;      
+              });     
+          });    
+      });  
+  }; 
 
   </script>
 </head>

@@ -71,11 +71,12 @@ li {
 
 #timeTable {
 	 width:75%;
-	 height: 600px;
+	 height: 700px;
 	 border-collapse: collapse;
 	 border: 1px solid #ADADAD;
 	 color: #707070;
 	 margin-top: 8%;
+	 
 }
 th, td {
     border: 1px solid #ADADAD;
@@ -83,6 +84,6 @@ th, td {
   }
   
   #tableArea{
-  height: 100%;
+  height: 95%;
   overflow: auto;
   }
