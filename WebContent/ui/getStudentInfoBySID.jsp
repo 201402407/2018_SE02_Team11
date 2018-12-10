@@ -16,6 +16,9 @@
 	$(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 		getStudentInfo();
+		
+		$("#menu").children().eq(0).css("background-color", "#00649F");
+	    $("#menu").children().eq(0).css("color", "white");
 	});
 	
 	/* 페이지 들어올 시 바로 실행 */
@@ -71,7 +74,7 @@
  </div>
  <!-- 좌측 메뉴 공간 -->
    <div id="studentMenu">
-     <ul>
+     <ul id="menu">
         <li id="first">학적상태 조회</li>
         <li>휴복학 요청</li>
         <li>당학기 운영과목 조회</li>

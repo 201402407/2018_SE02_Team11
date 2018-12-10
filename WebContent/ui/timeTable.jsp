@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+<%@page import="Util.OurTimes"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -20,6 +21,24 @@
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 	    getTimeList();
+	    
+	    $("#menu").children().eq(3).css("background-color", "#00649F");
+	    $("#menu").children().eq(3).css("color", "white");
+	    
+	    <% if(OurTimes.currentTerm() == 0){
+	    	%> 
+	    	$("#currentTerm").html("학기중이 아닙니다.");
+	    	<%
+	    }
+	    else {
+	    	String year = String.valueOf(OurTimes.currentTerm()).substring(0, 4);
+	    	String term = String.valueOf(OurTimes.currentTerm()).substring(4);
+	    	%> 
+	    	$("#currentTerm").html(<%= year %> + "년/" + <%= term %> + "학기");
+	    	<%
+	    }
+	    %>
+	    
   });
   
   function dayOfWeekToInt(dayofweek) {
@@ -54,8 +73,8 @@
 					  $.each(success.arrjson, function(index, arrjson) {
 						  	var dayInt = dayOfWeekToInt(arrjson.dayOfWeek); // index로 변환
 						  	// 과목명과 시작시간, 종료시간 넣기.
-						  	var starttimesplit[3] = arrjson.startTime.split(":");
-						  	var endtimesplit[3] = arrjson.startTime.split(":");
+						  	var starttimesplit = arrjson.startTime.split(":");
+						  	var endtimesplit = arrjson.startTime.split(":");
 						  	var starttime = starttimesplit[0] - 8;
 						  	var endtime = endtimesplit[0] - 8;
 						  	if(starttimesplit[1] == "30") {
@@ -72,7 +91,8 @@
 					  var color = ["red" , "yellow", "green", "blue", "pink", "brown", "orange"];
 					 // 처음 9시부터니까 -9를 한 뒤 :로 스플릿 해서 뒤에 게 30이면 0.5로 치환
 					 // 다음 다 합쳐서 그거 * 2한 값의 id로 가서 해당 요일에 index 색칠
-					 while()
+					 searchList(day_list, color);
+					 mergeTable();
 				  }
 			  }
 			  else {
@@ -85,34 +105,52 @@
 		});
   }
   
-  function searchList(day_list) {
+  function searchList(day_list, color) {
 	  	  // 월~금까지 꺼내기
 	      for(var i = 0; i < day_list.length; i++) {
 	        var temp = day_list[i];
 	        var j = 0;
 	        // 각 요일별 과목 및 시간 꺼내기
 	        while(j < temp.length) { // j = 과목명, j+1 = 시작시간, j+2 = 종료시간
-	        	
+	        	var subject = temp[j];
+	        	var start = Math.floor(temp[j+1] * 2);
+	        	var end = Math.floor(temp[j+2] * 2);
+	        	var index = start;
+	        	while(index <= end) {
+	        		
+	        		$("#" + index).children().eq(i+1).css("bgcolor", color[i]);
+		        	$("#" + index).children().eq(i+1).html(subject);
+		        	index++;
+	        	}
 	        	j += 3;
 	        }
-	        for(var j = 0; j < temp.length; j) {
-	            if(temp[j].title == Search_Keyword_string) {
-	              var temp2 = Div_Find(temp[j]);
-	              temp2[2].style.visibility = "visible";
-	            }
-	          }
-	        }
+	      }
 	    }
-	    else {
-	      var search_day_list = array_to_day_list(day_value);
-	      for(var i = 0; i < search_day_list.length; i++) {
-	          if(search_day_list[i].title == Search_Keyword_string) {
-	            var temp2 = Div_Find(search_day_list[i]);
-	            temp2[2].style.visibility = "visible";
-	          }
-	        }
-	    }
-	}
+  
+  function mergeTable() {
+	  var mergeItem = ""; // 아이템 내용
+	  var mergeCount = 0; // 아이템 갯수
+	  var mergeRowNum = 0; // rowSpan 선언할 tr index 저장.
+	  
+	  $('tr', 'table').each(function(row) {
+		  if(row > 2) {
+			  var thisTr = $(this);
+			  var item = $(':first-child',thisTr).html();
+			  
+			  if(mergeItem != item) {
+				  mergeCount = 1;
+				  mergeItem = item;
+				  mergeRowNum = Number(row);
+			  }
+			  else {
+				  mergeCount = Number(mergeCount) + 1;
+				  $("tr:eq("+mergeRowNum+") > td:first-child").attr("rowspan", mergeCount);
+				  $("td:first-child", thisTr).remove(); // 병합해서 해당 행의 첫 번째 삭제
+			  }
+		  }
+	  })
+  }
+
   </script>
 </head>
 <body>
@@ -124,7 +162,7 @@
  </div>
  <!-- 좌측 메뉴 공간 -->
    <div id="studentMenu">
-     <ul>
+     <ul id ="menu">
         <li id="first">학적상태 조회</li>
         <li>휴복학 요청</li>
         <li>당학기 운영과목 조회</li>

@@ -13,6 +13,9 @@
 	    jQuery.ajaxSettings.traditional = true;
 	    window.addEventListener("message", messageHandlerReason, true);
 	
+	    $("#menu").children().eq(1).css("background-color", "#00649F");
+	    $("#menu").children().eq(1).css("color", "white");
+	    
 	    /* 초기 팝업창 숨기기 */
 	    document.getElementById("popup").style.display = "none";
 		
@@ -103,7 +106,7 @@
  </div>
  <!-- 좌측 메뉴 공간 -->
    <div id="studentMenu">
-     <ul>
+     <ul id="menu">
         <li id="first">학적상태 조회</li>
         <li>휴복학 요청</li>
         <li>당학기 운영과목 조회</li>
