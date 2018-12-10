@@ -190,7 +190,7 @@
 	        	}
 	        	j += 3;
 	        }
-	        alert(i);
+	       
 	        $('#timeTable').rowspan(i);
 	      }
 	    }
