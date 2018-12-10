@@ -54,14 +54,17 @@
 					  $.each(success.arrjson, function(index, arrjson) {
 						  	var dayInt = dayOfWeekToInt(arrjson.dayOfWeek); // index로 변환
 						  	// 과목명과 시작시간, 종료시간 넣기.
+						  	var starttimesplit[3] = arrjson.startTime.split(":");
+						  	var endtimesplit[3] = arrjson.startTime.split(":");
 						  	day_list[dayInt].push(arrjson.subjectName);
 						  	day_list[dayInt].push(arrjson.startTime);
 						  	day_list[dayInt].push(arrjson.endTime);
 						});
 					  // 강의 별 색깔의 차이를 두어 구별
-					  var color = {"red" , "yellow", "green", "blue", "pink", "brown", "orange"};
+					  var color = ["red" , "yellow", "green", "blue", "pink", "brown", "orange"];
 					 // 처음 9시부터니까 -9를 한 뒤 :로 스플릿 해서 뒤에 게 30이면 0.5로 치환
 					 // 다음 다 합쳐서 그거 * 2한 값의 id로 가서 해당 요일에 index 색칠
+					 
 				  }
 			  }
 			  else {

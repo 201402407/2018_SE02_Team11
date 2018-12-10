@@ -6,10 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
   <link href="<%=request.getContextPath() %>/css/signup.css?ver=1" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" type="text/css" href="loginpage.css?ver=1">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
-  <script src="js/login.js?ver=1"></script>
   <script>
 	/* 생성 시 실행 */
 	$(document).ready(function(){
@@ -31,10 +29,16 @@
 		})
 	});
 	
+	function pad(n, width) {
+		  n = n + '';
+		  return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+		}
+	
 	/* 회원가입 버튼 클릭 시 발생 */
 	function signup() {
-		var birth = $("#year option:selected").val() + "-" + $("#month option:selected").val() +
-		"-" + $("#day option:selected").val();
+		var birth = $("#year option:selected").val() + "-" + pad($("#month option:selected").val(), 2) +
+		"-" + pad($("#day option:selected").val(), 2);
+		alert(birth);
 		$.ajax({
 		
 			  type: 'post',
@@ -50,6 +54,7 @@
 			  success: function(success) {
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
+						  <!--location.href = "<%=request.getContextPath() %>/proc/account_signup.jsp"; -->
 						  $("#error").empty(); // 비우기
 						  $("#error").append(success.error); // 추가
 					  }

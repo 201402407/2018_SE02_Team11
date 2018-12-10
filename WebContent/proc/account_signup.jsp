@@ -19,7 +19,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 	final String rp_name = "name";
 	LocalDate birth;
 	final String rp_birth = "birth";
-	
+	System.out.println(rp_birth);
 	// 1. Install Parameters (문자열 공백검사 + 형변환실패 검사)
 	id = req.getParameter(rp_id);
 	if(OurProcResp.reqParamVoidString(id))

@@ -5,18 +5,19 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/ThisSemesterSubjectByDCode.css?ver=1" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/thisSemesterSubjectBySID.css?ver=1" rel="stylesheet" type="text/css">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
   function createTable(){
 	     
 	    $.ajax({
-	    	url: "<%=request.getContextPath() %>/proc/subject_getThisSemesterSubjectByDCode.jsp",
+	    	type : 'post',
+	    	url: "<%=request.getContextPath() %>/proc/subject_getThisSemesterSubjectBySID.jsp",
 	        data : {
 	        	
 	        },
-	        type : 'post',
+	        dataType : "json",
 	        success : function(data){
 	            var results = data.boardList;
 	            var str = '<TR>';
