@@ -16,6 +16,40 @@
 	    
 	    $("#menu").children().eq(2).css("background-color", "#00649F");
 	    $("#menu").children().eq(2).css("color", "white");
+	    
+	    /* 좌측 메뉴 클릭 이벤트 */
+		$("ul li").click(function(event){
+		// 누른 노드가 몇 번째인지 switch로 판단해서 적용
+		switch($(this).index()) {
+		case 0:
+			location.href = "getStudentInfoBySID.jsp";
+			break;
+		case 1:
+			location.href = "requestTimeOnOff.jsp";
+			break;
+		case 2:
+			location.href = "thisSemesterSubjectBySID.jsp";
+			break;
+		case 3:
+			location.href = "timeTable.jsp";
+			break;
+		case 4:
+			location.href = "login.jsp";
+			break;
+		case 5:
+			location.href = "login.jsp";
+			break;
+		case 6:
+			location.href = "login.jsp";
+			break;
+		case 7:
+			location.href = "login.jsp";
+			break;
+		case 8:
+			location.href = "login.jsp";
+			break;
+		}
+		});
   });
   
   
@@ -52,22 +86,35 @@
 	        },
 	        dataType : "json",
 			  success: function(success) {
-				  alert(success);
+				  
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
 					  }
 					  else {
 						
-						  var data = [
-								['Name', 'Age', 'Email'],
-								['John Doe', '27', 'john@doe.com'],
-								['Jane Doe', '29', 'jane@doe.com']
-							];
+						var result = success.data;
+						var data = [
+						['과목명', '과목코드']
+						];
 
+						 $.each(result, function(key, value){ // JSON 받아온 것의 data 순서대로 읽음.
+							 var temp = [];
+							
+							 temp.push(value.subjectName);
+							 temp.push(value.subjectCode);
+							 data.push(temp); // 표의 한 행을 넣음.
+						 });
+						
 							var table = arrayToTable(data, {
 								thead: true,
-								attrs: {class: 'table'}
+								attrs: {"class" : 'table',
+									"id" : "resultTable",
+					            	"border" : "1px solid #F1F1F1",
+					            	"border-collapse": "collapse",
+					            	"width" : "60%",
+					            	"height" : "300px"
+					            	}
 							})
 
 							$('#subjectTable').append(table);
@@ -98,7 +145,9 @@
 	            th: true, // should we use th elemenst for the first row
 	            thead: false, //should we incldue a thead element with the first row
 	            tfoot: false, // should we include a tfoot element with the last row
-	            attrs: {} // attributes for the table element, can be used to
+	            attrs: {
+	            	
+	            } // attributes for the table element, can be used to
 	        };
 
 	    options = $.extend(defaults, options);

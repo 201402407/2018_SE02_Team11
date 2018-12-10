@@ -60,3 +60,16 @@ li {
 #first {
 	margin-top: 50px;
 }
+#resultTable {
+	 width:75%;
+	 height: 600px;
+	 border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+	 color: #707070;
+	 margin-top: 8%;
+}
+th, td {
+    border: 1px solid #ADADAD;
+    width: 10px;
+  }
+  

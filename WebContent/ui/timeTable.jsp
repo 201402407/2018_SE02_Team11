@@ -25,6 +25,41 @@
 	    $("#menu").children().eq(3).css("background-color", "#00649F");
 	    $("#menu").children().eq(3).css("color", "white");
 	    
+	    /* 좌측 메뉴 클릭 이벤트 */
+		$("ul li").click(function(event){
+		// 누른 노드가 몇 번째인지 switch로 판단해서 적용
+		switch($(this).index()) {
+		case 0:
+			location.href = "getStudentInfoBySID.jsp";
+			break;
+		case 1:
+			location.href = "requestTimeOnOff.jsp";
+			break;
+		case 2:
+			location.href = "thisSemesterSubjectBySID.jsp";
+			break;
+		case 3:
+			location.href = "timeTable.jsp";
+			break;
+		case 4:
+			location.href = "login.jsp";
+			break;
+		case 5:
+			location.href = "login.jsp";
+			break;
+		case 6:
+			location.href = "login.jsp";
+			break;
+		case 7:
+			location.href = "login.jsp";
+			break;
+		case 8:
+			location.href = "login.jsp";
+			break;
+		}
+		});
+	    
+	    
 	    <% if(OurTimes.currentTerm() == 0){
 	    	%> 
 	    	$("#currentTerm").html("학기중이 아닙니다.");
