@@ -210,7 +210,6 @@
 							var temp2 = [];
 						/* 순서 : score, profName, dayOfWeek, registerTerm, startTime, endTime, 
 						applyNum, lectureCode, subjectName, allNum
-								dayOfWeek, startTime, endTime, score 
 							push와 shift를 사용하자 */
 								$.each(value, function(element, result) {
 									//alert(result);

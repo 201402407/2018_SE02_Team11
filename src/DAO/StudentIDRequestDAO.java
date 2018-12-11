@@ -58,11 +58,8 @@ public class StudentIDRequestDAO extends DAOBase {
 	/** 학번요청대기열목록조회 
 	 * @return 학번요청대기열목록(요청번호, 요청일자, 아이디)
 	 * @throws SQLException DB오류
-<<<<<<< HEAD
 	 * ! rs.beforeFirst() 테스트해보기
 	 * ! DAO 완료
-=======
->>>>>>> e6979f8c4ab803222d3442f38ce319abe674d857
 	 * */
 	public List<StudentIDRequest> getReqSIDList() throws SQLException {
 		ArrayList<StudentIDRequest> resultArrayList = new ArrayList<StudentIDRequest>();

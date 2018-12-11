@@ -39,7 +39,7 @@
 					  }
 					  else {
 						  if( $("#inputAccountID").val() == "admin") {
-							    
+							  location.href = "getReqSIDList.jsp";
 						  }
 						  else {
 							 
