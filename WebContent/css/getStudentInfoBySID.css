@@ -42,6 +42,7 @@ body {
 	display: inline-block;
 	background-color: #F1F8FC;
 	color: #00649F;
+	cursor: pointer;
 	 
 }
 ul {
@@ -56,6 +57,7 @@ li {
 	line-height: 44px;
 	vertical-align: middle;
     text-align: left;
+    cursor: pointer;
 }
 #first {
 	margin-top: 50px;
@@ -78,6 +80,7 @@ li {
 	background-color: #F1F1F1;
 	display: inline-block;
 	color: "#707070";
+	
 }
 
 #firstline {

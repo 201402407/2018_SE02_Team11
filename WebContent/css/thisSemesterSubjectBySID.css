@@ -56,6 +56,7 @@ li {
 	line-height: 44px;
 	vertical-align: middle;
     text-align: left;
+    cursor: pointer;
 }
 #first {
 	margin-top: 50px;

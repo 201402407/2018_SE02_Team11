@@ -80,34 +80,6 @@ tr {
 	border-collapse: collapse;
 	 border: 1px solid #ADADAD;
 }
-.request {
-	width: 60px;
-	height: 26px;
-	background-color: #00649F;
-	color: white;
-	font-size: 12px;
-	text-align : center;
-	margin-left: 19%;
-	margin-top: 1.5px;
-	border: 1px;
-	border-radius: 5px;
-}
 #title {
 	color: white;
-}
-
-/* The Modal (background) */
-#popup {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-	top: 0;
-	width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  margin: -0.6%;
-}
-
-iframe {
-	border-width: 0px;
 }

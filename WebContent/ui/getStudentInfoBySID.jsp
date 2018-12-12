@@ -44,7 +44,7 @@
 			location.href = "login.jsp";
 			break;
 		case 7:
-			location.href = "login.jsp";
+			location.href = "getAwardInfoBySID.jsp";
 			break;
 		case 8:
 			location.href = "login.jsp";
