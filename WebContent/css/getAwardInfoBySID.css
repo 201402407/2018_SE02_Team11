@@ -42,7 +42,7 @@ body {
 	display: inline-block;
 	background-color: #F1F8FC;
 	color: #00649F;
-	 
+	 cursor: pointer;
 }
 ul {
 	background-color: #F1F8FC;
@@ -70,6 +70,8 @@ li {
 }
 tbody {
 	background-color: #F1F1F1;
+	overflow: auto;
+	text-indent: 10px;
 }
 td {
 	border-collapse: collapse;

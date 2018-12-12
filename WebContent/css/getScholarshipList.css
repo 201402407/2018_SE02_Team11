@@ -42,7 +42,7 @@ body {
 	display: inline-block;
 	background-color: #F1F8FC;
 	color: #00649F;
-	cursor: pointer; 
+	 cursor: pointer;
 }
 ul {
 	background-color: #F1F8FC;
@@ -59,8 +59,7 @@ li {
     cursor: pointer;
 }
 
-
-#gradeTable {
+#evaluationTable {
 	 width:75%;
 	 height: 20px;
 	 border-collapse: collapse;
@@ -69,17 +68,10 @@ li {
 	 margin-top: 8%;
 	 margin-left: 22%;
 }
-
-#title2 {
-	background-color: #53819B;
-}
-
-thead {
-	color: white;
-}
 tbody {
 	background-color: #F1F1F1;
 	text-indent: 10px;
+	overflow: auto;
 }
 td {
 	border-collapse: collapse;
@@ -89,4 +81,7 @@ td {
 tr {
 	border-collapse: collapse;
 	 border: 1px solid #ADADAD;
+}
+#title {
+	color: white;
 }

@@ -47,7 +47,7 @@
 			location.href = "getAwardInfoBySID.jsp";
 			break;
 		case 8:
-			location.href = "login.jsp";
+			location.href = "getScholarshipList.jsp";
 			break;
 		}
 		});

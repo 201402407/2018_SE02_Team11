@@ -50,7 +50,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out, HttpSession s
 			OurProcResp.printResp(out, null, null, null);
 			return;
 		case FAIL_STUDENT:
-			OurProcResp.printResp(out, "학번부여를 받지 못했습니다. 문제 있으면 관리자와 상담하시길.", null, null);
+			OurProcResp.printResp(out, "아직 학번부여를 받지 못했습니다.", null, null);
 			return;
 		case INCORRECT_PWD:
 			OurProcResp.printResp(out, "패스워드가 맞지 않습니다.", rp_pwd, null);

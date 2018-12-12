@@ -11,14 +11,14 @@
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
   /* 각 장학내역 담을 Array 선언 */
-  var awardList = []; // 각 장학내역별 배열 선언 
+  var scholarshipList = []; // 각 장학내역별 배열 선언 
   
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
-	    getAwardList();
+	    getScholarshipList();
 	    
-	    $("#menu").children().eq(7).css("background-color", "#00649F");
-	    $("#menu").children().eq(7).css("color", "white");
+	    $("#menu").children().eq(8).css("background-color", "#00649F");
+	    $("#menu").children().eq(8).css("color", "white");
 	    	    
 	    /* 좌측 메뉴 클릭 이벤트 */
 		$("ul li").click(function(event){
@@ -55,7 +55,6 @@
 		});
   });
   
-  
   function logout() {
 		$.ajax({
 			  type: 'post',
@@ -79,13 +78,12 @@
 			});
 	}
 	 
-  /* 장학내역리스트 가져오기 */
-  function getAwardList() {
+  /* 전체장학리스트 가져오기 */
+  function getScholarshipList() {
 	  $.ajax({
 		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/scholarshipaward_getAwardInfoBySID.jsp",
+		  url: "<%=request.getContextPath() %>/proc/scholarship_getScholarshipList.jsp",
 		  data:  {
-			  "sid" : <%=session.getAttribute("sid") %>
 			  },
 		  //async: false,
 		  dataType : "json",
@@ -104,14 +102,13 @@
 						  	var tempArray = [];
 						  	
 						  	tempArray.push(arrjson.schoName);
-						  	tempArray.push(arrjson.money);
-						  	tempArray.push(arrjson.awardDate);
+						  	tempArray.push(arrjson.schoNum);
 						  	
-						  	awardList.push(tempArray); // 푸시
+						  	scholarshipList.push(tempArray); // 푸시
 						  	
 						});
 						
-					 displayAwardList(awardList);
+					 displayScholarshipList(scholarshipList);
 					 
 				  }
 			  }
@@ -126,15 +123,14 @@
   }
   
   /* 화면에 출력 */
-  function displayAwardList(list) {
+  function displayScholarshipList(list) {
 	  
 	  // 전체 row 갯수
 	  for(var i=0; i < list.length; i++) {
 		  $("#tablebody").append("<tr class='listRow' id='listIndex" + i + "'></tr>"); // tr 생성
 		  // 해당하는 row의 column 갯수
 		  $("#listIndex" + i).append("<td>"+ list[i][0] + "</td>"); // 장학이름
-		  $("#listIndex" + i).append("<td align='center'>"+ list[i][1] + " 원</td>"); // 장학금
-		  $("#listIndex" + i).append("<td align='center'>"+ list[i][2] + "</td>"); // 수혜일자
+		  $("#listIndex" + i).append("<td>"+ list[i][1] + "</td>"); // 장학금
 	  }
 	  
   }
@@ -167,9 +163,8 @@
 
 		<thead>
         <tr align="center" id="title"> 
-            <td width="210" bgcolor="#00649F">장학이름</td>
-            <td width="120" bgcolor="#00649F">장학금</td>
-            <td width="140" bgcolor="#00649F">수혜일자</td>
+            <td width="320" bgcolor="#00649F">장학 이름</td>
+            <td width="130" bgcolor="#00649F">장학 번호</td>
         </tr>
         </thead>
         <tbody id="tablebody">
