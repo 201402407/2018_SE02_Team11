@@ -121,8 +121,8 @@ public class LectureEvaluationDAO extends DAOBase {
 					+ " VALUES (?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, p_attendancenum);
-			pstmt.setString(2, p_text);
+			pstmt.setString(1, p_text);
+			pstmt.setInt(2, p_attendancenum);
 			int result = pstmt.executeUpdate(); 
 			
 			// SQL ½ÇÆÐ

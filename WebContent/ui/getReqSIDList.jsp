@@ -166,7 +166,7 @@
 							$(".reqdiv").css({
 								'width' : '24.8%',
 								'height' : '25px',
-								'border' : '0.5px solid #ADADAD',
+								'border' : '0px',
 								//'margin-right' : '-7px',
 								'color' : '#707070',
 								'float' : 'left',

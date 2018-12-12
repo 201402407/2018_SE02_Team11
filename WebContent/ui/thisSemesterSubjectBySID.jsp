@@ -11,12 +11,12 @@
   <script>
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
-	    window.addEventListener("message", messageHandler, true);
 	    createTable();
 	    
 	    $("#menu").children().eq(2).css("background-color", "#00649F");
 	    $("#menu").children().eq(2).css("color", "white");
 	    
+	    window.addEventListener("message", messageHandler, true);
 	    /* ÃÊ±â ÆË¾÷Ã¢ ¼û±â±â */
 	    document.getElementById("popup").style.display = "none";
 	    
@@ -40,7 +40,7 @@
 			location.href = "getApplyLectureList.jsp";
 			break;
 		case 5:
-			location.href = "login.jsp";
+			location.href = "lectureEvaluation.jsp";
 			break;
 		case 6:
 			location.href = "login.jsp";
