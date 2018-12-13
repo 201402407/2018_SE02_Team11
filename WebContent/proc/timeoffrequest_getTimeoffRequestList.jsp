@@ -8,7 +8,6 @@
 <%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.SQLException" %>
-<% request.setCharacterEncoding("euc-kr"); %>
 
 <%!
 private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
@@ -25,10 +24,23 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 		JSONArray listJson = new JSONArray();
 		for(TimeoffRequest elem : list)
 		{
+			int changeType;
+			switch(elem.getChangeType())
+			{
+			case TAKEOFF:
+				changeType = 0;
+				break;
+			case RESUME:
+				changeType = 1;
+				break;
+			default:
+				changeType = -1;
+			}
+			
 			JSONObject elemJson = new JSONObject();
 			elemJson.put("reqNum", elem.getReqNum());
-			elemJson.put("reqDate", elem.getReqDate());
-			elemJson.put("changeType", elem.getChangeType());
+			elemJson.put("reqDate", elem.getReqDate().toString());
+			elemJson.put("changeType", changeType);
 			elemJson.put("startSemester", elem.getStartSemester());
 			elemJson.put("endSemester", elem.getEndSemester());
 			elemJson.put("reason", elem.getReason());
@@ -49,6 +61,6 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 %>
 
 <%
-request.setCharacterEncoding("euc-kr");
+request.setCharacterEncoding("utf-8");
 makeMyResponse(request, out);
 %>
