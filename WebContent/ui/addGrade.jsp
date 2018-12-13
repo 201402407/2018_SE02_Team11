@@ -169,17 +169,18 @@
 			
 			$("#addButton").click(function() {
 				if(col == null) {
+					alert(col);
 					alert("원하시는 수강 리스트를 우선 선택하세요!");
-					break;
+					
 				}
-				if($("#gradeBox option:selected").val() == null) {
+				else if($("#gradeBox option:selected").val() == null) {
 					alert("학점을 선택하세요!");
-					break;
 				}
-				
-				var attendancenum = list[col][1];
-				var grade = $("#gradeBox option:selected").val();
-				add(attendancenum, grade);
+				else {
+					var attendancenum = list[col][1];
+					var grade = $("#gradeBox option:selected").val();
+					add(attendancenum, grade);	
+				}
 			});
 	  });
 	  
@@ -269,6 +270,6 @@
 	 	<option value='1.0'>D0</option>
 	</select>
    </div>
-   <button type="button" class="button" id="addButton" onclick="add()">등록</button>
+   <button type="button" class="button" id="addButton">등록</button>
 </body>
 </html>

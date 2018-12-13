@@ -182,7 +182,7 @@
 				  }
 				  else {
 					  alert("학번요청 허가 완료되었습니다.");
-					  getList();
+					  
 				  }
 			  }
 			  else {
@@ -196,7 +196,7 @@
   	}
   
   /* 휴복학신청거절 */
-  function reject(list) {
+  function reject(reqNum) {
 	  $.ajax({
 		  type: 'post',
 		  url: "<%=request.getContextPath() %>/proc/timeoffrequest_rejectTimeoffReq.jsp",
@@ -213,7 +213,7 @@
 				  }
 				  else {
 					  alert("학번요청 거절 완료되었습니다.");
-					  getList();
+					  
 				  }
 			  }
 			  else {
