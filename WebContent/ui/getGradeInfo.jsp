@@ -160,12 +160,8 @@
 				  }
 				  else {
 					var temp = success.data;
-					elemJson.put("isVisible", elem.isVisibleGrade());
-					elemJson.put("subjectName", elem.getSubjectName());
-					elemJson.put("grade", elem.getGrade());
-					elemJson.put("isRetake", elem.isRetake());
-					elemJson.put("gradeBefore", elem.getGradeBefore());
-					  /* 성적리스트 출력 */
+					alert("성공");
+					 /* 성적리스트 출력 */
 					  $.each(temp, function(key, arrjson) {
 						  	// 성적 정보 넣기.
 						  	var tempArray = [];
