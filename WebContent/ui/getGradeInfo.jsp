@@ -11,12 +11,18 @@
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
   /* 각 강의평가 담을 Array 선언 */
-  var evaluationList = []; // 각 강의평가별 배열 선언 
+  var gradeList = []; // 각 강의평가별 배열 선언 
   
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
-	    getAttendanceList();
-	    
+	    getTermSelectBox();
+	   // getGradeList($("#TermBox option:selected").val());
+	    $(function(){
+			$("#TermBox").change(function() {
+				getGradeList($("#TermBox option:selected").val());
+			})
+		})
+		
 	    $("#menu").children().eq(6).css("background-color", "#00649F");
 	    $("#menu").children().eq(6).css("color", "white");
 
@@ -49,7 +55,7 @@
 			location.href = "getAwardInfoBySID.jsp";
 			break;
 		case 8:
-			location.href = "login.jsp";
+			location.href = "getScholarshipList.jsp";
 			break;
 		}
 		});
@@ -79,17 +85,6 @@
 			});
 	}
 	
-  function dayOfWeekToKor(dayofweek) {
-	switch(dayofweek) {
-	case "MONDAY":		return "월요일";
-	case "TUESDAY":		return "화요일";
-	case "WEDNESDAY":	return "수요일";
-	case "THURSDAY":	return "목요일";
-	case "FRIDAY":		return "금요일";
-		default:		return -1;
-	}  
-  }
-  
   function retakeToString(isRetake) {
 	  if(isRetake)	return "Yes";
 	  else			return "No";
@@ -117,15 +112,43 @@
 		var date = new Date();
 		var year = date.getFullYear();
 		var month = date.getMonth() + 1;
+		var term = getTerm(month);
 		
+		for(var i = 18; i > 3; i--) { // /3을 통해 계산. 16까지면 최대 10학기를 구분.
+			// 처음 시작 시
+			if(i == 18) {
+				if(term == 1)	i = 17; // 2감소시킴(continue를 통해 1이 더 감소)
+				continue;
+			}
+			if(i % 3 == 0) { // 1학기, 2학기도 지나면
+				year--; // 1년 감소
+				continue;
+			}
+			term = i % 3;
+			var temp = year.toString().concat(term.toString());
+			// 추가
+			console.log(i);
+			$("#TermBox").append("<option value='"+ temp + "'>"+ year + "/" + term + "학기</option>")
+		}
 	}
-  /* 수강리스트 가져오기 */
-  function getAttendanceList() {
+	
+	/* 학기를 리턴하는 함수 */
+	function getTerm(month) {
+		if(month < 9 && month >= 3) // 1학기
+			return 1;
+		else
+			return 2;
+	}
+	
+  /* 성적리스트 가져오기 */
+  function getGradeList(term) {
+	  console.log(term);
 	  $.ajax({
 		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/attendance_getAttendanceListBySID.jsp",
+		  url: "<%=request.getContextPath() %>/proc/attendance_getGradeInfo.jsp",
 		  data:  {
-			  "sid" : <%=session.getAttribute("sid") %>
+			  "sid" : <%=session.getAttribute("sid") %>,
+		  	  "semester" : term
 			  },
 		  //async: false,
 		  dataType : "json",
@@ -137,26 +160,27 @@
 				  }
 				  else {
 					var temp = success.data;
-					
-					  /* 수강리스트 출력 */
+					elemJson.put("isVisible", elem.isVisibleGrade());
+					elemJson.put("subjectName", elem.getSubjectName());
+					elemJson.put("grade", elem.getGrade());
+					elemJson.put("isRetake", elem.isRetake());
+					elemJson.put("gradeBefore", elem.getGradeBefore());
+					  /* 성적리스트 출력 */
 					  $.each(temp, function(key, arrjson) {
-						  	// 수강과목 정보 넣기.
+						  	// 성적 정보 넣기.
 						  	var tempArray = [];
 						  	
+						  	tempArray.push(arrjson.isVisible);
 						  	tempArray.push(arrjson.subjectName);
-						  	tempArray.push(getTerm(arrjson.registerTerm));
-						  	tempArray.push(retakeToString(arrjson.isRetake));
-						  	tempArray.push(dayOfWeekToKor(arrjson.dayOfWeek));
-						  	tempArray.push(arrjson.startTime);
-						  	tempArray.push(arrjson.endTime);
-						  	tempArray.push(arrjson.score);
-						  	tempArray.push(arrjson.attNum);
+						  	tempArray.push(arrjson.grade);
+						  	tempArray.push(arrjson.isRetake);
+						  	tempArray.push(arrjson.gradeBefore);
 						  	
-						  	evaluationList.push(tempArray); // 푸시
+						  	gradeList.push(tempArray); // 푸시
 						  	
 						});
 						
-					 displayAttendanceList(evaluationList);
+					 displayGradeList(gradeList);
 					 
 				  }
 			  }
@@ -171,18 +195,18 @@
   }
   
   /* 화면에 출력 */
-  function displayAttendanceList(list) {
+  function displayGradeList(list) {
 	  
 	  // 전체 row 갯수
 	  for(var i=0; i < list.length; i++) {
 		  $("#tablebody").append("<tr class='listRow' id='listIndex" + i + "'></tr>"); // tr 생성
 		  // 해당하는 row의 column 갯수
 		  for(var j = 0; j < list[i].length; j++) {
-				if(j + 1 == list[i].length) {
-					$("#listIndex" + i).append('<button type="button" value="'+ list[i][7] + '" class="request" id="btn' + i + '">평가</button>');
-					break;
-			  	}
-				
+			  if(list[i][0]) {
+				  if(j == 2 || j == 4)
+					  $("#listIndex" + i).append("<td></td>");
+					  continue;
+			  }
 			  	$("#listIndex" + i).append("<td>"+ list[i][j] + "</td>");
 
 		  }
@@ -193,40 +217,6 @@
 		  isLectureEvaluation($(this).val());
 		});
 	
-  }
-
-  /* 강의평가여부 확인 */
-  function isLectureEvaluation(attNum) {
-	  $.ajax({
-		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/attendance_getLectureEvaluationByCode.jsp",
-		  data:  {
-			  "attNum" : attNum
-			  },
-		  //async: false,
-		  dataType : "json",
-		  success: function(success) {
-			  if(success) { // 전송 완료 시.
-				  if(success.error != null) { // 실패
-					  alert(success.error);
-				  }
-				  else {
-					  if(success.data) {
-						  alert("이미 강의평가가 완료된 과목입니다.");
-						  return;
-					  }
-					  document.getElementById("popup").style.display = "block";
-					  sendMessage(attNum);
-				  }
-			  }
-			  else {
-				  alert("잠시 후에 시도해주세요.");
-			  }
-		  },
-		  error: function(xhr, request,error) {
-
-		  }
-		});
   }
   
   </script>
@@ -254,7 +244,7 @@
    </div>
    <div id="selectArea" class="select">
 				<select id="TermBox" class="area">
-				<option value="" disabled selected>원하는 학기를 선택하세요.</option>
+				<option value="not" disabled selected>원하는 학기를 선택하세요.</option>
 				</select>
    </div>
    <div id="tableArea">

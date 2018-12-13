@@ -48,13 +48,13 @@
 			location.href = "lectureEvaluation.jsp";
 			break;
 		case 6:
-			location.href = "login.jsp";
+			location.href = "getGradeInfo.jsp";
 			break;
 		case 7:
-			location.href = "login.jsp";
+			location.href = "getAwardInfoBySID.jsp";
 			break;
 		case 8:
-			location.href = "login.jsp";
+			location.href = "getScholarshipList.jsp";
 			break;
 		}
 		});

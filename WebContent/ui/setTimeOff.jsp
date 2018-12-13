@@ -36,13 +36,13 @@
 			location.href = "getApplyLectureList.jsp";
 			break;
 		case 5:
-			location.href = "login.jsp";
+			location.href = "getGradeInfo.jsp";
 			break;
 		case 6:
-			location.href = "login.jsp";
+			location.href = "getAwardInfoBySID.jsp";
 			break;
 		case 7:
-			location.href = "login.jsp";
+			location.href = "getScholarshipList.jsp";
 			break;
 		}
 		});
@@ -307,18 +307,26 @@
         <li>성적 부여</li>
 	</ul>
    </div>
-   <!-- 검색 라인 -->
-     <div id="searchArea" class="searchArea">
-         <input type="text" name="SubjectName" id="inputDepartmentCode">
-       </div>
-       <!-- 주요화면 -->
-   <div id="mainArea">
-   		<div id="numContext" class="context">요청번호</div>
-   		<div id="dateContext" class="context">요청일자</div>
-   		<div id="idContext" class="context">아이디</div>
-   		<div id="whitespaceContext" class="context"></div>
-   		<div id="subArea">
-   		</div>
-   		</div>
+	 <div id="tableArea">
+   		<table id="evaluationTable">
+
+		<thead>
+        <tr align="center" id="title"> 
+            <td width="210" bgcolor="#00649F">장학이름</td>
+            <td width="120" bgcolor="#00649F">장학금</td>
+            <td width="140" bgcolor="#00649F">수혜일자</td>
+        </tr>
+        </thead>
+        <tbody id="tablebody">
+        </tbody>
+    </table>
+   </div>
+   <div id="reasonArea">
+   	<div id="reasonTitle">
+   	</div>
+   	<div id="reasonTextArea">
+   		<div id="reasonText"></div>
+   	</div>
+   </div>
 </body>
 </html>
