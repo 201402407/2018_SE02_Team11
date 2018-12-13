@@ -32,6 +32,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 			elemJson.put("startSemester", elem.getStartSemester());
 			elemJson.put("endSemester", elem.getEndSemester());
 			elemJson.put("reason", elem.getReason());
+			elemJson.put("sid", elem.getStudentID());
 			 
 			listJson.add(elemJson);
 		}
