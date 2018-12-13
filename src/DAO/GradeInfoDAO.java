@@ -91,9 +91,6 @@ public class GradeInfoDAO extends DAOBase {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(sql);
 			setIntegers(pstmt, p_attnumlist);
-			System.out.println("------------------");
-			System.out.println(sql);
-			System.out.println("------------------");
 			ResultSet rs = pstmt.executeQuery();
 			
 			// 각 수강번호에 해당하는 평점을 채워넣는다.
