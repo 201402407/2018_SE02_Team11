@@ -83,8 +83,15 @@
 		  type: 'post',
 		  url: "<%=request.getContextPath() %>/proc/lecture_addLecture.jsp",
 		  data:  {
-			  "subj_name" :  $("#subjectNameArea").val(),
-			  "score" : $("#scoreArea").val()
+			  "subjcode" :  $("#subjcodeArea").val(),
+			  "profcode" : $("#profcodeArea").val(),
+			  "depcode" :  $("#depcodeArea").val(),
+			  "registerterm" : $("#registertermArea").val(),
+			  "allnum" :  $("#allnumArea").val(),
+			  "dayofweek" : $("#dayofweekArea").val(),
+			  "starttime" :  $("#starttimeArea").val(),
+			  "endtime" : $("#endtimeArea").val(),
+			  "syltext" : $("#syltextArea").val()
 			  },
 		  //async: false,
 		  dataType : "json",
@@ -131,22 +138,22 @@
    <div id="inputArea">
 	 	<div id="firstline">
 	 			과목코드<input type="text" id="subjcodeArea" class="area">
-	 			등록학기<input type="text" id="profcodeArea" class="area">
+	 			교수등록번호<input type="text" id="profcodeArea" class="area">
 	 	</div>
 	 	<div id="secondline">
-	 			교수 등록번호<input type="text" id="depcodeArea" class="area">
-	 			전체인원<input type="text" id="registertermArea" class="area">
+	 			학과코드<input type="text" id="depcodeArea" class="area">
+	 			등록학기<input type="text" id="registertermArea" class="area">
 	 	</div>
 	 	<div id="thirdline">
-	 			강의 시작시간<input type="text" id="allnumArea" class="area">
-	 			강의 종료시간<input type="text" id="dayofweekArea" class="area">
+	 			전체인원<input type="text" id="allnumArea" class="area">
+	 			강의 요일<input type="text" id="dayofweekArea" class="area">
 	 	</div>
 	 	<div id="fourthline">
 	 			강의 시작시간<input type="text" id="starttimeArea" class="area">
 	 			강의 종료시간<input type="text" id="endtimeArea" class="area">
 	 	</div>
 	 	<div id="fifthline">
-	 			강의요일<input type="text" id="dayofweekArea" class="area">
+	 			강의계획서 내용<input type="text" id="syltextArea" class="area">
 	 	</div>
 	 </div>
 	 <button type="button" class="button" id="addButton" onclick="add()">등록</button>

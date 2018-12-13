@@ -94,7 +94,6 @@
   /* 특정 과목 검색 */
   function search() {
 	  $("#subArea").empty(); // 초기화
-	  alert($("#inputSubjectName").val());
 	  $.ajax({
 	    	type : 'post',
 	    	url: "<%=request.getContextPath() %>/proc/lecture_getLectureByName.jsp",

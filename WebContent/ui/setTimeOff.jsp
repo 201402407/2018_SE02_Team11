@@ -158,11 +158,11 @@
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][4] + "</td>"); // 종료학기
 	  }
 	
-	  $(".permit").click(function({
+	  $(".permit").click(function(event){
 			permit($(this).val());
 		});
 	  
-	  $(".reject").click(function({
+	  $(".reject").click(function(event){
 			reject($(this).val());
 		});
   }

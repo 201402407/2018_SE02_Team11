@@ -39,7 +39,7 @@
 			location.href = "getApplyLectureList.jsp";
 			break;
 		case 5:
-			location.href = "awardToStudent.jsp";
+			location.href = "addLecture.jsp";
 			break;
 		case 6:
 			location.href = "addProfessor.jsp";

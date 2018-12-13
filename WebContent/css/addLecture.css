@@ -109,7 +109,7 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 8%;
+	margin-top: 5%;
 }
 
 #thirdline {
@@ -118,7 +118,7 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 8%;
+	margin-top: 5%;
 }
 
 #fourthline {
@@ -127,9 +127,19 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 8%;
+	margin-top: 5%;
 }
-#subjectNameArea {
+
+#fifthline {
+	width: 100%;
+	display: block;
+	color: #707070;
+	font-size: 15px;
+	margin-left: 10%;
+	margin-top: 5%;
+}
+
+#subjcodeArea {
 	width: 300px;
 	height: 30px;
 	background-color: white;
@@ -141,9 +151,100 @@ li {
 	border: none;
 }
 
-#scoreArea {
+#profcodeArea {
 	width: 300px;
 	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
+}
+
+
+#depcodeArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
+}
+
+
+#registertermArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
+}
+
+
+#allnumArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
+}
+
+
+#dayofweekArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
+}
+
+
+#starttimeArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
+}
+
+
+#endtimeArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
+}
+
+
+#syltextArea {
+	width: 300px;
+	height: 100px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
