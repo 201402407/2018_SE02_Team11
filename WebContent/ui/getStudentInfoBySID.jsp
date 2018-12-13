@@ -5,16 +5,16 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/getStudentInfoBySID.css?ver=1" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/getStudentInfoBySID.css" rel="stylesheet" type="text/css">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
-  
+  var list = [];
 	/* 생성 시 실행 */
 	$(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 		getStudentInfo();
-		
+		getStudentChange();
 		$("#menu").children().eq(0).css("background-color", "#00649F");
 		$("#menu").children().eq(0).css("color", "white");
 		
@@ -77,6 +77,74 @@
 				  }
 				});
 		}
+	  
+	function changetokor(temp) {
+		if(temp == 0)	return "휴학";
+		if(temp == 1)	return "복학";
+	}
+	/* 학적변동 */
+	function getStudentChange() {
+		$.ajax({
+			
+			  type: 'post',
+			  url: "<%=request.getContextPath() %>/proc/changerecord_getChangeRecordListBySID.jsp",
+			  data:  {
+				  "sid" : <%=session.getAttribute("sid") %>
+				  },
+			  //async: false,
+			  dataType : "json",
+			  success: function(success) {
+				  alert(success);
+				  if(success) { // 전송 완료 시.
+					  if(success.error != null) { // 실패
+						  alert(success.error);
+					  }
+					  else {
+						  var temp = success.data;
+							alert(temp);
+						  /* 수강리스트 출력 */
+						  $.each(temp, function(key, arrjson) {
+							  	// 수강과목 정보 넣기.
+							  	var tempArray = [];
+							  	
+							  	tempArray.push(arrjson.changeDate);
+							  	tempArray.push(changetokor(arrjson.changeType));
+							  	tempArray.push(arrjson.startSemester);
+							  	tempArray.push(arrjson.endSemester);
+							  	
+							  	list.push(tempArray); // 푸시
+							  	
+							});
+							
+						 displayList(list);
+						 
+					  }
+				  }
+				  else {
+					  alert("잠시 후에 시도해주세요.");
+				  }
+			  },
+			  error: function(xhr, request,error) {
+
+			  }
+			});
+	}
+	
+	/* 화면에 출력 */
+	  function displayList(list) {
+		  
+		  // 전체 row 갯수
+		  for(var i=0; i < list.length; i++) {
+			  $("#tablebody").append("<tr class='listRow' id='listIndex" + i + "'></tr>"); // tr 생성
+			  // 해당하는 row의 column 갯수
+			  $("#listIndex" + i).append("<td>"+ list[i][0] + "</td>"); // 변동일자
+			  $("#listIndex" + i).append("<td>"+ list[i][1] + "</td>"); // 변동구분
+			  $("#listIndex" + i).append("<td>"+ list[i][2] + "</td>"); // 시작학기
+			  $("#listIndex" + i).append("<td>"+ list[i][3] + "</td>"); // 종료학기
+		  }
+		  
+	  }
+	
 	/* 페이지 들어올 시 바로 실행 */
 	function getStudentInfo() {
 		$.ajax({
@@ -159,7 +227,7 @@
 	</ul>
    </div>
 	<!-- 메인 화면 이미지 공간 -->
-	 <img src="<%=request.getContextPath() %>/image/mainImage.png" id="mainImageSrc"> 
+	 <!--  --> 
 	 <div id="studentInfoArea">
 	 	<div id="firstline">
 	 			학년<div id="yearArea" class="area"></div>
@@ -172,5 +240,19 @@
 	 			졸업여부<div id="isGraduateArea" class="area"></div>
 	 	</div>
 	 </div>
+	 <div id="tableArea">
+   		<table id="changeTable">
+		<thead>
+        <tr align="center" id="title"> 
+            <td width="150" bgcolor="#00649F">변동일자</td>
+            <td width="150" bgcolor="#00649F">변동구분</td>
+            <td width="150" bgcolor="#00649F">시작학기</td>
+            <td width="150" bgcolor="#00649F">종료학기</td>
+        </tr>
+        </thead>
+        <tbody id="tablebody">
+        </tbody>
+    </table>
+   </div>
 </body>
 </html>

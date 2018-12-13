@@ -96,8 +96,6 @@
 	        },
 	        dataType : "json",
 			  success: function(success) {
-				  alert(success);
-				  alert(success.data);
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
@@ -105,12 +103,12 @@
 					  else {
 						 var temp = success.data;
 						//location.href = "../proc/timeoffrequest_getTimeoffRequestList.jsp";
-						alert(temp);
+						
 						 /* 수강리스트 출력 */
 						  $.each(temp, function(key, arrjson) {
 							  	// 수강과목 정보 넣기.
 							  	var tempArray = [];
-							  	alert(arrjson.changeType);
+							  	
 							  	console.log(arrjson.changeType);
 							  	
 							  	tempArray.push(arrjson.reqNum);
@@ -145,17 +143,16 @@
 	  for(var i=0; i < list.length; i++) {
 		  $("#tablebody").append("<tr class='listRow' id='listIndex" + i + "'></tr>"); // tr 생성
 		  
-		  if(i+1 == list.length) { // 맨 끝열
-			  $("#reasonText").html(list[i][5]);
-			  $("#listIndex" + i).append('<button type="button" value="'+ list[i][0] + '" class="permit" id="permitbtn' + i + '">승인</button>');
-			  $("#listIndex" + i).append('<button type="button" value="'+ list[i][0] + '" class="reject" id="rejectbtn' + i + '">거절</button>');
-		  }
 		  // 해당하는 row의 column 갯수
 		  $("#listIndex" + i).append("<td>"+ list[i][0] + "</td>"); // 요청번호
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][1] + "</td>"); // 요청일자
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][2] + "</td>"); // 휴복학구분
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][3] + "</td>"); // 시작학기
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][4] + "</td>"); // 종료학기
+		  $("#reasonText").html(list[i][5]);
+		  $("#listIndex" + i).append("<td id='"+ i + "'align='center'></td>"); // 종료학기
+		  $("#"+ i).append('<button type="button" value="'+ list[i][0] + '" class="permit" id="permitbtn' + i + '">승인</button>');
+		  $("#"+ i).append('<button type="button" value="'+ list[i][0] + '" class="reject" id="rejectbtn' + i + '">거절</button>');
 	  }
 	
 	  $(".permit").click(function(event){
@@ -269,7 +266,7 @@
     </table>
    </div>
    <div id="reasonArea">
-   	<div id="reasonTitle">
+   	<div id="reasonTitle">요<br/>청<br/>사<br/>유<br/>
    	</div>
    	<div id="reasonTextArea">
    		<div id="reasonText"></div>

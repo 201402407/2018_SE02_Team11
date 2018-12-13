@@ -120,3 +120,31 @@ li {
 	margin-left: 20px;	
 	}	
 	
+#changeTable {
+	 width:65%;
+	 height: 20px;
+	 border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+	 color: #707070;
+	 margin-top: 10%;
+	 margin-left: 27.5%;
+	 overflow: auto;
+}
+tbody {
+	background-color: #F1F1F1;
+	text-indent: 10px;
+	overflow: auto;
+}
+td {
+	border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+	 padding: 4px;
+}
+tr {
+	border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+}
+#title {
+	color: white;
+}
+	

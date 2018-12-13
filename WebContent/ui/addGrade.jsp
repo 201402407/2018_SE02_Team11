@@ -101,8 +101,6 @@
 	        },
 	        dataType : "json",
 			  success: function(success) {
-				  alert(success);
-				  alert(success.data);
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
@@ -110,13 +108,12 @@
 					  }
 					  else {
 						 var temp = success.data;
-						alert(temp);
+						
 						 /* 수강리스트 출력 */
 						 // 순서 : subjectName, attendanceNum, isRetake, studentID, studentName
 						  $.each(temp, function(key, arrjson) {
 							  	// 수강과목 정보 넣기.
 							  	var tempArray = [];
-							  	alert(arrjson.subjectName);
 							  	
 							  	tempArray.push(arrjson.subjectName);
 							  	tempArray.push(arrjson.attendanceNum);
@@ -166,22 +163,22 @@
 		  // 클릭
 		  $(this).css("background-color", "#003453");
 		  $(this).css("color", "white");
-		  alert(col);
+		  
 			// 평점 활성화
 		  $("#gradeBox").show();
 			
 			$("#addButton").click(function() {
 				if(col == null) {
 					alert("원하시는 수강 리스트를 우선 선택하세요!");
+					break;
 				}
 				if($("#gradeBox option:selected").val() == null) {
 					alert("학점을 선택하세요!");
+					break;
 				}
 				
 				var attendancenum = list[col][1];
 				var grade = $("#gradeBox option:selected").val();
-				alert(col + ", " + grade);
-				alert(list[col][1]);
 				add(attendancenum, grade);
 			});
 	  });

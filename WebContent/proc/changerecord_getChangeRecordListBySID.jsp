@@ -34,10 +34,23 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 		JSONArray listJson = new JSONArray();
 		for(ChangeRecord elem : list)
 		{
+			int changeType;
+			switch(elem.getChangeType())
+			{
+			case TAKEOFF:
+				changeType = 0;
+				break;
+			case RESUME:
+				changeType = 1;
+				break;
+			default:
+				changeType = -1;
+			}
+			
 			JSONObject elemJson = new JSONObject();
 			elemJson.put("changerecordNum", elem.getChangerecordNum());
 			elemJson.put("changeDate", elem.getChangeDate().toString());
-			elemJson.put("changeType", elem.getChangeType());
+			elemJson.put("changeType", changeType);
 			elemJson.put("startSemester", elem.getStartSemester());
 			elemJson.put("endSemester", elem.getEndSemester());
 			elemJson.put("reason", elem.getReason());
