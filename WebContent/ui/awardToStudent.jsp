@@ -5,15 +5,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/addScholarship.css?ver=1" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/awardToStudent.css?ver=1" rel="stylesheet" type="text/css">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 
-	    $("#menu").children().eq(3).css("background-color", "#00649F");
-	    $("#menu").children().eq(3).css("color", "white");
+	    $("#menu").children().eq(5).css("background-color", "#00649F");
+	    $("#menu").children().eq(5).css("color", "white");
 	    
 	    /* 관리자 확인 */
 	    if(<%=session.getAttribute("isAdmin") == null %>) {
@@ -81,9 +81,11 @@
   function add() {
 	  $.ajax({
 		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/scholarship_addScholarship.jsp",
+		  url: "<%=request.getContextPath() %>/proc/scholarshipaward_awardToStudent.jsp",
 		  data:  {
-			  "scho_name" :  $("#scholarshipArea").val()
+			  "scholnum" :  $("#scholnumArea").val(),
+			  "money" : $("#moneyArea").val(),
+			  "sid" : $("#sidArea").val()
 			  },
 		  //async: false,
 		  dataType : "json",
@@ -129,7 +131,13 @@
    </div>
    <div id="inputArea">
 	 	<div id="firstline">
-	 			장학명<input type="text" id="scholarshipArea" class="area">
+	 			장학코드<input type="text" id="scholnumArea" class="area">
+	 	</div>
+	 	<div id="secondline">
+	 			장학금<input type="text" id="moneyArea" class="area">
+	 	</div>
+	 	<div id="thirdline">
+	 			학번<input type="text" id="sidArea" class="area">
 	 	</div>
 	 </div>
 	 <button type="button" class="button" id="addButton" onclick="add()">등록</button>

@@ -44,7 +44,7 @@
 			location.href = "getApplyLectureList.jsp";
 			break;
 		case 5:
-			location.href = "getGradeInfo.jsp";
+			location.href = "awardToStudent.jsp";
 			break;
 		case 6:
 			location.href = "addProfessor.jsp";
@@ -81,6 +81,11 @@
 			});
 	}
 
+  /* 휴복학 문자 변경 */
+  function changetypeToKor(changetype) {
+	  if(changetype == 0)	return "휴학";
+	  if(changetype == 1)	return "복학";
+  }
   /* 리스트출력 */
   function getList() {
 	  $("#tablebody").empty(); // 초기화
@@ -107,6 +112,7 @@
 							  	var tempArray = [];
 							  	alert(arrjson.changeType);
 							  	console.log(arrjson.changeType);
+							  	
 							  	tempArray.push(arrjson.reqNum);
 							  	tempArray.push(arrjson.reqDate);
 							  	tempArray.push(arrjson.changeType);
@@ -141,8 +147,8 @@
 		  
 		  if(i+1 == list.length) { // 맨 끝열
 			  $("#reasonText").html(list[i][5]);
-			  $("#listIndex" + i).append('<button type="button" value="'+ i + '" class="permit" id="permitbtn' + i + '">승인</button>');
-			  $("#listIndex" + i).append('<button type="button" value="'+ i + '" class="reject" id="rejectbtn' + i + '">거절</button>');
+			  $("#listIndex" + i).append('<button type="button" value="'+ list[i][0] + '" class="permit" id="permitbtn' + i + '">승인</button>');
+			  $("#listIndex" + i).append('<button type="button" value="'+ list[i][0] + '" class="reject" id="rejectbtn' + i + '">거절</button>');
 		  }
 		  // 해당하는 row의 column 갯수
 		  $("#listIndex" + i).append("<td>"+ list[i][0] + "</td>"); // 요청번호
@@ -150,26 +156,24 @@
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][2] + "</td>"); // 휴복학구분
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][3] + "</td>"); // 시작학기
 		  $("#listIndex" + i).append("<td align='center'>"+ list[i][4] + "</td>"); // 종료학기
-		  
 	  }
-  }
-  /* 클로저 */
-  //리턴할 때마다 새로운 num을 사용. 
-  function make_permitfunction(lectureArray) {
-      return function() { permit(lectureArray); };
-  }
-  function make_rejectfunction(lectureArray) {
-      return function() { reject(lectureArray); };
+	
+	  $(".permit").click(function({
+			permit($(this).val());
+		});
+	  
+	  $(".reject").click(function({
+			reject($(this).val());
+		});
   }
   
-  /* 학번부여허가 */
-  function permit(lectureArray) {
+  /* 휴복학신청허가 */
+  function permit(reqNum) {
 	  $.ajax({
 		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/studentidrequest_permitReqSID.jsp",
+		  url: "<%=request.getContextPath() %>/proc/timeoffrequest_permitTimeoffRequest.jsp",
 		  data:  {
-			  "reqnum" : lectureArray[0],
-			  "dcode" : $("#inputDepartmentCode").val()
+			  "reqNum" : reqNum
 			  },
 		  //async: false,
 		  dataType : "json",
@@ -194,13 +198,13 @@
 		});
   	}
   
-  /* 학번부여거절 */
-  function reject(lectureArray) {
+  /* 휴복학신청거절 */
+  function reject(list) {
 	  $.ajax({
 		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/studentidrequest_rejectReqSID.jsp",
+		  url: "<%=request.getContextPath() %>/proc/timeoffrequest_rejectTimeoffReq.jsp",
 		  data:  {
-			  "reqnum" : lectureArray[0]
+			  "reqNum" : reqNum
 			  },
 		  //async: false,
 		  dataType : "json",
