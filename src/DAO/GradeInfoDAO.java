@@ -75,10 +75,14 @@ public class GradeInfoDAO extends DAOBase {
 		// 10035    ->  (null)
 		// 10115    ->  (null)
 		// 10097    ->  4.0, true
-		// 10013    ->  2.5, false
+		// 10013    ->  2.5, fals
 		
 		// 입력물과 반환물의 리스트 길이는 똑같아야 한다.
 		List<GradeInfo> gradeInfoList = new ArrayList<GradeInfo>( Collections.nCopies(p_attnumlist.size(), null) );
+		// 수강리스트가 비었다면 SQL문을 실행할 수고 조차 들여선 안된다.
+			if (p_attnumlist.isEmpty())
+				return gradeInfoList;
+		
 		try {
 			String sql_beforePlaceHolders = "SELECT * FROM GradeInfo\r\n" + 
 					"WHERE attendanceNum in (%s)";
@@ -87,6 +91,9 @@ public class GradeInfoDAO extends DAOBase {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(sql);
 			setIntegers(pstmt, p_attnumlist);
+			System.out.println("------------------");
+			System.out.println(sql);
+			System.out.println("------------------");
 			ResultSet rs = pstmt.executeQuery();
 			
 			// 각 수강번호에 해당하는 평점을 채워넣는다.
