@@ -38,7 +38,7 @@
 			location.href = "addSubject.jsp";
 			break;
 		case 3:
-			location.href = "timeTable.jsp";
+			location.href = "addScholarship.jsp";
 			break;
 		case 4:
 			location.href = "getApplyLectureList.jsp";
@@ -47,7 +47,7 @@
 			location.href = "getGradeInfo.jsp";
 			break;
 		case 6:
-			location.href = "getAwardInfoBySID.jsp";
+			location.href = "addProfessor.jsp";
 			break;
 		case 7:
 			location.href = "getScholarshipList.jsp";

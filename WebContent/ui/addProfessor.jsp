@@ -5,15 +5,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/addSubject.css?ver=1" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/addProfessor.css?ver=1" rel="stylesheet" type="text/css">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 
-	    $("#menu").children().eq(2).css("background-color", "#00649F");
-	    $("#menu").children().eq(2).css("color", "white");
+	    $("#menu").children().eq(6).css("background-color", "#00649F");
+	    $("#menu").children().eq(6).css("color", "white");
 	    
 	    /* 관리자 확인 */
 	    if(<%=session.getAttribute("isAdmin") == null %>) {
@@ -81,10 +81,9 @@
   function add() {
 	  $.ajax({
 		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/subject_addSubject.jsp",
+		  url: "<%=request.getContextPath() %>/proc/professor_addProfessor.jsp",
 		  data:  {
-			  "subj_name" :  $("#subjectNameArea").val(),
-			  "score" : $("#scoreArea").val()
+			  "profname" :  $("#professorArea").val()
 			  },
 		  //async: false,
 		  dataType : "json",
@@ -130,10 +129,7 @@
    </div>
    <div id="inputArea">
 	 	<div id="firstline">
-	 			과목명<input type="text" id="subjectNameArea" class="area">
-	 	</div>
-	 	<div id="secondline">
-	 			학점<input type="text" id="scoreArea" class="area">
+	 			교수 이름<input type="text" id="professorArea" class="area">
 	 	</div>
 	 </div>
 	 <button type="button" class="button" id="addButton" onclick="add()">등록</button>
