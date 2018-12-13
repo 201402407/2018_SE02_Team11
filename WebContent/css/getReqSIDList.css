@@ -10,6 +10,9 @@ body {
 }
 
 
+#first {
+	margin-top: 50px;
+}
 #header {
 	height: 30px;
 	background-color: #F1F1F1;

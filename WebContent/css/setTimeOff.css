@@ -60,12 +60,45 @@ li {
     cursor: pointer;
 }
 
+#tableArea {
+	height: 50%;
+}
+#timeoffTable {
+	 width:75%;
+	 height: 20px;
+	 border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+	 color: #707070;
+	 margin-top: 8%;
+	 margin-left: 22%;
+}
+tbody {
+	background-color: #F1F1F1;
+	text-indent: 10px;
+	overflow: auto;
+}
+td {
+	border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+	 padding: 4px;
+}
+tr {
+	border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+}
+
+#first {
+	margin-top: 50px;
+}
+#title {
+	color: white;
+}
 
 #reasonArea {
 	width: 72%;
 	height: 300px;
 	margin-top: 5%;
-	margin-left: 10%;	
+	margin-left: 30%;	
 }
 #reasonTitle {
 	background-color: #00649F;
@@ -79,6 +112,12 @@ li {
 	border: 10px solid #ADADAD;
 	display: inline-block;
 }
+
+#first {
+	margin-top: 50px;
+}
+
+
 #reasonText {
 	display: inline-block;
 	background-color: white;

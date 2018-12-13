@@ -5,17 +5,25 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/getReqSIDList.css?ver=1" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/setTimeOff.css?ver=1" rel="stylesheet" type="text/css">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
+  /* 결과 담을 Array 선언 */
+  var list = []; // 결과담을 배열 선언 
+  
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 	    getList();
 	    
-	    $("#menu").children().eq(0).css("background-color", "#00649F");
-	    $("#menu").children().eq(0).css("color", "white");
+	    $("#menu").children().eq(1).css("background-color", "#00649F");
+	    $("#menu").children().eq(1).css("color", "white");
 	    
+	    /* 관리자 확인 */
+	    if(<%=session.getAttribute("id") %> != "admin") {
+	    	alert("관리자로 로그인 되어있지 않습니다!");
+	    	location.href = "login.jsp";
+	    }
 	    /* 좌측 메뉴 클릭 이벤트 */
 		$("ul li").click(function(event){
 		// 누른 노드가 몇 번째인지 switch로 판단해서 적용
@@ -24,7 +32,7 @@
 			location.href = "getReqSIDList.jsp";
 			break;
 		case 1:
-			location.href = "requestTimeOnOff.jsp";
+			location.href = "setTimeOff.jsp";
 			break;
 		case 2:
 			location.href = "thisSemesterSubjectBySID.jsp";
@@ -78,129 +86,39 @@
 	  $("#subArea").empty(); // 초기화
 	    $.ajax({
 	    	type : 'post',
-	    	url: "<%=request.getContextPath() %>/proc/studentidrequest_getReqSIDList.jsp",
+	    	url: "<%=request.getContextPath() %>/proc/timeoffrequest_getTimeoffRequestList.jsp",
 	        data : {
 	        },
 	        dataType : "json",
 			  success: function(success) {
-				  
+				  alert(success.error);
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
 					  }
 					  else {
-						
 						var temp = success.data;
+						location.href = "../proc/timeoffrequest_getTimeoffRequestList.jsp";
+						alert(temp);
+						 /* 수강리스트 출력 */
+						  $.each(temp, function(key, arrjson) {
+							  	// 수강과목 정보 넣기.
+							  	var tempArray = [];
+							  	alert(arrjson.changeType);
+							  	console.log(arrjson.changeType);
+							  	tempArray.push(arrjson.reqNum);
+							  	tempArray.push(arrjson.reqDate);
+							  	tempArray.push(arrjson.changeType);
+							  	tempArray.push(arrjson.startSemester);
+							  	tempArray.push(arrjson.endSemester);
+							  	tempArray.push(arrjson.reason);
+							  	
+							  	list.push(tempArray); // 푸시
+							  	
+							});
+							
 						
-						var result = []; // 배열 생성. 나중에 인덱스로 읽게
-						$.each(temp, function(key, value){ // JSON 받아온 것의 data 순서대로 읽음.
-							var temp2 = [];
-						/* 순서 : reqSIDnum, reqSIDdata, accountID
-							push와 shift를 사용하자 */
-								$.each(value, function(element, result) {
-									
-									temp2.push(result);
-								});
-							result.push(temp2);
-						 });
-
-							for(var i = 0; i < result.length; i++) { // 인덱스 1은 subjectName이다.
-								/* reqnum */
-								$('#subArea').append("<div class='reqdiv' id='num"+ i +"'></div>"); // div추가
-								$("#num" + i).append('<span class="reqspan" id="numspan'+ i +'" name="not">'+ result[i][0] + '</span>');
-								/* reqdate */
-								$('#subArea').append("<div class='reqdiv' id='date"+ i +"'></div>"); // div추가
-								$("#date" + i).append('<span class="reqspan" id="datespan'+ i +'" name="not">'+ result[i][1] + '</span>');
-								/* reqid */
-								$('#subArea').append("<div class='reqdiv' id='id"+ i +"'></div>"); // div추가
-								$("#id" + i).append('<span class="reqspan" id="idspan'+ i +'" name="not">'+ result[i][2] + '</span>');
-								/* reqbtn */
-								$('#subArea').append("<div class='reqdiv' id='ws"+ i +"'></div>"); // div추가
-								$("#ws" + i).append('<button class="permit" type="button" name="not" id="permitbtn' + i + '">승인</button>'); // 버튼추가
-								$("#ws" + i).append('<button class="reject" type="button" name="not" id="rejectbtn' + i + '">거절</button>'); // 버튼추가
-								
-								/*
-								$("#" + i).css({
-									'width' : '99.9%',
-									'height' : '25px',
-									'border' : '0.5px solid #ADADAD',
-									'color' : '#707070',
-									'float' : 'left',
-									'text-indent' : '7px'
-								})
-								
-								$("#btn" + i).css({ // 버튼 css 설정
-									'width' : '70px',
-									'height' : '20px',
-									'background' : '#00649F',
-									'color' : 'white',
-									'font-size' : '10px',
-									'line-height' : '10px',
-									'float' : 'right',
-									'margint-right' : '30px',
-									'border' : '0px',
-									'border-radius' : '5px',
-								});
-								*/
-								
-								/* 수강신청 가능 리스트 조회 팝업 전송 */
-								/*
-								$("#"+i).click(function(event){
-									if(event.target.name == "not") {
-										alert("not");
-									}
-									else {
-										
-										make_function2(result[i]);
-									}
-									
-								});
-								*/
-								
-								/* 해당과목 수강신청 */
-								$("#permitbtn"+i).click(make_permitfunction(result[i]));
-								$("#rejectbtn"+i).click(make_rejectfunction(result[i]));
-							}
-							
-							/* css 추가 */
-							$(".reqdiv").css({
-								'width' : '24.8%',
-								'height' : '25px',
-								'border' : '0px',
-								//'margin-right' : '-7px',
-								'color' : '#707070',
-								'float' : 'left',
-								'text-indent' : '7px',
-								'display' : 'inline-block'
-							})
-							
-							$(".permit" + i).css({ // 버튼 css 설정
-								'width' : '45px',
-								'height' : '20px',
-								'background' : '#00649F',
-								'color' : 'white',
-								'font-size' : '10px',
-								'line-height' : '10px',
-								'float' : 'right',
-								'margint-right' : '30px',
-								'text-align': 'center',
-								'border' : '0px',
-								'border-radius' : '5px',
-							});
-							
-							$(".reject" + i).css({ // 버튼 css 설정
-								'width' : '45px',
-								'height' : '20px',
-								'background' : '#ADADAD',
-								'color' : 'white',
-								'font-size' : '10px',
-								'text-align': 'center',
-								'line-height' : '10px',
-								'float' : 'right',
-								'margint-right' : '30px',
-								'border' : '0px',
-								'border-radius' : '5px',
-							});
+						printlist(list);
 				  	}
 				  }
 				  
@@ -213,6 +131,27 @@
 			  }
 	    });
 	}
+  /* 리스트 출력 */
+  function printlist(list) {
+	  $($("#reasonText")).html(" ");
+	// 전체 row 갯수
+	  for(var i=0; i < list.length; i++) {
+		  $("#tablebody").append("<tr class='listRow' id='listIndex" + i + "'></tr>"); // tr 생성
+		  
+		  if(i+1 == list.length) { // 맨 끝열
+			  $("#reasonText").html(list[i][5]);
+			  $("#listIndex" + i).append('<button type="button" value="'+ i + '" class="permit" id="permitbtn' + i + '">승인</button>');
+			  $("#listIndex" + i).append('<button type="button" value="'+ i + '" class="reject" id="rejectbtn' + i + '">거절</button>');
+		  }
+		  // 해당하는 row의 column 갯수
+		  $("#listIndex" + i).append("<td>"+ list[i][0] + "</td>"); // 요청번호
+		  $("#listIndex" + i).append("<td align='center'>"+ list[i][1] + "</td>"); // 요청일자
+		  $("#listIndex" + i).append("<td align='center'>"+ list[i][2] + "</td>"); // 휴복학구분
+		  $("#listIndex" + i).append("<td align='center'>"+ list[i][3] + "</td>"); // 시작학기
+		  $("#listIndex" + i).append("<td align='center'>"+ list[i][4] + "</td>"); // 종료학기
+		  
+	  }
+  }
   /* 클로저 */
   //리턴할 때마다 새로운 num을 사용. 
   function make_permitfunction(lectureArray) {
@@ -291,7 +230,7 @@
 <!-- 홈페이지의 메뉴 바 -->
    <div id="header">
    <button type="button" class="logout_button" id="logoutButton" onclick="logout()">로그아웃</button>
-        <span id="nowLoginSID">관리자</span>
+        <span id="nowLoginSID"></span>
         
  </div>
  <!-- 좌측 메뉴 공간 -->
@@ -308,13 +247,16 @@
 	</ul>
    </div>
 	 <div id="tableArea">
-   		<table id="evaluationTable">
+   		<table id="timeoffTable">
 
 		<thead>
         <tr align="center" id="title"> 
-            <td width="210" bgcolor="#00649F">장학이름</td>
-            <td width="120" bgcolor="#00649F">장학금</td>
-            <td width="140" bgcolor="#00649F">수혜일자</td>
+            <td width="100" bgcolor="#00649F">요청번호</td>
+            <td width="180" bgcolor="#00649F">요청일자</td>
+            <td width="90" bgcolor="#00649F">휴복학구분</td>
+            <td width="120" bgcolor="#00649F">시작학기</td>
+            <td width="120" bgcolor="#00649F">종료학기</td>
+            <td width="180" bgcolor="#00649F"></td>
         </tr>
         </thead>
         <tbody id="tablebody">

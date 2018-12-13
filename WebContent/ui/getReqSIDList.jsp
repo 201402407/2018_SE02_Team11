@@ -24,7 +24,7 @@
 			location.href = "getReqSIDList.jsp";
 			break;
 		case 1:
-			location.href = "requestTimeOnOff.jsp";
+			location.href = "setTimeOff.jsp";
 			break;
 		case 2:
 			location.href = "thisSemesterSubjectBySID.jsp";
