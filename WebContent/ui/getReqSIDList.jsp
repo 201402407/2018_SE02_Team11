@@ -12,7 +12,10 @@
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
 	    getList();
-	    
+	    if(<%=session.getAttribute("isAdmin") == null %>) {
+	    	alert("관리자로 로그인 되어있지 않습니다!");
+	    	location.href = "login.jsp";
+	    }
 	    $("#menu").children().eq(0).css("background-color", "#00649F");
 	    $("#menu").children().eq(0).css("color", "white");
 	    
@@ -27,7 +30,7 @@
 			location.href = "setTimeOff.jsp";
 			break;
 		case 2:
-			location.href = "thisSemesterSubjectBySID.jsp";
+			location.href = "addSubject.jsp";
 			break;
 		case 3:
 			location.href = "timeTable.jsp";

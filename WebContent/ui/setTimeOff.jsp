@@ -20,7 +20,7 @@
 	    $("#menu").children().eq(1).css("color", "white");
 	    
 	    /* 관리자 확인 */
-	    if(<%=session.getAttribute("id") %> != "admin") {
+	    if(<%=session.getAttribute("isAdmin") == null %>) {
 	    	alert("관리자로 로그인 되어있지 않습니다!");
 	    	location.href = "login.jsp";
 	    }
@@ -35,7 +35,7 @@
 			location.href = "setTimeOff.jsp";
 			break;
 		case 2:
-			location.href = "thisSemesterSubjectBySID.jsp";
+			location.href = "addSubject.jsp";
 			break;
 		case 3:
 			location.href = "timeTable.jsp";
@@ -83,7 +83,7 @@
 
   /* 리스트출력 */
   function getList() {
-	  $("#subArea").empty(); // 초기화
+	  $("#tablebody").empty(); // 초기화
 	    $.ajax({
 	    	type : 'post',
 	    	url: "<%=request.getContextPath() %>/proc/timeoffrequest_getTimeoffRequestList.jsp",
@@ -91,14 +91,15 @@
 	        },
 	        dataType : "json",
 			  success: function(success) {
-				  alert(success.error);
+				  alert(success);
+				  alert(success.data);
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
 					  }
 					  else {
-						var temp = success.data;
-						location.href = "../proc/timeoffrequest_getTimeoffRequestList.jsp";
+						 var temp = success.data;
+						//location.href = "../proc/timeoffrequest_getTimeoffRequestList.jsp";
 						alert(temp);
 						 /* 수강리스트 출력 */
 						  $.each(temp, function(key, arrjson) {
@@ -230,7 +231,7 @@
 <!-- 홈페이지의 메뉴 바 -->
    <div id="header">
    <button type="button" class="logout_button" id="logoutButton" onclick="logout()">로그아웃</button>
-        <span id="nowLoginSID"></span>
+        <span id="nowLoginSID">관리자</span>
         
  </div>
  <!-- 좌측 메뉴 공간 -->

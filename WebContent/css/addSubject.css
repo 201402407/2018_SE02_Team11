@@ -62,52 +62,77 @@ li {
     cursor: pointer;
 }
 
-
 #first {
 	margin-top: 50px;
 }
-#mainArea {
-	width: 60%;
-	height: 500px;
-	margin-left:30%;
-	margin-top: 7%;
-}
 
-.context {
-	display: inline-block;
-	height: 40px;
-	line-height: 40px;
-	font-size: 18px;
-	color: white;
-	background-color: #00649F;
-	text-align: center;
-	width:25%;
-	border: 1px solid #ADADAD;
-	margin-right: -7px;
-}
 
-#whitespaceContext {
-	margin-top: 5px;
-}
-#subArea {
-	background-color: #F1F1F1;
-	overflow: auto;
-	width: 100%;
-	height: 60%;
-}
 
-#inputDepartmentCode {
-	height: 25px;
-	font-size: 14px;
-	line-height: 25px;
-	text-align: left;
-	vertical-align: middle;
-	text-indent: 5px;
-	background-color: #F1F1F1;
-	border: 1px solid #ADADAD;
-	width: 15%;
-	float: right;
-	margin-right: 10%;
+#addButton {
+	border-radius: 8px;
+	border: none;
 	margin-top: 30px;
-	
+	margin-left: 400px;
+	font-size: 16px;
+	height: 60px;
+	width: 180px;
+	display: inline-block;
+	background-color: #00649F;
+	color: white;
+}
+
+
+#inputArea {
+	border-radius: 8px;
+	display: block;
+	width: 45%;
+	height: 45%;
+	margin-left: 15%;
+	margin-top: 11%;
+	background-color: #F1F1F1;
+	display: inline-block;
+	color: "#707070";
+}
+
+#firstline {
+	width: 100%;
+	display: block;
+	color: #707070;
+	font-size: 15px;
+	margin-left: 10%;
+	margin-top: 10%;
+}
+
+#secondline {
+	width: 100%;
+	display: block;
+	color: #707070;
+	font-size: 15px;
+	margin-left: 10%;
+	margin-top: 15%;
+}
+
+
+#subjectNameArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 8.5%;
+	border: none;
+}
+
+#scoreArea {
+	width: 300px;
+	height: 30px;
+	background-color: white;
+	display: inline-block;
+	font-size: 12px;
+	padding: 2px;
+	text-indent: 5px;
+	margin-left: 11.5%;
+	border: none;
 }
