@@ -85,10 +85,10 @@ li {
 #inputArea {
 	border-radius: 8px;
 	display: block;
-	width: 45%;
-	height: 45%;
-	margin-left: 15%;
-	margin-top: 11%;
+	width: 60%;
+	height: 68%;
+	margin-left: 10%;
+	margin-top: 4%;
 	background-color: #F1F1F1;
 	display: inline-block;
 	color: "#707070";
@@ -100,7 +100,7 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 6%;
+	margin-top: 3%;
 }
 
 #secondline {
@@ -109,7 +109,7 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 5%;
+	margin-top: 3%;
 }
 
 #thirdline {
@@ -118,7 +118,7 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 5%;
+	margin-top: 3%;
 }
 
 #fourthline {
@@ -127,7 +127,7 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 5%;
+	margin-top: 3%;
 }
 
 #fifthline {
@@ -136,120 +136,126 @@ li {
 	color: #707070;
 	font-size: 15px;
 	margin-left: 10%;
-	margin-top: 5%;
+	margin-top: 3%;
 }
 
 #subjcodeArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 8.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 #profcodeArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 
 #depcodeArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 
 #registertermArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 
 #allnumArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 
 #dayofweekArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 
 #starttimeArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 
 #endtimeArea {
-	width: 300px;
+	width: 200px;
 	height: 30px;
 	background-color: white;
 	display: inline-block;
 	font-size: 12px;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-left: 4%;
 	border: none;
 }
 
 
 #syltextArea {
-	width: 300px;
-	height: 100px;
+	width: 80%;
+	height: 80px;
 	background-color: white;
 	display: inline-block;
-	font-size: 12px;
+	font-size: 13px;
+	color: #707070;
 	padding: 2px;
 	text-indent: 5px;
-	margin-left: 11.5%;
+	margin-top: 4%;
 	border: none;
+}
+
+textarea {
+	font-size: 14px;
+	color: #707070;
 }

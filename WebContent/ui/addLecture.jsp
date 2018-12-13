@@ -153,7 +153,7 @@
 	 			강의 종료시간<input type="text" id="endtimeArea" class="area">
 	 	</div>
 	 	<div id="fifthline">
-	 			강의계획서 내용<input type="text" id="syltextArea" class="area">
+	 			<textarea id="syltextArea" placeholder="강의계획서를 입력하세요" class="area"></textarea>
 	 	</div>
 	 </div>
 	 <button type="button" class="button" id="addButton" onclick="add()">등록</button>
