@@ -160,7 +160,7 @@
 				  }
 				  else {
 					var temp = success.data;
-					alert("성공");
+					
 					 /* 성적리스트 출력 */
 					  $.each(temp, function(key, arrjson) {
 						  	// 성적 정보 넣기.

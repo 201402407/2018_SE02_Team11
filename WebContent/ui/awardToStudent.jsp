@@ -96,6 +96,7 @@
 				  }
 				  else { // 성공
 						alert("정상적으로 추가되었습니다.");
+						location.href = "awardToStudent.jsp";
 				  }
 			  }
 			  else {

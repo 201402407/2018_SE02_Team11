@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/getStudentInfoBySID.css" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/getStudentInfoBySID.css?ver=1" rel="stylesheet" type="text/css">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
@@ -94,14 +94,14 @@
 			  //async: false,
 			  dataType : "json",
 			  success: function(success) {
-				  alert(success);
+				  
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
 					  }
 					  else {
 						  var temp = success.data;
-							alert(temp);
+							
 						  /* 수강리스트 출력 */
 						  $.each(temp, function(key, arrjson) {
 							  	// 수강과목 정보 넣기.

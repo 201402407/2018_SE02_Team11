@@ -182,7 +182,7 @@
 				  }
 				  else {
 					  alert("학번요청 허가 완료되었습니다.");
-					  
+					  location.href = "setTimeOff.jsp";
 				  }
 			  }
 			  else {
@@ -213,7 +213,7 @@
 				  }
 				  else {
 					  alert("학번요청 거절 완료되었습니다.");
-					  
+					  location.href = "setTimeOff.jsp";
 				  }
 			  }
 			  else {
