@@ -80,6 +80,7 @@ public class OurTimes {
 				&& compareDateWithoutYear(today, END_ADD_ATTENDANCE_FALL) <= 0);  //제2학기
 	}
 	
+	
 	/**
 	 * 현재가 학기중인가?<br>
 	 * □□□□□□■■■■■■■■■□□□□□□□□□■■■■■■■■■□□□<br>
@@ -95,6 +96,21 @@ public class OurTimes {
 				&& compareDateWithoutYear(today, END_TERM_SPRING) <= 0)  //제1학기
 				||
 				(compareDateWithoutYear(today, BEGIN_TERM_FALL) >= 0
+				&& compareDateWithoutYear(today, END_TERM_FALL) <= 0);  //제2학기
+	}
+	
+	/**
+	 * 현재가 수강신청 시작 ~ 종강인가?
+	 * @return
+	 */
+	public static boolean isNowFromAddingAttendanceToTermEnd()
+	{
+		LocalDate today = dateNow();
+		return
+				(compareDateWithoutYear(today, BEGIN_ADD_ATTENDANCE_SPRING) >= 0
+				&& compareDateWithoutYear(today, END_TERM_SPRING) <= 0)  //제1학기
+				||
+				(compareDateWithoutYear(today, BEGIN_ADD_ATTENDANCE_FALL) >= 0
 				&& compareDateWithoutYear(today, END_TERM_FALL) <= 0);  //제2학기
 	}
 	

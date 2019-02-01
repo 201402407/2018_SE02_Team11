@@ -193,38 +193,37 @@ public class SubjectDAO extends DAOBase {
 	
 	/** 당학기운용과목조회 
 	 * @param p_dcode 학과코드
-	 * @return 과목정보리스트(과목코드, 과목명) null : 조회가능기간 아닌경우.
+	 * @return 과목정보리스트(과목코드, 과목명), null : 조회가능기간 아닌경우.
 	 * @throws SQLException DB오류
-	 * ! DAO 현재 시간에 따른 조회 가능 여부에 대한 알고리즘 추가 필요*/
+	 * ! DAO 현재 시간에 따른 조회 가능 여부에 대한 알고리즘 추가 필요
+	 * ! DAO SQL을 수정했다
+	 * */
 	public List<Subject> getThisSemesterSubjectByDCode(int p_dcode) throws SQLException {
 		List<Subject> arrayList = new ArrayList<Subject>();
 		
 		try {
-			String SQL = "SELECT Subject.subjectCode, Subject.subjectName"
-					+ " FROM Lecture"
-					+ " WHERE Lecture.registerTerm = ?"
-					+ " AND Lecture.departmentCode = ?"
-					+ " INNER JOIN Subject"
-					+ " ON Lecture.departmentCode = Subject.subjectCode"
-					+ " GROUP BY Subject.subjectCode";
-			conn = getConnection();
-			pstmt = conn.prepareStatement(SQL);
-
 			int currentTerm;
 			if(OurTimes.isNowOnTerm()) { // 학기중인 경우
 				currentTerm = OurTimes.currentTerm();
 			}
-			// 방학중인 경우
-			else {
-				// 수강신청 기간(2.1~2.7, 8.1~8.7) 포함 개강 전인 2월과 8월 둘 다 조회 가능.
-				if(OurTimes.dateNow().getMonthValue() == 2 || 
-						OurTimes.dateNow().getMonthValue() == 8) { 
-					currentTerm = OurTimes.closestFutureTerm();
-				}
-				else {
-					return null;
-				}
+			// 방학중인 경우 // 수강신청 기간 이후라면 조회 가능
+			else if(OurTimes.isNowFromAddingAttendanceToTermEnd())
+			{ 
+				currentTerm = OurTimes.closestFutureTerm();
 			}
+			else {
+			 	return null;
+			}
+			
+			String SQL = "SELECT Subject.subjectCode, Subject.subjectName, Subject.score"
+					+ " FROM Lecture"
+					+ " INNER JOIN Subject"
+					+ " ON Lecture.subjectCode = Subject.subjectCode"
+					+ " WHERE Lecture.registerTerm = ?"
+					+ " AND Lecture.departmentCode = ?"
+					+ " GROUP BY Subject.subjectCode";
+			conn = getConnection();
+			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, currentTerm);
 			pstmt.setInt(2, p_dcode);
 			ResultSet rs = pstmt.executeQuery();
@@ -232,10 +231,12 @@ public class SubjectDAO extends DAOBase {
 			while(rs.next()) {
 				int rsSubjectCode = rs.getInt("subjectCode");
 				String rsSubjectName = rs.getString("subjectName");
+				double rsScore = rs.getDouble("score");
 				
 				Subject subject = new Subject();
 				subject.setSubjectCode(rsSubjectCode);
 				subject.setSubjectName(rsSubjectName);
+				subject.setScore(rsScore);
 				
 				arrayList.add(subject);	
 			}
