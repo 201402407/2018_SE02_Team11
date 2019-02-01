@@ -43,7 +43,6 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 			JSONObject elemJson = new JSONObject();
 			elemJson.put("subjectCode", elem.getSubjectCode());
 			elemJson.put("subjectName", elem.getSubjectName());
-			elemJson.put("score", elem.getScore());
 			
 			listJson.add(elemJson);
 		}

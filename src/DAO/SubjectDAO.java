@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ClassObject.Subject;
-import DAO.AccountDAO.signUpResult;
 import Util.OurTimes;
 
 public class SubjectDAO extends DAOBase {
@@ -58,7 +57,7 @@ public class SubjectDAO extends DAOBase {
 	
 	/** 과목세부정보조회 
 	 * @param p_scode 과목코드
-	 * @return 과목세부정보(과목명,학점) Subject
+	 * @return 과목세부정보(과목명,학점), 과목코드에 해당하는 것 없으면 null
 	 * @throws SQLException DB오류
 	 * ! DAO 조회결과없음 수정해야 하는지?*/
 	public Subject getSubjectInfoBySCode(int p_scode) throws SQLException {
