@@ -1,33 +1,55 @@
-<%@page import="DAO.LectureDAO"%>
-<%@ page import="java.util.Stack"%>
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
+<%@page import="java.util.List"%>
+<%@page import="org.json.simple.JSONArray"%>
+<%@page import="org.json.simple.JSONObject"%>
+<%@page import="java.io.IOException"%>
+<%@page import="Util.*"%>
+<%@page import="ClassObject.*"%>
+<%@page import="DAO.*"%>
+<%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.SQLException" %>
 <% request.setCharacterEncoding("euc-kr"); %>
 
-<%
-	int lcode = Integer.valueOf(request.getParameter("lectureCode"));
+<%!
+private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
+{	
+	int lcode;
+	final String rp_lcode = "lcode";
 	
-	LectureDAO lectureDAO = new LectureDAO();
-   
-	String result;
-	
+	// 1. Install Parameters (DAO에 넣을 수 있게)
 	try {
-		result = lectureDAO.getSyllabusByLCode(lcode);
+		lcode = Integer.parseInt( req.getParameter(rp_lcode) );
+	} catch (Exception e) {
+		//형변환실패
+		OurProcResp.printResp(out, "분반코드를 제대로 입력해주세요.", rp_lcode, null);
+		return;
+	}
+	
+	// 2. do DAO Job
+	try
+	{
+		LectureDAO dao = new LectureDAO();
+		String syltext = dao.getSyllabusByLCode(lcode);
 		
-		// NOT_IN_DB
-		if(result == null) {
-			
+		if(syltext == null || syltext.isEmpty())
+		{
+			OurProcResp.printResp(out, "해당 과목은 강의계획서가 없습니다", null, null);
+			return;
 		}
-		
-		else {
-			
-		}
-	 
-   }
-   catch(SQLException e) {
-	   e.printStackTrace();
-   }
+
+		OurProcResp.printResp(out, null, null, syltext);
+		return;
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		OurProcResp.printResp(out, "DB오류가 발생하였습니다.", null, null);
+		return;
+	}
+}
+%>
+
+<%
+request.setCharacterEncoding("euc-kr");
+makeMyResponse(request, out);
 %>
