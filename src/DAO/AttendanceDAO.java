@@ -88,7 +88,7 @@ public class AttendanceDAO extends DAOBase {
 					
 					// 목록 꺼내오기
 					while(rs.next()) {
-						int rsReqSIDnum = rs.getInt("attendanceNum");
+						int rsAttNum = rs.getInt("attendanceNum");
 						int rsLcode = rs.getInt("lectureCode");
 						String rsSubjectName = rs.getString("subjectName");
 						boolean isRetake = rs.getBoolean("isRetake");
@@ -99,7 +99,7 @@ public class AttendanceDAO extends DAOBase {
 						double rsScore = rs.getDouble("score");
 						
 						AttendanceListBySID attendanceListBySID = new AttendanceListBySID(
-								rsReqSIDnum,
+								rsAttNum,
 								rsLcode,
 								rsSubjectName,
 								isRetake,

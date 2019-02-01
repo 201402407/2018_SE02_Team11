@@ -4,7 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 public class AttendanceListBySID {
-	private int reqSIDnum;
+	private int attNum;
 	private int lcode;
 	private String subjectName;
 	private boolean isRetake;
@@ -14,9 +14,9 @@ public class AttendanceListBySID {
 	private LocalTime endTime;
 	private double score;
 	
-	public AttendanceListBySID(int reqSIDnum, int lcode, String subjectName, boolean isRetake, int registerTerm,
+	public AttendanceListBySID(int attNum, int lcode, String subjectName, boolean isRetake, int registerTerm,
 	DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, double score) {
-		setReqSIDnum(reqSIDnum);
+		setAttNum(attNum);
 		setLcode(lcode);
 		setSubjectName(subjectName);
 		setRetake(isRetake);
@@ -27,11 +27,11 @@ public class AttendanceListBySID {
 		setScore(score);
 	}
 	
-	public int getReqSIDnum() {
-		return reqSIDnum;
+	public int getAttNum() {
+		return attNum;
 	}
-	public void setReqSIDnum(int reqSIDnum) {
-		this.reqSIDnum = reqSIDnum;
+	public void setAttNum(int attNum) {
+		this.attNum = attNum;
 	}
 	public int getLcode() {
 		return lcode;
