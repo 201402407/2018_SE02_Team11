@@ -126,7 +126,7 @@ public class LectureDAO extends DAOBase {
 	 * 과목검색. 선조건은 "수강신청리스트조회"를 따른다.
 	 * @param p_sid 학번
 	 * @param p_subjectname 과목명
-	 * @return 수강신청가능리스트 중 주어진 과목명에 해당하는 것
+	 * @return 수강신청가능리스트 중 주어진 과목명에 해당하는 것, 휴학중이거나 수강신청기간 아니면 null
 	 * @throws SQLException DB오류
 	 */
 	public List<LectureDetail> getLectureByName(int p_sid, String p_subjectname) throws SQLException
@@ -136,9 +136,9 @@ public class LectureDAO extends DAOBase {
 			// 리턴 결과물
 			List<LectureDetail> lectureDetailList;
 			
-			// 휴학중이면 선조건에 맞지 않는다.
+			// 선조건
 			boolean isTimeOff = studentDAO.getTimeOffBySID(p_sid);
-			if( !(isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
+			if( !(!isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
 				return null;
 			
 			// 해당학과
