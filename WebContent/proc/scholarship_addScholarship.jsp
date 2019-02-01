@@ -5,7 +5,6 @@
 <%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.SQLException" %>
-<% request.setCharacterEncoding("euc-kr"); %>
 
 <%!
 private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
@@ -53,6 +52,6 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 // Parameter: scho_name=장학이름
 // 장학에 추가가 한 줄 이루어진다.
 // data 없음
-request.setCharacterEncoding("euc-kr");
+request.setCharacterEncoding("utf-8");
 makeMyResponse(request, out);
 %>

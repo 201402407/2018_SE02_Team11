@@ -5,7 +5,6 @@
 <%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.SQLException" %>
-<% request.setCharacterEncoding("euc-kr"); %>
 
 <%!
 private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
@@ -57,6 +56,6 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 %>
 
 <%
-request.setCharacterEncoding("euc-kr");
+request.setCharacterEncoding("utf-8");
 makeMyResponse(request, out);
 %>

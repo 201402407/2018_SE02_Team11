@@ -94,7 +94,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 // Parameter: subj_name=과목명, score=평점
 // 과목에 추가가 한 줄 이루어진다.
 // data 없음
-request.setCharacterEncoding("euc-kr");
+request.setCharacterEncoding("utf-8");
 makeMyResponse(request, out);
 
 %>
