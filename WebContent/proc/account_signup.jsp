@@ -75,6 +75,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 			OurProcResp.printResp(out, "생일이 올바르지 않습니다.", rp_birth, null);
 			return;
 		}
+		
 	}
 	catch(SQLException sqle)
 	{
