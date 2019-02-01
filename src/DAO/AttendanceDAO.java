@@ -15,6 +15,7 @@ import ClassObject.AttendanceTimeList;
 import ClassObject.GradeInfo;
 import ClassObject.GradeInfoOfTerm;
 import ClassObject.LectureDetail;
+import Util.OurSchoolPolicy;
 import Util.OurTimes;
 
 public class AttendanceDAO extends DAOBase {
@@ -30,6 +31,8 @@ public class AttendanceDAO extends DAOBase {
 	 // 수강 결과 enum
 	public enum attendanceResult {
 		SUCCESS,
+		NO_SUCH_STUDENT, //없는 학생
+		UNABLE_ADD_ATTENDANCE, //선조건 - 수강신청 불가
 		NOT_ENOUGH_NUM, //여석부족
 		NOT_ENOUGH_SCORE, //잔여신청학점부족
 		COLLISION_TIMETABLE  //시간충돌
@@ -46,12 +49,21 @@ public class AttendanceDAO extends DAOBase {
 	/** 학생의수강목록조회 
 	 * @param p_sid 학번
 	 * @return 학생의수강목록(수강번호, 분반코드, 과목명, 재수강여부, 등록학기, 강의요일, 강의시작시각, 강의종료시작, 학점).
-	 * 학기중이 아니면 null
 	 * @throws SQLException DB오류
 	 * + 현재 학기(LegisterTerm) 구하는 법 수정필요
-	 * !DAO 경우에 따른 조건 추가 필요*/
+	 * !DAO 경우에 따른 조건 추가 필요
+	 * ! 학기중이 아니라도 조회는 가능함 (다만 수강신청을 안했다면 공백)
+	 * */
 	public List<AttendanceListBySID> getAttendanceListBySID(int p_sid) throws SQLException {
 			List<AttendanceListBySID> arrayList = new ArrayList<AttendanceListBySID>();
+			
+			// 현재 학기를 구한다
+			// 방학중이라면 근미래학기가 된다.
+			int registerTerm;
+			if(OurTimes.isNowOnTerm())
+				registerTerm = OurTimes.currentTerm();
+			else
+				registerTerm = OurTimes.closestFutureTerm();
 			
 				try {
 					String SQL = "SELECT A.attendanceNum, A.lectureCode, S.subjectName,"
@@ -63,13 +75,13 @@ public class AttendanceDAO extends DAOBase {
 					conn = getConnection();
 					pstmt = conn.prepareStatement(SQL);
 
+					/*
 					// 학기 중인지 체크 ( 만약 학기 중이 아니면 )
 					if(!OurTimes.isNowOnTerm()) {
 						return null;
 					}
+					*/
 					
-					// 현재 학기 int로 구하기
-					int registerTerm = OurTimes.currentTerm();
 					pstmt.setInt(1, p_sid);
 					pstmt.setInt(2, registerTerm);
 					ResultSet rs = pstmt.executeQuery(); // ResultSet
@@ -173,6 +185,17 @@ public class AttendanceDAO extends DAOBase {
 	 * @throws SQLException DB오류
 	 * ! DAO 수정*/
 	public attendanceResult addAttendance(int p_lcode, int p_sid) throws SQLException {
+		
+		StudentDAO studentDAO = new StudentDAO();
+		// -해당하는 학번 존재 안함
+		if ( ! studentDAO.isStudentExist(p_sid) )
+			return attendanceResult.NO_SUCH_STUDENT;
+		
+		// -선조건 : 휴학중이거나 수강신청기간이 아니면 신청불가
+		boolean isTimeOff = studentDAO.getTimeOffBySID(p_sid);
+		if(!(!isTimeOff && OurTimes.isNowAbleToAddAttendance()))
+			return attendanceResult.UNABLE_ADD_ATTENDANCE;
+		
 		LectureDetail targetLectureInfo = lectureDAO.getLectureInfoByLCode(p_lcode);
 		List<AttendanceListBySID> attendanceList = getAttendanceListBySID(p_sid);
 		int currentApplyTerm = OurTimes.closestFutureTerm();
@@ -190,7 +213,7 @@ public class AttendanceDAO extends DAOBase {
 		// 분반의 학점 구하기
 		double targetLectureScore = targetLectureInfo.getScore();
 		// 일정기준보다 초과하면
-		if(attendanceScore + targetLectureScore > 18) {
+		if(attendanceScore + targetLectureScore > OurSchoolPolicy.MAX_ATTENDANCE_SUM_SCORE) {
 			return attendanceResult.NOT_ENOUGH_SCORE;
 		}
 		
@@ -231,7 +254,7 @@ public class AttendanceDAO extends DAOBase {
 		// 모든 조건 충족, 이제 추가를 한다
 		try
 		{
-			String sql = "INSRET INTO Attendance (isRetake, studentID, lectureCode) "
+			String sql = "INSERT INTO Attendance (isRetake, studentID, lectureCode) "
 					+ "VALUES (?, ?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(sql);
