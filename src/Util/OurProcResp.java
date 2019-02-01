@@ -77,6 +77,7 @@ public class OurProcResp {
 	
 	/**
 	 * 문자열로 받은 시각을 올바르게
+	 * hh:mm:ss 형식이어야 한다
 	 */
 	public static LocalTime getValidLocalTime(String rp_time) throws Exception
 	{

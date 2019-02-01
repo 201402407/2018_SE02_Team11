@@ -58,7 +58,7 @@ public class LectureDAO extends DAOBase {
 	 * 수강신청가능리스트조회
 	 * @param p_sid 학번
 	 * @return 분반상세정보리스트(분반코드, 과목명, 교수이름, 등록학기, 신청인원, 전체인원, 강의요일, 강의시작시각, 강의종료시각, 학점).
-	 * 선조건이 맞지 않는 경우 null
+	 * 학생이 휴학중이거나 수강신청기간이 아닌경우 null
 	 * @throws SQLException DB오류.
 	 * ! DAO명세서 수정
 	 */
@@ -69,9 +69,9 @@ public class LectureDAO extends DAOBase {
 			// 리턴 결과물
 			List<LectureDetail> lectureDetailList;
 			
-			// 휴학중이면 선조건에 맞지 않는다.
+			// 선조건
 			boolean isTimeOff = studentDAO.getTimeOffBySID(p_sid);
-			if( !(isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
+			if( !(!isTimeOff && OurTimes.isNowAbleToAddAttendance()) )
 				return null;
 			// 학생의 해당학과를 구한다
 			int dcode = departmentDAO.getDCodeBySID(p_sid);
