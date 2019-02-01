@@ -264,9 +264,26 @@ public class AttendanceDAO extends DAOBase {
 			int result = pstmt.executeUpdate();
 			if(result != 1)
 				throw new SQLException("Affected Row is " + result);
+					
+		} catch(SQLException sqle){
+			throw sqle;
+		}finally {
+		      if(pstmt != null) try{pstmt.close();}catch(SQLException sqle){}
+		      if(conn != null) try{conn.close();}catch(SQLException sqle){}
+		}
+		// applyNum ¡ı∞°
+		try
+		{
+			String sql = "UPDATE Lecture\r\n" + 
+					"SET applyNum = applyNum +1\r\n" + 
+					"WHERE lectureCode = ?";
+			conn = getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, targetLectureInfo.getLectureCode());
+			pstmt.executeUpdate();
 			
 			return attendanceResult.SUCCESS;
-					
+			
 		} catch(SQLException sqle){
 			throw sqle;
 		}finally {
