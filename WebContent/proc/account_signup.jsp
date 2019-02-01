@@ -7,7 +7,6 @@
 <%@ page language="java" contentType="application/json; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.SQLException" %>
-<% request.setCharacterEncoding("euc-kr"); %>
 
 <%!
 private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOException
@@ -52,7 +51,8 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 		OurProcResp.printResp(out, "생일을 제대로 입력해주세요.", rp_birth, null);
 		return;
 	}
-	
+	System.out.println("nounce");
+	System.out.println(name);
 	// 2. do DAO Job
 	try
 	{
@@ -89,6 +89,6 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 // Parameter: id, pwd, name, birth
 // 계정 테이블에 하나 추가된다. 학번요청 테이블에 하나 추가된다.
 // data 없음
-request.setCharacterEncoding("euc-kr");
+request.setCharacterEncoding("utf-8");
 makeMyResponse(request, out);
 %>
