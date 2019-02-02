@@ -40,8 +40,9 @@ function View_Item(obj) {
 				  else {
 					var result = success.data;
 					
-					$("#nameArea").append(result.subjectName); // 또는 result[0]
-					$("#scoreArea").append(result.score); // 또는 result[0]
+					//document.getElementById("nameArea").html() = "";
+					$("#nameArea").html(result.subjectName); // 또는 result[0]
+					$("#scoreArea").html(result.score); // 또는 result[0]
 			  	}
 			  }
 			  else {

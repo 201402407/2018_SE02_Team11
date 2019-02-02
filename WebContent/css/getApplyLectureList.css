@@ -1,0 +1,152 @@
+html {
+	width: 100%;
+	height: 100%;
+}
+body {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	margin: 0%;
+}
+
+
+#header {
+	height: 30px;
+	background-color: #F1F1F1;
+	display: block;
+	width: 100%;
+}
+
+#logoutButton {
+	float: right;
+	background-color: #00649F;
+	width: 8%;
+	height: 100%;
+	margin:0px;
+	color: white;
+	font-size: 14px;
+	border: none;
+}
+
+#nowLoginSID {
+	float: right;
+	font-size: 14px;
+	margin-right: 1%;
+	margin-top: 4px;
+}
+
+#studentMenu {
+	width: 240px;
+	height: 100%;
+	float: left;
+	display: inline-block;
+	background-color: #F1F8FC;
+	color: #00649F;
+	 
+}
+ul {
+	background-color: #F1F8FC;
+	color: #00649F;
+	height: 100%;
+}
+li {
+	height: 44px;
+	padding: 2px;
+	font-size: 14px;
+	line-height: 44px;
+	vertical-align: middle;
+    text-align: left;
+}
+#searchArea {
+	margin-left: 10%;
+}
+#inputSubjectName{
+	height: 30px;
+	font-size: 14px;
+	line-height: 30px;
+	text-align: left;
+	vertical-align: middle;
+	text-indent: 5px;
+	background-color: #F1F1F1;
+	border: 1px solid #ADADAD;
+	width: 25%;
+}
+
+#mainArea {
+	width: 60%;
+	height: 500px;
+	margin-left:30%;
+	margin-top: 7%;
+}
+
+#subjectNameContext {
+	height: 40px;
+	line-height: 40px;
+	font-size: 17px;
+	color: white;
+	background-color: #00649F;
+	text-indent: 10px;
+}
+#subArea {
+	background-color: #F1F1F1;
+	overflow: auto;
+	width: 100%;
+	height: 60%;
+}
+#requestButton {
+	background-color: #00649F;
+	color: white;
+	border-radius: 5px;
+}
+
+#searchButton{
+	width: 50px;
+	background-color: #00649F;
+	color: white;
+	border-radius: 10px;
+	margin-left: 10px;
+}
+
+#allButton {
+	margin-left: 30px;
+	width: 50px;
+	background-color: #00649F;
+	color: white;
+	border-radius: 5px;
+}
+#first {
+	margin-top: 50px;
+}
+#resultTable {
+	 width:55%;
+	 border-collapse: collapse;
+	 border: 1px solid #ADADAD;
+	 background-color: #F1F1F1;
+	 margin-top: 8%;
+	 margin-left: 31%;
+	 height: 20px;
+}
+ th {
+ 	background-color: #00649F;
+ 	color: white;
+ }
+ 
+ td {
+ text-align: center;
+ }
+  
+  
+/* The Modal (background) */
+#popup {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  margin: -0.6%;
+}
+iframe {
+	border-width: 0px;
+}

@@ -35,7 +35,7 @@
 			location.href = "timeTable.jsp";
 			break;
 		case 4:
-			location.href = "login.jsp";
+			location.href = "getApplyLectureList.jsp";
 			break;
 		case 5:
 			location.href = "login.jsp";

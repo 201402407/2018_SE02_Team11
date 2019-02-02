@@ -1,0 +1,47 @@
+html {
+	margin: 0%;
+}
+
+/* Add ToDo Button View */
+#writingFormContainer{
+	background-color: #F1F8FC;
+	width: 550px;
+	height: 300px;
+	margin: 0%;
+	margin: 100px 450px;
+	position: absolute;
+	z-index: 3;
+	border: 0px;
+	color: #00649F;
+}
+h6 {
+	display: none;
+}
+#writingTransparentBorder
+{
+	background-color: #000000;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	position: absolute;
+	opacity: 0.5;
+	z-index: 2;
+}
+
+.area {
+	width: 15%;
+	height: 24px;
+	border-radius: 13px;
+	background-color: #D4DDE2;
+	display: inline-block;
+	font-size: 13px;
+	padding: 2px;
+	line-height: 24px;
+	text-indent: 10px;
+}
+img{
+	width: 255px;
+	height: 25px;
+	float: right;
+	margin: 5px 5px;
+}
