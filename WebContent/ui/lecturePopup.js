@@ -55,6 +55,7 @@ function view_syllabus(obj) {
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
+						  $("#syllabusText").html(" ");
 						  //sendMessage("close");
 					  }
 					  else {

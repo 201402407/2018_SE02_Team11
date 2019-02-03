@@ -37,8 +37,8 @@ public class GradeInfoDAO extends DAOBase {
 					" VALUES (?, ?)";
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, p_attendancenum);
-			pstmt.setDouble(2, p_grade);
+			pstmt.setDouble(1, p_grade);
+			pstmt.setInt(2, p_attendancenum);
 			int result = pstmt.executeUpdate(); 
 			
 			// SQL ½ÇÆÐ

@@ -5,19 +5,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>SE02_Team11</title>
-  <link href="<%=request.getContextPath() %>/css/setTimeOff.css?ver=1" rel="stylesheet" type="text/css">
+  <link href="<%=request.getContextPath() %>/css/addGrade.css?ver=1" rel="stylesheet" type="text/css">
   <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
   <script>
   /* 결과 담을 Array 선언 */
   var list = []; // 결과담을 배열 선언 
-  
+  var col; // 선택한 행 인덱스
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
-	    getList();
 	    
-	    $("#menu").children().eq(1).css("background-color", "#00649F");
-	    $("#menu").children().eq(1).css("color", "white");
+	    $("#menu").children().eq(7).css("background-color", "#00649F");
+	    $("#menu").children().eq(7).css("color", "white");
 	    
 	    /* 관리자 확인 */
 	    if(<%=session.getAttribute("isAdmin") == null %>) {
@@ -82,17 +81,23 @@
 	}
 
   /* 휴복학 문자 변경 */
-  function changetypeToKor(changetype) {
-	  if(changetype == 0)	return "휴학";
-	  if(changetype == 1)	return "복학";
+  function retakeToKor(changetype) {
+	  if(changetype)	return "Yes";
+	  if(!changetype)	return "No";
   }
-  /* 리스트출력 */
-  function getList() {
-	  $("#tablebody").empty(); // 초기화
-	    $.ajax({
+  
+  /* 검색 */
+  function search()	{
+	  
+	  if($("#inputLectureCode").val() == null) {
+		  return;
+	  }
+	  
+	  $.ajax({
 	    	type : 'post',
-	    	url: "<%=request.getContextPath() %>/proc/timeoffrequest_getTimeoffRequestList.jsp",
+	    	url: "<%=request.getContextPath() %>/proc/attendance_getAttendanceListbyLCode.jsp",
 	        data : {
+	        	"lcode" : $("#inputLectureCode").val()
 	        },
 	        dataType : "json",
 			  success: function(success) {
@@ -101,27 +106,25 @@
 				  if(success) { // 전송 완료 시.
 					  if(success.error != null) { // 실패
 						  alert(success.error);
+						  $("#inputLectureCode").html(" "); // 공백으로 바꿈
 					  }
 					  else {
 						 var temp = success.data;
-						//location.href = "../proc/timeoffrequest_getTimeoffRequestList.jsp";
 						alert(temp);
 						 /* 수강리스트 출력 */
+						 // 순서 : subjectName, attendanceNum, isRetake, studentID, studentName
 						  $.each(temp, function(key, arrjson) {
 							  	// 수강과목 정보 넣기.
 							  	var tempArray = [];
-							  	alert(arrjson.changeType);
-							  	console.log(arrjson.changeType);
+							  	alert(arrjson.subjectName);
 							  	
-							  	tempArray.push(arrjson.reqNum);
-							  	tempArray.push(arrjson.reqDate);
-							  	tempArray.push(arrjson.changeType);
-							  	tempArray.push(arrjson.startSemester);
-							  	tempArray.push(arrjson.endSemester);
-							  	tempArray.push(arrjson.reason);
+							  	tempArray.push(arrjson.subjectName);
+							  	tempArray.push(arrjson.attendanceNum);
+							  	tempArray.push(retakeToKor(arrjson.isRetake));
+							  	tempArray.push(arrjson.studentID);
+							  	tempArray.push(arrjson.studentName);
 							  	
 							  	list.push(tempArray); // 푸시
-							  	
 							});
 							
 						
@@ -137,55 +140,73 @@
 
 			  }
 	    });
-	}
+  }
+  
   /* 리스트 출력 */
   function printlist(list) {
-	  $($("#reasonText")).html(" ");
-	// 전체 row 갯수
+	  $($("#tablebody")).empty(); // 테이블 초기화
+	  // 전체 row 갯수
 	  for(var i=0; i < list.length; i++) {
 		  $("#tablebody").append("<tr class='listRow' id='listIndex" + i + "'></tr>"); // tr 생성
 		  
-		  if(i+1 == list.length) { // 맨 끝열
-			  $("#reasonText").html(list[i][5]);
-			  $("#listIndex" + i).append('<button type="button" value="'+ list[i][0] + '" class="permit" id="permitbtn' + i + '">승인</button>');
-			  $("#listIndex" + i).append('<button type="button" value="'+ list[i][0] + '" class="reject" id="rejectbtn' + i + '">거절</button>');
-		  }
 		  // 해당하는 row의 column 갯수
-		  $("#listIndex" + i).append("<td>"+ list[i][0] + "</td>"); // 요청번호
-		  $("#listIndex" + i).append("<td align='center'>"+ list[i][1] + "</td>"); // 요청일자
-		  $("#listIndex" + i).append("<td align='center'>"+ list[i][2] + "</td>"); // 휴복학구분
-		  $("#listIndex" + i).append("<td align='center'>"+ list[i][3] + "</td>"); // 시작학기
-		  $("#listIndex" + i).append("<td align='center'>"+ list[i][4] + "</td>"); // 종료학기
+		  $("#listIndex" + i).append("<td>"+ list[i][0] + "</td>"); // 과목명
+		  $("#listIndex" + i).append("<td align='center'>"+ list[i][1] + "</td>"); // 수강번호
+		  $("#listIndex" + i).append("<td align='center'>"+ list[i][2] + "</td>"); // 재수강여부
+		  $("#listIndex" + i).append("<td align='center'>"+ list[i][3] + "</td>"); // 학번
+		  $("#listIndex" + i).append("<td>"+ list[i][4] + "</td>"); // 학생이름
 	  }
-	
-	  $(".permit").click(function(event){
-			permit($(this).val());
-		});
 	  
-	  $(".reject").click(function(event){
-			reject($(this).val());
-		});
+	  
+	  // 행 클릭 시
+	  $("tbody tr").click(function() {
+		  $("tbody tr").css("background-color", "#F1F1F1"); // 기존 것들 전부 초기화
+		  $("tbody tr").css("color", "#707070"); // 기존 것들 전부 초기화
+		  col = $(this).index();
+		  // 클릭
+		  $(this).css("background-color", "#003453");
+		  $(this).css("color", "white");
+		  alert(col);
+			// 평점 활성화
+		  $("#gradeBox").show();
+			
+			$("#addButton").click(function() {
+				if(col == null) {
+					alert("원하시는 수강 리스트를 우선 선택하세요!");
+				}
+				if($("#gradeBox option:selected").val() == null) {
+					alert("학점을 선택하세요!");
+				}
+				
+				var attendancenum = list[col][1];
+				var grade = $("#gradeBox option:selected").val();
+				alert(col + ", " + grade);
+				alert(list[col][1]);
+				add(attendancenum, grade);
+			});
+	  });
+	  
   }
   
-  /* 휴복학신청허가 */
-  function permit(reqNum) {
+  /* 성적등록 */
+  function add(attnum, grade) {
 	  $.ajax({
 		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/timeoffrequest_permitTimeoffRequest.jsp",
+		  url: "<%=request.getContextPath() %>/proc/gradeinfo_addGrade.jsp",
 		  data:  {
-			  "reqNum" : reqNum
+			  "attendancenum" : attnum,
+			  "grade" : grade
 			  },
 		  //async: false,
 		  dataType : "json",
 		  success: function(success) {
-			
 			  if(success) { // 전송 완료 시.
 				  if(success.error != null) { // 실패
 					  alert(success.error);
 				  }
 				  else {
-					  alert("학번요청 허가 완료되었습니다.");
-					  getList();
+					  alert("성적부여가 완료되었습니다.");
+					  $("#tablebody").empty(); // 테이블 초기화
 				  }
 			  }
 			  else {
@@ -197,38 +218,6 @@
 		  }
 		});
   	}
-  
-  /* 휴복학신청거절 */
-  function reject(list) {
-	  $.ajax({
-		  type: 'post',
-		  url: "<%=request.getContextPath() %>/proc/timeoffrequest_rejectTimeoffReq.jsp",
-		  data:  {
-			  "reqNum" : reqNum
-			  },
-		  //async: false,
-		  dataType : "json",
-		  success: function(success) {
-			
-			  if(success) { // 전송 완료 시.
-				  if(success.error != null) { // 실패
-					  alert(success.error);
-				  }
-				  else {
-					  alert("학번요청 거절 완료되었습니다.");
-					  getList();
-				  }
-			  }
-			  else {
-				  alert("잠시 후에 시도해주세요.");
-			  }
-		  },
-		  error: function(xhr, request,error) {
-
-		  }
-		});
-  	}
-  
   </script>
 </head>
 <body>
@@ -251,29 +240,38 @@
         <li>성적 부여</li>
 	</ul>
    </div>
+   <!-- 검색 -->
+   <div id="searchArea" class="searchArea">
+         <input type="text" name="LectureCode" id="inputLectureCode">
+		<button type="button" class="button" name="searchButton" id="searchButton" onclick="search()">조회</button>         
+       </div>
 	 <div id="tableArea">
-   		<table id="timeoffTable">
-
+   		<table id="gradeTable">
 		<thead>
         <tr align="center" id="title"> 
-            <td width="100" bgcolor="#00649F">요청번호</td>
-            <td width="180" bgcolor="#00649F">요청일자</td>
-            <td width="90" bgcolor="#00649F">휴복학구분</td>
-            <td width="120" bgcolor="#00649F">시작학기</td>
-            <td width="120" bgcolor="#00649F">종료학기</td>
-            <td width="180" bgcolor="#00649F"></td>
+            <td width="150" bgcolor="#00649F">과목명</td>
+            <td width="120" bgcolor="#00649F">수강번호</td>
+            <td width="120" bgcolor="#00649F">재수강여부</td>
+            <td width="150" bgcolor="#00649F">학번</td>
+            <td width="130" bgcolor="#00649F">학생이름</td>
         </tr>
         </thead>
         <tbody id="tablebody">
         </tbody>
     </table>
    </div>
-   <div id="reasonArea">
-   	<div id="reasonTitle">
-   	</div>
-   	<div id="reasonTextArea">
-   		<div id="reasonText"></div>
-   	</div>
+   <div id="boxArea">
+   	<select id="gradeBox" class="box">
+	 	<option value='4.5'>A+</option>
+	 	<option value='4.0'>A0</option>
+	 	<option value='3.5'>B+</option>
+	 	<option value='3.0'>B0</option>
+	 	<option value='2.5'>C+</option>
+	 	<option value='2.0'>C0</option>
+	 	<option value='1.5'>D+</option>
+	 	<option value='1.0'>D0</option>
+	</select>
    </div>
+   <button type="button" class="button" id="addButton" onclick="add()">등록</button>
 </body>
 </html>

@@ -45,7 +45,7 @@
 			location.href = "addProfessor.jsp";
 			break;
 		case 7:
-			location.href = "login.jsp";
+			location.href = "addGrade.jsp";
 			break;
 		}
 		});

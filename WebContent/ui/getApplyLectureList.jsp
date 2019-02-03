@@ -148,7 +148,8 @@
 									'font-size' : '10px',
 									'line-height' : '10px',
 									'float' : 'right',
-									'margint-right' : '30px',
+									'margin-right' : '30px',
+									'margin-top' : '3px',
 									'border' : '0px',
 									'border-radius' : '5px',
 								});
