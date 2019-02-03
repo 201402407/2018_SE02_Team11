@@ -6,7 +6,7 @@ html {
 #writingFormContainer{
 	background-color: #F1F8FC;
 	width: 550px;
-	height: 300px;
+	height: 400px;
 	margin: 0%;
 	margin: 100px 450px;
 	position: absolute;
@@ -36,6 +36,22 @@ h6 {
 	width: 25%;
 	height: 24px;
 	border-radius: 13px;
+	background-color: #D4DDE2;
+	display: inline-block;
+	font-size: 13px;
+	padding: 2px;
+	line-height: 24px;
+	text-indent: 10px;
+}
+
+#syllabusText {
+	color: #707070;
+	margin: 6px;
+	margin-left: 45%;
+	margin-right: 45%;
+	width: 80%;
+	height: 80px;
+	border-radius: 10px;
 	background-color: #D4DDE2;
 	display: inline-block;
 	font-size: 13px;

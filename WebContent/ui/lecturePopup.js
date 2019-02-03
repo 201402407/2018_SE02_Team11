@@ -1,5 +1,5 @@
 window.onload = function() {
-	
+	jQuery.ajaxSettings.traditional = true;
   window.addEventListener("message", messageHandler, true);
   document.getElementById("Close_button").onclick = function() {
 	  sendMessage("close");
@@ -16,7 +16,7 @@ function messageHandler(e) {
 /* 과목명과 학점 출력 */
 function View_Item(obj) {
   
-  
+  view_syllabus(obj);
   /* 초기화 */
   $("#snameArea").empty();
   $("#lcodeArea").empty();
@@ -41,6 +41,39 @@ function View_Item(obj) {
   $("#startArea").html(obj[4]);
   $("#endArea").html(obj[5]);
   
+}
+
+function view_syllabus(obj) {
+	$.ajax({
+	  	type: 'post',
+	  	url: "../proc/lecture_getSyllabusByLCode.jsp",
+	  	data: {
+	       	"lcode" : obj[7]
+	  	},
+	      dataType : "json",
+			  success: function(success) {
+				  if(success) { // 전송 완료 시.
+					  if(success.error != null) { // 실패
+						  alert(success.error);
+						  //sendMessage("close");
+					  }
+					  else {
+						
+						var result = success.data;
+						
+						
+						$("#syllabusText").html(result); // 또는 result[0]
+						
+				  	}
+				  }
+				  else {
+					  alert("잠시 후에 시도해주세요.");
+				  }
+			  },
+			  error: function(xhr, request,error) {
+
+			  }
+	  });
 }
 
 function sendMessage(obj) {

@@ -1,4 +1,5 @@
 window.onload = function() {
+	jQuery.ajaxSettings.traditional = true;
   document.getElementById("Close_button").onclick = function() {
 	  sendMessage("close");
 	  	  
@@ -9,7 +10,6 @@ window.onload = function() {
 /* 과목명과 학점 출력 */
 function View_Item(obj) {
   var scode = obj;
-  jQuery.ajaxSettings.traditional = true;
   
   /* 초기화 */
   $("#nameArea").empty();
