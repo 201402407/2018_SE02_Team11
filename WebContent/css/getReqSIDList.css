@@ -57,3 +57,35 @@ li {
 	vertical-align: middle;
     text-align: left;
 }
+
+
+#mainArea {
+	width: 60%;
+	height: 500px;
+	margin-left:30%;
+	margin-top: 7%;
+}
+
+.context {
+	height: 40px;
+	line-height: 40px;
+	font-size: 18px;
+	color: white;
+	background-color: #00649F;
+	text-align: center;
+}
+
+#subArea {
+	background-color: #F1F1F1;
+	overflow: auto;
+	width: 100%;
+	height: 60%;
+}
+
+#searchButton{
+	width: 50px;
+	background-color: #00649F;
+	color: white;
+	border-radius: 10px;
+	margin-left: 10px;
+}

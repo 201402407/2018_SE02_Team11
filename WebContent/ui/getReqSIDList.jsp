@@ -14,8 +14,8 @@
 	    window.addEventListener("message", messageHandler, true);
 	    createTable();
 	    
-	    $("#menu").children().eq(2).css("background-color", "#00649F");
-	    $("#menu").children().eq(2).css("color", "white");
+	    $("#menu").children().eq(0).css("background-color", "#00649F");
+	    $("#menu").children().eq(0).css("color", "white");
 	    
 	    /* 초기 팝업창 숨기기 */
 	    document.getElementById("popup").style.display = "none";
@@ -25,7 +25,7 @@
 		// 누른 노드가 몇 번째인지 switch로 판단해서 적용
 		switch($(this).index()) {
 		case 0:
-			location.href = "getStudentInfoBySID.jsp";
+			location.href = "getReqSIDList.jsp";
 			break;
 		case 1:
 			location.href = "requestTimeOnOff.jsp";
@@ -89,11 +89,13 @@
 			  }
 			});
 	}
-  function createTable(){
-	     
+
+  /* 리스트출력 */
+  function allsearch() {
+	  $("#subArea").empty(); // 초기화
 	    $.ajax({
 	    	type : 'post',
-	    	url: "<%=request.getContextPath() %>/proc/subject_getThisSemesterSubjectBySID.jsp",
+	    	url: "<%=request.getContextPath() %>/proc/lecture_getApplyLectureList.jsp",
 	        data : {
 	        	"sid" : <%=session.getAttribute("sid") %>
 	        },
@@ -105,37 +107,67 @@
 						  alert(success.error);
 					  }
 					  else {
-						var result = success.data;
-						var data = [
-						['과목명', '과목코드']
-						];
-
-						 $.each(result, function(key, value){ // JSON 받아온 것의 data 순서대로 읽음.
-							 var temp = [];
-							
-							 temp.push(value.subjectName);
-							 temp.push(value.subjectCode);
-							 data.push(temp); // 표의 한 행을 넣음.
-						 });
 						
-							var table = arrayToTable(data, {
-								thead: true,
-								attrs: {"class" : 'table',
-									"id" : "resultTable",
-					            	"border" : "1px solid #F1F1F1",
-					            	"border-collapse": "collapse",
-					            	"width" : "60%",
-					            	"height" : "300px"
-					            	}
-							})
+						var temp = success.data;
+						
+						var result = []; // 배열 생성. 나중에 인덱스로 읽게
+						$.each(temp, function(key, value){ // JSON 받아온 것의 data 순서대로 읽음.
+							var temp2 = [];
+						/* 순서 : score, profName, dayOfWeek, registerTerm, startTime, endTime, 
+						applyNum, lectureCode, subjectName, allNum
+								dayOfWeek, startTime, endTime, score 
+							push와 shift를 사용하자 */
+								$.each(value, function(element, result) {
+									//alert(result);
+									temp2.push(result);
+								});
+							result.push(temp2);
+						 });
 
-							$('#subjectTable').append(table);
-							
-							/* 클릭 이벤트 생성 */
-							$("tbody tr").click(function(event){
-								document.getElementById("popup").style.display = "block"; // 팝업 열기
-								sendMessage(data[$(this).index() + 1]); // 해당 인덱스에 해당하는 데이터를 전송
-							});
+							for(var i = 0; i < result.length; i++) { // 인덱스 1은 subjectName이다.
+								$('#subArea').append("<div id='"+ i +"'></div>"); // div추가
+								$("#" + i).append('<span id="span'+ i +'" name="not">'+ result[i][8] + '</span>');
+								$("#" + i).append('<button type="button" name="not" id="btn' + i + '">신청</button>'); // 버튼추가
+								
+								$("#" + i).css({
+									'width' : '99.9%',
+									'height' : '25px',
+									'border' : '0.5px solid #ADADAD',
+									'color' : '#707070',
+									'float' : 'left',
+									'text-indent' : '7px'
+								})
+								
+								$("#btn" + i).css({ // 버튼 css 설정
+									'width' : '70px',
+									'height' : '20px',
+									'background' : '#00649F',
+									'color' : 'white',
+									'font-size' : '10px',
+									'line-height' : '10px',
+									'float' : 'right',
+									'margint-right' : '30px',
+									'border' : '0px',
+									'border-radius' : '5px',
+								});
+								
+								/* 수강신청 가능 리스트 조회 팝업 전송 */
+								/*
+								$("#"+i).click(function(event){
+									if(event.target.name == "not") {
+										alert("not");
+									}
+									else {
+										
+										make_function2(result[i]);
+									}
+									
+								});
+								*/
+								$("#span"+i).click(make_function2(result[i]));
+								/* 해당과목 수강신청 */
+								$("#btn"+i).click(make_function(result[i]));
+							}
 				  	}
 				  }
 				  
@@ -148,91 +180,54 @@
 			  }
 	    });
 	}
-  
-  var arrayToTable = function (data, options) {
-
-	    "use strict";
-
-	    var table = $('<table />'),
-	        thead,
-	        tfoot,
-	        rows = [],
-	        row,
-	        i,
-	        j,
-	        defaults = {
-	            th: true, // should we use th elemenst for the first row
-	            thead: false, //should we incldue a thead element with the first row
-	            tfoot: false, // should we include a tfoot element with the last row
-	            attrs: {
-	            	
-	            } // attributes for the table element, can be used to
-	        };
-
-	    options = $.extend(defaults, options);
-
-	    table.attr(options.attrs);
-
-	    // loop through all the rows, we will deal with tfoot and thead later
-	    for (i = 0; i < data.length; i = i + 1) {
-	        row = $('<tr />');
-	        for (j = 0; j < data[i].length; j = j + 1) {
-	            if (i === 0 && options.th) {
-	                row.append($('<th />').html(data[i][j]));
-	            } else {
-	                row.append($('<td />').html(data[i][j]));
-	            }
-	        }
-	        rows.push(row);
-	    }
-
-	    // if we want a thead use shift to get it
-	    if (options.thead) {
-	        thead = rows.shift();
-	        thead = $('<thead />').append(thead);
-	        table.append(thead);
-	    }
-
-	    // if we want a tfoot then pop it off for later use
-	    if (options.tfoot) {
-	        tfoot = rows.pop();
-	    }
-
-	    // add all the rows
-	    for (i = 0; i < rows.length; i = i + 1) {
-	        table.append(rows[i]);
-	    }
-
-	    // and finally add the footer if needed
-	    if (options.tfoot) {
-	        tfoot = $('<tfoot />').append(tfoot);
-	        table.append(tfoot);
-	    }
-
-	    return table;
-	};
-	
-  function getDCode() {
-	  $.ajax({
-	    	url: "<%=request.getContextPath() %>/proc/subject_getThisSemesterSubjectByDCode.jsp",
-	        data : {
-	        	
-	        },
-	        type : 'post',
-	        success : function(data){
-	            var results = data.boardList;
-	            var str = '<TR>';
-	            $.each(results , function(i){
-	                str += '<TD>' + results[i].bdTitl + '</TD><TD>' + results[i].bdWriter + '</TD><TD>' + results[i].bdRgDt + '</TD>';
-	                str += '</TR>';
-	           });
-	           $("#boardList").append(str); 
-	        },
-	        error : function(){
-	            alert("error");
-	        }
-	    });
+  /* 클로저 */
+  //리턴할 때마다 새로운 num을 사용. 수강신청
+  function make_function(lectureArray) {
+      return function() { addAttendance(lectureArray); };
   }
+  
+  //리턴할 때마다 새로운 num을 사용. 팝업
+  function make_function2(lectureArray) {
+      return function() {  lecturePopup(lectureArray); };
+  }
+  
+  /* 해당분반상세조회 */
+  function lecturePopup(lectureArray) {
+	  document.getElementById("popup").style.display = "block"; // 팝업 열기
+	  
+	  sendMessage(lectureArray); // 해당 인덱스에 해당하는 데이터를 전송
+  }
+  /* 수강신청 */
+  function addAttendance(lectureArray) {
+	  $.ajax({
+		  type: 'post',
+		  url: "<%=request.getContextPath() %>/proc/attendance_addAttendance.jsp",
+		  data:  {
+			  "sid" : <%=session.getAttribute("sid") %>,
+			  "lcode" : lectureArray[7]
+			  },
+		  //async: false,
+		  dataType : "json",
+		  success: function(success) {
+			
+			  if(success) { // 전송 완료 시.
+				  if(success.error != null) { // 실패
+					  alert(success.error);
+				  }
+				  else {
+					  alert("정상적으로 수강 신청이 완료되었습니다.");
+					  
+				  }
+			  }
+			  else {
+				  alert("잠시 후에 시도해주세요.");
+			  }
+		  },
+		  error: function(xhr, request,error) {
+
+		  }
+		});
+  	}
   </script>
 </head>
 <body>
@@ -260,7 +255,20 @@
         <li>전체 장학 목록</li>
 	</ul>
    </div>
-   <div id="subjectTable">
-   </div>
+   <!-- 검색 라인 -->
+     <div id="searchArea" class="searchArea">
+         <input type="text" name="SubjectName" id="inputSubjectName">
+		<button type="button" class="button" name="searchButton" id="searchButton" onclick="search()">조회</button>
+		<button type="button" class="button" name="allButton" id="allButton" onclick="allsearch()">모두 보기</button>         
+       </div>
+       <!-- 주요화면 -->
+   <div id="mainArea">
+   		<div id="numContext" class="context">요청번호</div>
+   		<div id="dateContext" class="context">요청일자</div>
+   		<div id="idContext" class="context">아이디</div>
+   		<div id="whitespaceContext" class="context"></div>
+   		<div id="subArea">
+   		</div>
+   		</div>
 </body>
 </html>
