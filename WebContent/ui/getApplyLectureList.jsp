@@ -56,7 +56,7 @@
   });
   
   function sendMessage(obj) {
-	  alert(obj);
+	  
 	  document.getElementById("popup").contentWindow.postMessage(obj,"*");
 	}
   
@@ -91,9 +91,103 @@
 			});
 	}
   
+  /* 특정 과목 검색 */
+  function search() {
+	  $("#subArea").empty(); // 초기화
+	  alert($("#inputSubjectName").val());
+	  $.ajax({
+	    	type : 'post',
+	    	url: "<%=request.getContextPath() %>/proc/lecture_getLectureByName.jsp",
+	        data : {
+	        	"sid" : <%=session.getAttribute("sid") %>,
+	        	"subjectName" : $("#inputSubjectName").val()
+	        },
+	        dataType : "json",
+			  success: function(success) {
+				  
+				  if(success) { // 전송 완료 시.
+					  if(success.error != null) { // 실패
+						  alert(success.error);
+					  }
+					  else {
+						
+						var temp = success.data;
+						
+						var result = []; // 배열 생성. 나중에 인덱스로 읽게
+						$.each(temp, function(key, value){ // JSON 받아온 것의 data 순서대로 읽음.
+							var temp2 = [];
+						/* 순서 : score, profName, dayOfWeek, registerTerm, startTime, endTime, 
+						applyNum, lectureCode, subjectName, allNum
+								dayOfWeek, startTime, endTime, score 
+							push와 shift를 사용하자 */
+								$.each(value, function(element, result) {
+									//alert(result);
+									temp2.push(result);
+								});
+							result.push(temp2);
+						 });
+
+							for(var i = 0; i < result.length; i++) { // 인덱스 1은 subjectName이다.
+								$('#subArea').append("<div id='"+ i +"'></div>"); // div추가
+								$("#" + i).append('<span id="span'+ i +'" name="not">'+ result[i][8] + '</span>');
+								$("#" + i).append('<button type="button" name="not" id="btn' + i + '">신청</button>'); // 버튼추가
+								
+								$("#" + i).css({
+									'width' : '99.9%',
+									'height' : '25px',
+									'border' : '0.5px solid #ADADAD',
+									'color' : '#707070',
+									'float' : 'left',
+									'text-indent' : '7px'
+								})
+								
+								$("#btn" + i).css({ // 버튼 css 설정
+									'width' : '70px',
+									'height' : '20px',
+									'background' : '#00649F',
+									'color' : 'white',
+									'font-size' : '10px',
+									'line-height' : '10px',
+									'float' : 'right',
+									'margint-right' : '30px',
+									'border' : '0px',
+									'border-radius' : '5px',
+								});
+								
+								/* 수강신청 가능 리스트 조회 팝업 전송 */
+								/*
+								$("#"+i).click(function(event){
+									if(event.target.name == "not") {
+										alert("not");
+									}
+									else {
+										
+										make_function2(result[i]);
+									}
+									
+								});
+								*/
+								$("#span"+i).click(make_function2(result[i]));
+								/* 해당과목 수강신청 */
+								$("#btn"+i).click(make_function(result[i]));
+							}
+				  	}
+				  }
+				  
+				  else {
+					  alert("잠시 후에 시도해주세요.");
+				  }
+			  },
+			  error: function(xhr, request,error) {
+
+			  }
+	    });
+	 
+  }
+  
   /* 모두 검색 */
   function allsearch() {
-	     
+	  $("#subArea").empty(); // 초기화
 	    $.ajax({
 	    	type : 'post',
 	    	url: "<%=request.getContextPath() %>/proc/lecture_getApplyLectureList.jsp",
@@ -195,6 +289,7 @@
   /* 해당분반상세조회 */
   function lecturePopup(lectureArray) {
 	  document.getElementById("popup").style.display = "block"; // 팝업 열기
+	  
 	  sendMessage(lectureArray); // 해당 인덱스에 해당하는 데이터를 전송
   }
   /* 수강신청 */

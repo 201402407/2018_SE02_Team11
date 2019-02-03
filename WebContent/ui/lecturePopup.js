@@ -1,23 +1,21 @@
 window.onload = function() {
+	
+  window.addEventListener("message", messageHandler, true);
   document.getElementById("Close_button").onclick = function() {
 	  sendMessage("close");
-	  	  
   }
-  window.addEventListener("message", messageHandler, true);
+  
 }
 
 function messageHandler(e) {
-	alert(e);
   var obj = e.data;
-  alert(obj);
+  
   View_Item(obj);
 }
 
 /* 과목명과 학점 출력 */
 function View_Item(obj) {
-  alert(obj);
-  alert(obj[1]);
-  alert(typeof(obj[1]));
+  
   
   /* 초기화 */
   $("#snameArea").empty();

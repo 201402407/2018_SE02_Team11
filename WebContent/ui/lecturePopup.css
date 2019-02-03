@@ -14,6 +14,7 @@ html {
 	border: 0px;
 	color: #00649F;
 }
+
 h6 {
 	display: none;
 }
@@ -29,7 +30,10 @@ h6 {
 }
 
 .area {
-	width: 15%;
+	color: #707070;
+	margin: 6px;
+	margin-left: 10px;
+	width: 25%;
 	height: 24px;
 	border-radius: 13px;
 	background-color: #D4DDE2;
@@ -39,8 +43,16 @@ h6 {
 	line-height: 24px;
 	text-indent: 10px;
 }
+
+.line {
+	margin-top: 5%;
+}
+#marginArea {
+	margin-left: 7%;	
+}
+
 img{
-	width: 255px;
+	width: 25px;
 	height: 25px;
 	float: right;
 	margin: 5px 5px;

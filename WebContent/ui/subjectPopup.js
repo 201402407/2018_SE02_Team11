@@ -6,15 +6,6 @@ window.onload = function() {
   window.addEventListener("message", messageHandler, true);
 }
 
-function messageHandler(e) {
-  var obj = e.data;
-  /* 초기화 */
-  $("#nameArea").empty();
-  $("#scoreArea").empty();
-  
-  View_Item(obj.pop());
-}
-
 /* 과목명과 학점 출력 */
 function View_Item(obj) {
   var scode = obj;
@@ -23,7 +14,8 @@ function View_Item(obj) {
   /* 초기화 */
   $("#nameArea").empty();
   $("#scoreArea").empty();
-  
+  $("#nameArea").html("");
+  $("#scoreArea").html("");
   $.ajax({
   	type: 'post',
   	url: "../proc/subject_getSubjectInfoBySCode.jsp",
@@ -53,6 +45,15 @@ function View_Item(obj) {
 
 		  }
   });
+}
+
+function messageHandler(e) {
+  var obj = e.data;
+  /* 초기화 */
+  $("#nameArea").empty();
+  $("#scoreArea").empty();
+  
+  View_Item(obj.pop());
 }
 
 function sendMessage(obj) {

@@ -5,6 +5,8 @@
 <title>SE02_Team11</title>
 <!-- CSS, JS External 정의 -->
 <link rel="stylesheet" type="text/css" href="lecturePopup.css?ver=1">
+ <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+ <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.min.js"></script>
 <script src="lecturePopup.js?ver=1"></script>
 </head>
 <body>
@@ -13,25 +15,27 @@
 	<section id="writingFormContainer"><h6>empty</h6>
 			<!-- X(Close button) -->
 <img src="delete.png" alt="delete" id="Close_button">
-		<div id="firstline">
+	<div id="marginArea">
+		<div id="firstline" class="line">
 	 			과목명<div id="snameArea" class="area"></div>
 	 			분반코드<div id="lcodeArea" class="area"></div>
 	 	</div>
-	 	<div id="secondline">
+	 	<div id="secondline" class="line">
 	 			교수님<div id="profnameArea" class="area"></div>
 	 			등록학기<div id="termArea" class="area"></div>
 	 	</div>
-	 	<div id="thirdline">
+	 	<div id="thirdline" class="line">
 	 			신청인원<div id="applynumArea" class="area"></div>
 	 			전체인원<div id="allnumArea" class="area"></div>
 	 	</div>
-	 	<div id="fourthline">
+	 	<div id="fourthline" class="line">
 	 			강의요일<div id="dayofweekArea" class="area"></div>
 	 			학점<div id="scoreArea" class="area"></div>
 	 	</div>
-	 	<div id="fifthline">
+	 	<div id="fifthline" class="line">
 	 			시작시간<div id="startArea" class="area"></div>
 	 			종료시간<div id="endArea" class="area"></div>
+	 	</div>
 	 	</div>
 	</section>
 </body>

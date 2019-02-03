@@ -20,15 +20,17 @@ h6 {
 	
 }
 
+/* Add ToDo Button View */
 #writingFormContainer{
 	background-color: #D4DDE2;
-	width: 500px;
+	width: 550px;
 	height: 300px;
 	margin: 0%;
 	margin: 100px 450px;
 	position: absolute;
 	z-index: 3;
-	border: 2px solid black;
+	border: 0px;
+	color: #00649F;
 }
 
 #firstline {
