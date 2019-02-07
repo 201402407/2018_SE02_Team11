@@ -45,7 +45,7 @@ private void makeMyResponse(HttpServletRequest req, JspWriter out) throws IOExce
 			
 			listJson.add(elemJson);
 		}
-		OurProcResp.printResp(out, null, null, list);
+		OurProcResp.printResp(out, null, null, listJson);
 		return;
 	}
 	catch(SQLException sqle)
