@@ -50,6 +50,10 @@
 		}
 		});
 	    
+	    /*학기를 선택하는 박스*/
+		getTermSelectBox("startSemesterArea");
+		getTermSelectBox("endSemesterArea");
+	    
 	    /* 초기 팝업창 숨기기 */
 	    document.getElementById("popup").style.display = "none";
 		
@@ -90,6 +94,8 @@
 			  }
 			});
 	}
+  
+  
   
   function request() {
 	  if($("#isTakeOff option:selected").val() == "takeoff") {
@@ -149,6 +155,40 @@
 		  }
 		});
   }
+  
+  /* 학기를 리턴하는 함수 */
+	function getTerm(month) {
+		if(month < 9 && month >= 3) // 1학기
+			return 1;
+		else
+			return 2;
+	}
+  
+  /* 학기 선택 박스 옵션 생성 */
+	function getTermSelectBox(id) {
+		var date = new Date();
+		var year = date.getFullYear()+4;
+		var month = date.getMonth() + 1;
+		var term = getTerm(month);
+		
+		for(var i = 18; i > 3; i--) { // /3을 통해 계산. 16까지면 최대 10학기를 구분.
+			// 처음 시작 시
+			if(i == 18) {
+				if(term == 1)	i = 17; // 2감소시킴(continue를 통해 1이 더 감소)
+				continue;
+			}
+			if(i % 3 == 0) { // 1학기, 2학기도 지나면
+				year--; // 1년 감소
+				continue;
+			}
+			term = i % 3;
+			var temp = year.toString().concat(term.toString());
+			// 추가
+			console.log(i);
+			$("#" + id).append("<option value='"+ temp + "'>"+ year + "/" + term + "학기</option>")
+		}
+	}
+  
   </script>
 </head>
 <body>
@@ -185,10 +225,16 @@
 				</select>
 	 	</div>
 	 	<div id="secondline">
-	 			시작학기<input type="text" id="startSemesterArea" class="area">
+	 			시작학기<!-- <input type="text" id="startSemesterArea" class="area"> -->
+	 			<select id="startSemesterArea" class="area">
+				<option value="not" disabled selected>원하는 학기를 선택하세요.</option>
+				</select>
 	 	</div>
 	 	<div id="thirdline">
-	 			종료학기<input type="text" id="endSemesterArea" class="area">
+	 			종료학기<!--<input type="text" id="endSemesterArea" class="area"> -->
+	 			<select id="endSemesterArea" class="area">
+				<option value="not" disabled selected>원하는 학기를 선택하세요.</option>
+				</select>
 	 	</div>
 	 </div>
 	 <button type="button" class="button" id="requestButton" onclick="request()">신청</button>
