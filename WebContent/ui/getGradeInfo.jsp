@@ -169,8 +169,8 @@
 						  	tempArray.push(arrjson.isVisible);
 						  	tempArray.push(arrjson.subjectName);
 						  	tempArray.push(arrjson.grade);
-						  	tempArray.push(arrjson.isRetake);
-						  	tempArray.push(arrjson.gradeBefore);
+						  	tempArray.push(arrjson.isRetake ? "예" : "아니오");
+						  	tempArray.push(arrjson.gradeBefore == -1 ? "" : arrjson.gradeBefore);
 						  	
 						  	gradeList.push(tempArray); // 푸시
 						  	
@@ -197,8 +197,8 @@
 	  for(var i=0; i < list.length; i++) {
 		  $("#tablebody").append("<tr class='listRow' id='listIndex" + i + "'></tr>"); // tr 생성
 		  // 해당하는 row의 column 갯수
-		  for(var j = 0; j < list[i].length; j++) {
-			  if(list[i][0]) {
+		  for(var j = 1; j < list[i].length; j++) {
+			  if(!list[i][0]) {
 				  if(j == 2 || j == 4)
 					  $("#listIndex" + i).append("<td></td>");
 					  continue;
@@ -250,10 +250,10 @@
         <tr align="center" id="title1"> 
             <td width="150" bgcolor="#00649F" rowspan="2">과목명</td>
             <td width="60" bgcolor="#00649F" rowspan="2">평점</td>
-            <td width="70" colspan="2" bgcolor="#00649F">재수강여부</td>            
+            <td width="70" colspan="2" bgcolor="#00649F">재수강</td>            
         </tr>
         <tr align="center" id="title2"> 
-            <td width="70" bgcolor="#00649F">과목명</td>
+            <td width="70" bgcolor="#00649F">재수강여부</td>
             <td width="100" bgcolor="#00649F">평점</td>
         </tr>
         </thead>
