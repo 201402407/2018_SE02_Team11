@@ -61,20 +61,35 @@ li {
 	margin-top: 50px;
 }
 #resultTable {
-	 width:65%;
+	 width:55%;
 	 border-collapse: collapse;
 	 border: 1px solid #ADADAD;
 	 background-color: #F1F1F1;
 	 margin-top: 8%;
-	 margin-left: 5%;
+	 margin-left: 31%;
+	 height: 20px;
 }
-th, td {
-    border: 1px solid #ADADAD;
-    height: 20px;
-  }
-  
  th {
  	background-color: #00649F;
  	color: white;
  }
+ 
+ td {
+ text-align: center;
+ }
   
+  
+/* The Modal (background) */
+#popup {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  margin: -0.6%;
+}
+iframe {
+	border-width: 0px;
+}

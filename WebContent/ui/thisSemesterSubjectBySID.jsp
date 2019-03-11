@@ -11,11 +11,14 @@
   <script>
   $(document).ready(function(){
 	    jQuery.ajaxSettings.traditional = true;
-	
+	    window.addEventListener("message", messageHandler, true);
 	    createTable();
 	    
 	    $("#menu").children().eq(2).css("background-color", "#00649F");
 	    $("#menu").children().eq(2).css("color", "white");
+	    
+	    /* 초기 팝업창 숨기기 */
+	    document.getElementById("popup").style.display = "none";
 	    
 	    /* 좌측 메뉴 클릭 이벤트 */
 		$("ul li").click(function(event){
@@ -52,6 +55,16 @@
 		});
   });
   
+  function sendMessage(obj) {
+	  document.getElementById("popup").contentWindow.postMessage(obj,"*");
+	}
+  
+  function messageHandler(e) {
+	  /* 팝업창에서 닫는 요청이 들어오면 */
+	  if(e.data == "close") {
+		  document.getElementById("popup").style.display = "none";
+	  }
+  }
   
   function logout() {
 		$.ajax({
@@ -92,7 +105,6 @@
 						  alert(success.error);
 					  }
 					  else {
-						
 						var result = success.data;
 						var data = [
 						['과목명', '과목코드']
@@ -118,8 +130,15 @@
 							})
 
 							$('#subjectTable').append(table);
-					  }
+							
+							/* 클릭 이벤트 생성 */
+							$("tbody tr").click(function(event){
+								document.getElementById("popup").style.display = "block"; // 팝업 열기
+								sendMessage(data[$(this).index() + 1]); // 해당 인덱스에 해당하는 데이터를 전송
+							});
+				  	}
 				  }
+				  
 				  else {
 					  alert("잠시 후에 시도해주세요.");
 				  }
@@ -217,6 +236,10 @@
   </script>
 </head>
 <body>
+<!-- 팝업창 -->
+	<div id="myModal">
+        <iframe id="popup" src="subjectPopup.html" class="popup"></iframe>
+  </div>
 <!-- 홈페이지의 메뉴 바 -->
    <div id="header">
    <button type="button" class="logout_button" id="logoutButton" onclick="logout()">로그아웃</button>

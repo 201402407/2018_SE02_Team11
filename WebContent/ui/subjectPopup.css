@@ -1,0 +1,78 @@
+html {
+	margin: 0%;
+}
+
+/* Add ToDo Button View */
+h6 {
+	display: none;
+}
+#writingTransparentBorder
+{
+	border-radius:7px;
+	background-color: #ffffff;
+	color: #00649F;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	position: absolute;
+	opacity: 0.5;
+	z-index: 2;
+	
+}
+
+#writingFormContainer{
+	background-color: #D4DDE2;
+	width: 500px;
+	height: 300px;
+	margin: 0%;
+	margin: 100px 450px;
+	position: absolute;
+	z-index: 3;
+	border: 2px solid black;
+}
+
+#firstline {
+	width: 100%;
+	display: block;
+	color: #707070;
+	font-size: 15px;
+	margin-left: 4%;
+	margin-top: 20px;
+}
+
+#secondline {
+	width: 100%;
+	display: block;
+	color: #707070;
+	font-size: 15px;
+	margin-left: 4%;
+	margin-top: 20px;
+}
+
+.area {
+	width: 21%;
+	height: 25px;
+	background-color: white;
+	display: inline-block;
+	font-size: 13px;
+	padding: 2px;
+	line-height: 25px;
+	text-indent: 10px;
+}
+
+
+#nameArea {
+	margin-left: 20px;	
+	}	
+	
+#scoreArea {
+	margin-left: 20px;	
+	margin-top:10px;
+	}
+	
+img{
+	width: 25px;
+	height: 25px;
+	float: right;
+	margin: 5px 5px;
+}

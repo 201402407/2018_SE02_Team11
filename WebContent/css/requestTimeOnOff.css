@@ -161,7 +161,7 @@ li {
 	top: 0;
 	width: 100%; /* Full width */
   height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
+  margin: -0.6%;
 }
 
 iframe {
